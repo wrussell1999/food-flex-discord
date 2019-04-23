@@ -326,7 +326,7 @@ async def helpme(ctx):
     embed.add_field(name="#results", value="See who won the most recent food flex!", inline=False)
     embed.add_field(name="Scoring", value="1 point for those with the highest number of votes")
     embed.set_footer(text="For more information, contact Will R")
-    await bot.say(embed=embed)
+    await ctx.send(embed=embed)
     await ctx.message.delete()
 
 @bot.command(pass_context=True, description="Shows the overall score for the food flex")
@@ -353,13 +353,13 @@ async def winner(ctx):
         embed.add_field(name=winner.nick, value=value_str)
         logger.debug("Command: Single winner")
     logger.debug("Winner command")
-    await bot.say(embed=embed)
+    await ctx.send(embed=embed)
     await ctx.message.delete()
 
 @bot.command(pass_context=True, description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
 async def test(ctx):
     await ctx.send(random.choice(quotes['rude']))
-    await ctx.author.send("Test")
+    await ctx.send("Test")
     await ctx.message.delete()
 
 @bot.command(pass_context=True, description="All the rude Gordon Ramsay Quotes")
@@ -367,7 +367,7 @@ async def rude_quotes(ctx):
     embed = discord.Embed(title="Rude Gordon Ramsay Quotes", description="All the quotes stored in ramsay_quotes.json", colour=0xff0000)
     for index, val in enumerate(quotes['rude']):
         embed.add_field(name=str(index + 1), value=val, inline=False)
-    await ctx.say(embed=embed)
+    await ctx.send(embed=embed)
     await ctx.message.delete()
 
 @bot.command(pass_context=True)
@@ -395,7 +395,7 @@ async def warwick_term2(ctx):
     embed.add_field(name="3rd: Ali", value="Score: 1", inline=False)
     embed.add_field(name="3rd: Harry", value="Score: 1", inline=False)
     embed.add_field(name="Honourable mention: Joe", value="He tried", inline=False)
-    await ctx.say(embed=embed)
+    await ctx.send((embed=embed)
     await ctx.message.delete()
 
 @bot.command(pass_context=True)
@@ -405,7 +405,7 @@ async def final_score(ctx):
     embed.add_field(name="1st: James", value="Score: 12", inline=False)
     embed.add_field(name="2nd: Dan", value="Score: 10", inline=False)
     embed.add_field(name="3rd: Will", value="Score: 9", inline=False)
-    await ctx.say(embed=embed)
+    await ctx.send((embed=embed)
     await ctx.message.delete()
 
 @bot.group(pass_context=True)
