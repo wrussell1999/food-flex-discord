@@ -69,7 +69,7 @@ async def my_background_task():
         elif (hour == 23 and minute == 00):
             logger.info("1 hour left for submissions")
             embed = discord.Embed(title="1 hour left for submissions", description="There's still time to submit today's flex!", colour=0xff0000)
-            await bot.send_message(submission_channel, embed=embed)
+            await submission_channel.send(embed=embed)
         elif ((hour == 00 and minute == 00) and len(temp_data['submissions']) > 1):
             await voting_period(submission_channel, voting_channel)
         elif (hour == 11 and minute == 00 and len(temp_data['submissions']) > 1):
@@ -77,7 +77,7 @@ async def my_background_task():
             embed = await embed_scoreboard(temp_data['submissions'], temp_data['votes'], "1 hour left for voting", "There's still time to vote! Here are the current scores")
             embed.set_footer(text="Remember to vote for your submission to be valid!")
             await vote_reminder()      
-            await bot.send_message(voting_channel, embed=embed)
+            await voting_channel.send(embed=embed)
         elif ((hour == 12 and minute == 00) and len(temp_data['submissions']) > 1 and len(temp_data['voters']) > 0):
             await results_period(voting_channel, submission_channel, results_channel)
         await asyncio.sleep(60) # task runs every 60 seconds
@@ -85,7 +85,7 @@ async def my_background_task():
 async def submission_period(submission_channel, voting_channel):
     logger.info("SUBMISSIONS")
     embed = discord.Embed(title="Submissions are open", description="Submit a picture of your cooking!", colour=0xff0000)
-    await bot.send_message(submission_channel, embed=embed)
+    await submission_channel.send(embed=embed)
     await channel_permissions(True, False, submission_channel, voting_channel)
 
 async def voting_period(submission_channel, voting_channel):
@@ -97,7 +97,7 @@ async def voting_period(submission_channel, voting_channel):
         user = bot.get_guild(int(config['server_id'])).get_member(str(value))
         embed.add_field(name=user.nick, value=str(vote_value), inline=True)
         vote_value = chr(ord(vote_value) + 1)    
-    await bot.send_message(voting_channel, embed=embed)
+    await voting_channel.send(embed=embed)
 
     for value in temp_data['submissions']:
         temp_data['votes'].append(0)
@@ -112,7 +112,7 @@ async def vote_reminder():
             logger.debug(member_id + " has voted - no reminder")
         else:
             user = bot.get_guild(int(config['server_id'])).get_member(member_id)
-            await bot.send_message(user, "Remember to vote for your submission to be valid!!!")
+            await user.send("Remember to vote for your submission to be valid!!!")
             logger.debug("Vote reminder sent for " + str(user.nick))
 
 async def results_period(voting_channel, submission_channel, results_channel):
@@ -127,7 +127,7 @@ async def results_period(voting_channel, submission_channel, results_channel):
         votes_str = votes_str + str(val)
         user_obj = bot.get_guild(int(config['server_id'])).get_member(sorted_submissions_dict['submissions'][index])
         embed.add_field(name=user_obj.nick, value=votes_str, inline=True)
-    await bot.send_message(results_channel, embed=embed)
+    await results_channel.send(embed=embed)
     reset_dict()
     data_dict_to_json()
     await channel_permissions(False, False, voting_channel, submission_channel)
@@ -175,7 +175,7 @@ async def get_winner(results_channel):
                     await disqualify_winner(winner, winner_indexes[0])
     else:
         embed = discord.Embed(title="No winner", description="The potential winners were disqualified", colour=0xff0000)
-        await bot.send_message(results_channel, embed=embed)
+        await results_channel.send(embed=embed)
         winner_message = "No winner"
     return winner_message
 
@@ -190,7 +190,7 @@ def check_winner_vote(winner):
 async def disqualify_winner(winner, index):
     winner_message = "Winner disqualified: " + str(winner.nick)
     embed = discord.Embed(title=winner_message, description="Winner did not vote, therefore their submission is invalid", colour=0xff0000)
-    await bot.send_message(bot.get_channel(int(config['results_channel_id'])), embed=embed)
+    await bot.get_channel(int(config['results_channel_id'])).send(embed=embed)
     logger.debug("New winner selected" + str(temp_data['submissions'][index]))
     del temp_data['votes'][index]
     del temp_data['submissions'][index]
@@ -231,12 +231,12 @@ async def embed_scoreboard(users, scores, title, description):
 async def scoreboard(channel):
     sorted_scoreboard_dict = sort_scoreboard()
     embed = await embed_scoreboard(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], "SCOREBOARD", "Scoreboard for this term")
-    await bot.send_message(channel, embed=embed)
+    await channel.send(embed=embed)
 
 async def auto_scoreboard():
     sorted_scoreboard_dict = sort_scoreboard()
     embed = await embed_scoreboard(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], "SCOREBOARD", "Scoreboard for this term")
-    await bot.send_message(bot.get_channel(int(config['results_channel_id'])), embed=embed)
+    await bot.get_channel(int(config['results_channel_id'])).send(embed=embed)
 
 async def channel_permissions(before, after, channel_before, channel_after):
     server = bot.get_guild(int(config['server_id']))
@@ -276,8 +276,7 @@ async def process_submission(message, submission_channel):
     if (duplicate == False):
         temp_data['submissions'].append(message.author.id)
         logger.debug("Submission valid")
-        #update_score(message.author, 1)
-        await bot.send_message(submission_channel, random.choice(quotes['rude']))
+        await submission_channel.send(random.choice(quotes['rude']))
         data_dict_to_json()
     elif (duplicate == True):
         logger.warning("User already submitted - submission invalid")
@@ -363,8 +362,8 @@ async def winner(ctx):
 
 @bot.command(pass_context=True, description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
 async def test(ctx):
-    await bot.say(random.choice(quotes['rude']))
-    await bot.send_message(ctx.message.author, "Test")
+    await ctx.send(random.choice(quotes['rude']))
+    await ctx.message.author.send("Test")
     await bot.delete_message(ctx.message)
 
 @bot.command(pass_context=True, description="All the rude Gordon Ramsay Quotes")
@@ -380,16 +379,16 @@ async def say(ctx, channel: str, output: str):
     if (ctx.message.author.id == int(config['admin_id'])):
         if (channel == "main"):
             food_chat = bot.get_channel(config['food_chat_id'])
-            await bot.send_message(food_chat, output)
+            await food_chat.send(output)
         elif (channel == "submission"):
             submission_channel = bot.get_channel(int(config['submission_channel_id']))
-            await bot.send_message(submission_channel, output)  
+            await submission_channel.send(output)
         elif (channel == "voting"):
             voting_channel = bot.get_channel(int(config['voting_channel_id']))
-            await bot.send_message(voting_channel, output)  
+            await voting_channel.send(output)  
         elif (channel == "results"):
             results_channel = bot.get_channel(int(config['results_channel_id']))
-            await bot.send_message(results_channel, output)  
+            await results_channel.send(output)  
         await bot.delete_message(ctx.message)
 @bot.command(pass_context=True)
 async def warwick_term2(ctx):
