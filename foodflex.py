@@ -363,7 +363,7 @@ async def winner(ctx):
 @bot.command(pass_context=True, description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
 async def test(ctx):
     await ctx.send(random.choice(quotes['rude']))
-    await ctx.message.author.send("Test")
+    await ctx.author.send("Test")
     await bot.delete_message(ctx.message)
 
 @bot.command(pass_context=True, description="All the rude Gordon Ramsay Quotes")
@@ -371,12 +371,12 @@ async def rude_quotes(ctx):
     embed = discord.Embed(title="Rude Gordon Ramsay Quotes", description="All the quotes stored in ramsay_quotes.json", colour=0xff0000)
     for index, val in enumerate(quotes['rude']):
         embed.add_field(name=str(index + 1), value=val, inline=False)
-    await bot.say(embed=embed)
+    await ctx.say(embed=embed)
     await bot.delete_message(ctx.message)
 
 @bot.command(pass_context=True)
 async def say(ctx, channel: str, output: str):
-    if (ctx.message.author.id == int(config['admin_id'])):
+    if (ctx.author.id == int(config['admin_id'])):
         if (channel == "main"):
             food_chat = bot.get_channel(config['food_chat_id'])
             await food_chat.send(output)
@@ -399,7 +399,7 @@ async def warwick_term2(ctx):
     embed.add_field(name="3rd: Ali", value="Score: 1", inline=False)
     embed.add_field(name="3rd: Harry", value="Score: 1", inline=False)
     embed.add_field(name="Honourable mention: Joe", value="He tried", inline=False)
-    await bot.say(embed=embed)
+    await ctx.say(embed=embed)
     await bot.delete_message(ctx.message)
 
 @bot.command(pass_context=True)
@@ -409,13 +409,13 @@ async def final_score(ctx):
     embed.add_field(name="1st: James", value="Score: 12", inline=False)
     embed.add_field(name="2nd: Dan", value="Score: 10", inline=False)
     embed.add_field(name="3rd: Will", value="Score: 9", inline=False)
-    await bot.say(embed=embed)
+    await ctx.say(embed=embed)
     await bot.delete_message(ctx.message)
 
 @bot.group(pass_context=True)
 async def debug(ctx):
     if (ctx.invoked_subcommand is None):
-        await bot.say('Invalid debug command')
+        await bot.ctx('Invalid debug command')
 
 @debug.command(pass_context=True, description="Shows the current daily data as dict")
 async def data(ctx):
@@ -423,11 +423,11 @@ async def data(ctx):
     embed.add_field(name="Submissions", value=temp_data['submissions'])
     embed.add_field(name="Voters", value=temp_data['voters'])
     embed.add_field(name="Votes", value=temp_data['votes'])
-    await bot.say(embed=embed)
+    await bot.ctx(embed=embed)
     
 @debug.command(pass_context=True)
 async def submissions(ctx):
-    if (ctx.message.author.id == int(config['admin_id']))):
+    if (ctx.author.id == int(config['admin_id']))):
         await submission_period(bot.get_channel(int(config['submission_channel_id'])), bot.get_channel(int(config['voting_channel_id'])))
         reset_dict()
         logger.info("Submissions started manually")
@@ -435,21 +435,21 @@ async def submissions(ctx):
 
 @debug.command(pass_context=True)
 async def voting(ctx):
-    if (ctx.message.author.id == int(config['admin_id']))):
+    if (ctx.author.id == int(config['admin_id']))):
         await voting_period(bot.get_channel(int(config['submission_channel_id'])), bot.get_channel(int(config['voting_channel_id'])))
         logger.debug("Voting started manually")
         await bot.delete_message(ctx.message)
 
 @debug.command(pass_context=True)
 async def results(ctx):
-    if (ctx.message.author.id == int(config['admin_id'])):
+    if (ctx.author.id == int(config['admin_id'])):
         await results_period(bot.get_channel(int(config['voting_channel_id'])), bot.get_channel(int(config['submission_channel_id'])), bot.get_channel(int(config['results_channel_id'])))
         logger.debug("Results started manually")
         await bot.delete_message(ctx.message)
 
 @debug.command(pass_context=True)
 async def clear(ctx, list: str):
-    if (ctx.message.author.id == int(config['admin_id'])):
+    if (ctx.author.id == int(config['admin_id'])):
         if (list == "submissions"):
             temp_data['submissions'].clear()
             logger.debug("Submissions cleared manually")
@@ -464,7 +464,7 @@ async def clear(ctx, list: str):
 
 @debug.command(pass_context=True)
 async def force_json_dump(ctx, file: str):
-    if (ctx.message.author.id == int(config['admin_id'])):
+    if (ctx.author.id == int(config['admin_id'])):
         if (file == "data"):
             data_dict_to_json()
         elif (file == "score"):
