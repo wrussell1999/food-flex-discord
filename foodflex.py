@@ -327,12 +327,12 @@ async def helpme(ctx):
     embed.add_field(name="Scoring", value="1 point for those with the highest number of votes")
     embed.set_footer(text="For more information, contact Will R")
     await bot.say(embed=embed)
-    await bot.delete_message(ctx.message)
+    await ctx.message.delete()
 
 @bot.command(pass_context=True, description="Shows the overall score for the food flex")
 async def score(ctx):
     await scoreboard(ctx.channel)
-    await bot.delete_message(ctx.message)
+    await ctx.message.delete()
 
 @bot.command(pass_context=True, description="Winner of the Food Flex so far")
 async def winner(ctx):
@@ -354,13 +354,13 @@ async def winner(ctx):
         logger.debug("Command: Single winner")
     logger.debug("Winner command")
     await bot.say(embed=embed)
-    await bot.delete_message(ctx.message)
+    await ctx.message.delete()
 
 @bot.command(pass_context=True, description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
 async def test(ctx):
     await ctx.send(random.choice(quotes['rude']))
     await ctx.author.send("Test")
-    await bot.delete_message(ctx.message)
+    await ctx.message.delete()
 
 @bot.command(pass_context=True, description="All the rude Gordon Ramsay Quotes")
 async def rude_quotes(ctx):
@@ -368,7 +368,7 @@ async def rude_quotes(ctx):
     for index, val in enumerate(quotes['rude']):
         embed.add_field(name=str(index + 1), value=val, inline=False)
     await ctx.say(embed=embed)
-    await bot.delete_message(ctx.message)
+    await ctx.message.delete()
 
 @bot.command(pass_context=True)
 async def say(ctx, channel: str, output: str):
@@ -385,7 +385,7 @@ async def say(ctx, channel: str, output: str):
         elif (channel == "results"):
             results_channel = bot.get_channel(int(config['results_channel_id']))
             await results_channel.send(output)  
-        await bot.delete_message(ctx.message)
+        await ctx.message.delete()
 @bot.command(pass_context=True)
 async def warwick_term2(ctx):
     embed = discord.Embed(title="Warwick Term 2 Leaderboard",
@@ -396,7 +396,7 @@ async def warwick_term2(ctx):
     embed.add_field(name="3rd: Harry", value="Score: 1", inline=False)
     embed.add_field(name="Honourable mention: Joe", value="He tried", inline=False)
     await ctx.say(embed=embed)
-    await bot.delete_message(ctx.message)
+    await ctx.message.delete()
 
 @bot.command(pass_context=True)
 async def final_score(ctx):
@@ -406,7 +406,7 @@ async def final_score(ctx):
     embed.add_field(name="2nd: Dan", value="Score: 10", inline=False)
     embed.add_field(name="3rd: Will", value="Score: 9", inline=False)
     await ctx.say(embed=embed)
-    await bot.delete_message(ctx.message)
+    await ctx.message.delete()
 
 @bot.group(pass_context=True)
 async def debug(ctx):
@@ -427,21 +427,21 @@ async def submissions(ctx):
         await submission_period(bot.get_channel(int(config['submission_channel_id'])), bot.get_channel(int(config['voting_channel_id'])))
         reset_dict()
         logger.info("Submissions started manually")
-        await bot.delete_message(ctx.message)
+        await ctx.message.delete()
 
 @debug.command(pass_context=True)
 async def voting(ctx):
     if (ctx.author.id == int(config['admin_id']))):
         await voting_period(bot.get_channel(int(config['submission_channel_id'])), bot.get_channel(int(config['voting_channel_id'])))
         logger.debug("Voting started manually")
-        await bot.delete_message(ctx.message)
+        await ctx.message.delete()
 
 @debug.command(pass_context=True)
 async def results(ctx):
     if (ctx.author.id == int(config['admin_id'])):
         await results_period(bot.get_channel(int(config['voting_channel_id'])), bot.get_channel(int(config['submission_channel_id'])), bot.get_channel(int(config['results_channel_id'])))
         logger.debug("Results started manually")
-        await bot.delete_message(ctx.message)
+        await ctx.message.delete()
 
 @debug.command(pass_context=True)
 async def clear(ctx, list: str):
@@ -456,7 +456,7 @@ async def clear(ctx, list: str):
             temp_data['votes'].clear()
             logger.debug("Votes cleared manually")
         data_dict_to_json()
-        await bot.delete_message(ctx.message)
+        await ctx.message.delete()
 
 @debug.command(pass_context=True)
 async def force_json_dump(ctx, file: str):
@@ -465,7 +465,7 @@ async def force_json_dump(ctx, file: str):
             data_dict_to_json()
         elif (file == "score"):
             score_dict_to_json()
-        await bot.delete_message(ctx.message)
+        await ctx.message.delete()
 
 bot.loop.create_task(my_background_task())
 bot.run(token)
