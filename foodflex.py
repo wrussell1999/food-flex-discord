@@ -94,7 +94,7 @@ async def voting_period(submission_channel, voting_channel):
     embed.set_footer(text="Respond in the chat with the appropriate letter")
     vote_value = 'A'
     for value in temp_data['submissions']:
-        user = bot.get_server(config['server_id']).get_member(str(value))
+        user = bot.get_guild(int(config['server_id'])).get_member(str(value))
         embed.add_field(name=user.nick, value=str(vote_value), inline=True)
         vote_value = chr(ord(vote_value) + 1)    
     await bot.send_message(voting_channel, embed=embed)
@@ -111,7 +111,7 @@ async def vote_reminder():
         if member_id in temp_data['voters']:
             logger.debug(member_id + " has voted - no reminder")
         else:
-            user = bot.get_server(int(config['server_id'])).get_member(member_id)
+            user = bot.get_guild(int(config['server_id'])).get_member(member_id)
             await bot.send_message(user, "Remember to vote for your submission to be valid!!!")
             logger.debug("Vote reminder sent for " + str(user.nick))
 
@@ -125,7 +125,7 @@ async def results_period(voting_channel, submission_channel, results_channel):
     for index, val in enumerate(sorted_submissions_dict['votes']):
         votes_str = "Votes: "
         votes_str = votes_str + str(val)
-        user_obj = bot.get_server(int(config['server_id'])).get_member(sorted_submissions_dict['submissions'][index])
+        user_obj = bot.get_guild(int(config['server_id'])).get_member(sorted_submissions_dict['submissions'][index])
         embed.add_field(name=user_obj.nick, value=votes_str, inline=True)
     await bot.send_message(results_channel, embed=embed)
     reset_dict()
@@ -153,7 +153,7 @@ async def get_winner(results_channel):
                 winners = []
                 winner_message = "Winners: "
                 for index, winner_index in enumerate(winner_indexes):
-                    winners.append(bot.get_server(int(config['server_id'])).get_member(str(temp_data['submissions'][winner_index])))
+                    winners.append(bot.get_guild(int(config['server_id'])).get_member(str(temp_data['submissions'][winner_index])))
                 for index, member in enumerate(winners):
                     if (check_winner_vote(member) == True):
                         logger.debug("Selected Winner: " + member.nick)
@@ -165,7 +165,7 @@ async def get_winner(results_channel):
                         await disqualify_winner(member, index)
             else:
                 logger.debug("1 winner")
-                winner = bot.get_server(int(config['server_id'])).get_member(str((temp_data['submissions'][winner_indexes[0]])))
+                winner = bot.get_guild(int(config['server_id'])).get_member(str((temp_data['submissions'][winner_indexes[0]])))
                 if (check_winner_vote(winner) == True):
                     update_score(winner, 1)
                     winner_message = "Winner: " + winner.nick
@@ -223,7 +223,7 @@ async def embed_scoreboard(users, scores, title, description):
     logger.debug("Scoreboard displayed")
     embed = discord.Embed(title=str(title), description=str(description), colour=0xff0000)
     for index, val in enumerate(users):
-        user = bot.get_server(int(config['server_id'])).get_member(str(val))
+        user = bot.get_guild(int(config['server_id'])).get_member(str(val))
         score = "Score: " + str(scores[index])
         embed.add_field(name=user.nick, value=score)
     return embed
@@ -239,7 +239,7 @@ async def auto_scoreboard():
     await bot.send_message(bot.get_channel(int(config['results_channel_id'])), embed=embed)
 
 async def channel_permissions(before, after, channel_before, channel_after):
-    server = bot.get_server(int(config['server_id']))
+    server = bot.get_guild(int(config['server_id']))
     overwrite = discord.PermissionOverwrite()
     overwrite.send_messages = before
     await bot.edit_channel_permissions(channel_before, server.default_role, overwrite)
@@ -252,7 +252,7 @@ async def on_message(message):
     submission_channel = bot.get_channel(int(config['submission_channel_id']))
     voting_channel = bot.get_channel(int(int(config['voting_channel_id'])))
     dev_channel = bot.get_channel(int(config['dev_channel_id']))
-    server = bot.get_server(int(config['server_id']))
+    server = bot.get_guild(int(config['server_id']))
     now = datetime.datetime.now()
     hour = int(now.strftime("%H"))
     minute = int(now.strftime("%M"))
@@ -349,12 +349,12 @@ async def winner(ctx):
     if (len(winner_indexes) > 1):
         winners = []
         for index, winner_index in enumerate(winner_indexes):
-            winners.append(bot.get_server(int(config['server_id'])).get_member(str(overall_score['users'][winner_index])))
+            winners.append(bot.get_guild(int(config['server_id'])).get_member(str(overall_score['users'][winner_index])))
         for index, member in enumerate(winners):
             embed.add_field(name=member.nick, value=value_str)
         logger.debug("Command: Multiple winners")
     else:
-        winner = bot.get_server(int(config['server_id'])).get_member(str((overall_score['users'][winner_indexes[0]])))
+        winner = bot.get_guild(int(config['server_id'])).get_member(str((overall_score['users'][winner_indexes[0]])))
         embed.add_field(name=winner.nick, value=value_str)
         logger.debug("Command: Single winner")
     logger.debug("Winner command")
