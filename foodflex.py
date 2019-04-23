@@ -40,7 +40,7 @@ with open("data/daily_data.json") as temp_file:
 
 sorted_submissions_dict = {}
 
-logger.debug(temp_data) # loade`d
+logger.debug(temp_data) # loadeed
     
 def data_dict_to_json():
     logger.debug("'data' dumped to daily_data.json")
@@ -239,12 +239,9 @@ async def auto_scoreboard():
     await bot.get_channel(int(config['results_channel_id'])).send(embed=embed)
 
 async def channel_permissions(before, after, channel_before, channel_after):
-    server = bot.get_guild(int(config['server_id']))
-    overwrite = discord.PermissionOverwrite()
-    overwrite.send_messages = before
-    await bot.edit_channel_permissions(channel_before, server.default_role, overwrite)
-    overwrite.send_messages = after
-    await bot.edit_channel_permissions(channel_after, server.default_role, overwrite)
+    guild = bot.get_guild(int(config['server_id']))
+    await channel_before.set_permissions(guild.default_role, send_messages=before)
+    await channel_after.set_permissions(guild.default_role, send_messages=after)
     logger.debug("Permissions updated")
     
 @bot.event    
@@ -252,7 +249,6 @@ async def on_message(message):
     submission_channel = bot.get_channel(int(config['submission_channel_id']))
     voting_channel = bot.get_channel(int(int(config['voting_channel_id'])))
     dev_channel = bot.get_channel(int(config['dev_channel_id']))
-    server = bot.get_guild(int(config['server_id']))
     now = datetime.datetime.now()
     hour = int(now.strftime("%H"))
     minute = int(now.strftime("%M"))
@@ -335,7 +331,7 @@ async def helpme(ctx):
 
 @bot.command(pass_context=True, description="Shows the overall score for the food flex")
 async def score(ctx):
-    await scoreboard(ctx.message.channel)
+    await scoreboard(ctx.channel)
     await bot.delete_message(ctx.message)
 
 @bot.command(pass_context=True, description="Winner of the Food Flex so far")
