@@ -337,25 +337,29 @@ async def score(ctx):
 
 @bot.command(pass_context=True, description="Winner of the Food Flex so far")
 async def winner(ctx):
-    embed = discord.Embed(title="Winners", description="Highest score for term 2", colour=0xff0000)
-    embed.set_footer(text="It's all to play for...")
-    max_vote = max(overall_score['score'])
-    value_str = "Score: " + str(max_vote)
-    winner_indexes = [i for i, j in enumerate(overall_score['score']) if j == max_vote]
-    if (len(winner_indexes) > 1):
-        winners = []
-        for index, winner_index in enumerate(winner_indexes):
-            winners.append(bot.get_guild(config['server_id']).get_member(str(overall_score['users'][winner_index])))
-        for index, member in enumerate(winners):
-            embed.add_field(name=member.nick, value=value_str)
-        logger.debug("Command: Multiple winners")
+    if (len(overall_score['score']) != 0):
+        embed = discord.Embed(title="Winners", description="Highest score for term 2", colour=0xff0000)
+        embed.set_footer(text="It's all to play for...")
+        max_vote = max(overall_score['score'])
+        value_str = "Score: " + str(max_vote)
+        winner_indexes = [i for i, j in enumerate(overall_score['score']) if j == max_vote]
+        if (len(winner_indexes) > 1):
+            winners = []
+            for index, winner_index in enumerate(winner_indexes):
+                winners.append(bot.get_guild(config['server_id']).get_member(str(overall_score['users'][winner_index])))
+            for index, member in enumerate(winners):
+                embed.add_field(name=member.nick, value=value_str)
+            logger.debug("Command: Multiple winners")
+        else:
+            winner = bot.get_guild(config['server_id']).get_member(str(overall_score['users'][winner_indexes[0]]))
+            embed.add_field(name=winner.nick, value=value_str)
+            logger.debug("Command: Single winner")
+        logger.debug("Winner command")
+        await ctx.send(embed=embed)
+        await ctx.message.delete()
     else:
-        winner = bot.get_guild(config['server_id']).get_member(str(overall_score['users'][winner_indexes[0]]))
-        embed.add_field(name=winner.nick, value=value_str)
-        logger.debug("Command: Single winner")
-    logger.debug("Winner command")
-    await ctx.send(embed=embed)
-    await ctx.message.delete()
+        await ctx.send("There are currently no winners")
+        await ctx.message.delete()
 
 @bot.command(pass_context=True, description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
 async def test(ctx):
