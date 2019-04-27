@@ -47,7 +47,7 @@ def data_dict_to_json():
     with open('data/daily_data.json', 'w') as json_file:
         json.dump(temp_data, json_file)
 
-token = int(config['token_id'])
+token = config['token_id']
 
 @bot.event
 async def on_ready(): 
@@ -395,7 +395,7 @@ async def warwick_term2(ctx):
     embed.add_field(name="3rd: Ali", value="Score: 1", inline=False)
     embed.add_field(name="3rd: Harry", value="Score: 1", inline=False)
     embed.add_field(name="Honourable mention: Joe", value="He tried", inline=False)
-    await ctx.send((embed=embed)
+    await ctx.send(embed=embed)
     await ctx.message.delete()
 
 @bot.command(pass_context=True)
@@ -405,7 +405,7 @@ async def final_score(ctx):
     embed.add_field(name="1st: James", value="Score: 12", inline=False)
     embed.add_field(name="2nd: Dan", value="Score: 10", inline=False)
     embed.add_field(name="3rd: Will", value="Score: 9", inline=False)
-    await ctx.send((embed=embed)
+    await ctx.send(embed=embed)
     await ctx.message.delete()
 
 @bot.group(pass_context=True)
@@ -423,7 +423,7 @@ async def data(ctx):
     
 @debug.command(pass_context=True)
 async def submissions(ctx):
-    if (ctx.author.id == int(config['admin_id']))):
+    if (ctx.author.id == int(config['admin_id'])):
         await submission_period(bot.get_channel(int(config['submission_channel_id'])), bot.get_channel(int(config['voting_channel_id'])))
         reset_dict()
         logger.info("Submissions started manually")
@@ -431,7 +431,7 @@ async def submissions(ctx):
 
 @debug.command(pass_context=True)
 async def voting(ctx):
-    if (ctx.author.id == int(config['admin_id']))):
+    if (ctx.author.id == int(config['admin_id'])):
         await voting_period(bot.get_channel(int(config['submission_channel_id'])), bot.get_channel(int(config['voting_channel_id'])))
         logger.debug("Voting started manually")
         await ctx.message.delete()
