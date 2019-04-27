@@ -35,6 +35,7 @@ def score_dict_to_json():
         json.dump(overall_score, json_file)
 
 temp_data = {} # daily data
+
 with open("data/daily_data.json") as temp_file:
     temp_data = json.load(temp_file)
 
@@ -56,9 +57,9 @@ async def on_ready():
 async def my_background_task():
     await bot.wait_until_ready()
 
-    submission_channel = bot.get_channel(int(config['submission_channel_id']))
-    voting_channel = bot.get_channel(int(config['voting_channel_id']))
-    results_channel = bot.get_channel(int(config['results_channel_id']))
+    submission_channel = bot.get_channel(config['submission_channel_id'])
+    voting_channel = bot.get_channel(config['voting_channel_id'])
+    results_channel = bot.get_channel(config['results_channel_id'])
     while not bot.is_closed:
         now = datetime.datetime.now()
         hour = int(now.strftime("%H"))
@@ -94,7 +95,7 @@ async def voting_period(submission_channel, voting_channel):
     embed.set_footer(text="Respond in the chat with the appropriate letter")
     vote_value = 'A'
     for value in temp_data['submissions']:
-        user = bot.get_guild(int(config['server_id'])).get_member(str(value))
+        user = bot.get_guild(config['server_id']).get_member(str(value))
         embed.add_field(name=user.nick, value=str(vote_value), inline=True)
         vote_value = chr(ord(vote_value) + 1)    
     await voting_channel.send(embed=embed)
@@ -111,7 +112,7 @@ async def vote_reminder():
         if member_id in temp_data['voters']:
             logger.debug(member_id + " has voted - no reminder")
         else:
-            user = bot.get_guild(int(config['server_id'])).get_member(member_id)
+            user = bot.get_guild(config['server_id']).get_member(member_id)
             await user.send("Remember to vote for your submission to be valid!!!")
             logger.debug("Vote reminder sent for " + str(user.nick))
 
@@ -125,7 +126,7 @@ async def results_period(voting_channel, submission_channel, results_channel):
     for index, val in enumerate(sorted_submissions_dict['votes']):
         votes_str = "Votes: "
         votes_str = votes_str + str(val)
-        user_obj = bot.get_guild(int(config['server_id'])).get_member(sorted_submissions_dict['submissions'][index])
+        user_obj = bot.get_guild(config['server_id']).get_member(sorted_submissions_dict['submissions'][index])
         embed.add_field(name=user_obj.nick, value=votes_str, inline=True)
     await results_channel.send(embed=embed)
     reset_dict()
@@ -153,7 +154,7 @@ async def get_winner(results_channel):
                 winners = []
                 winner_message = "Winners: "
                 for index, winner_index in enumerate(winner_indexes):
-                    winners.append(bot.get_guild(int(config['server_id'])).get_member(str(temp_data['submissions'][winner_index])))
+                    winners.append(bot.get_guild(config['server_id']).get_member(str(temp_data['submissions'][winner_index])))
                 for index, member in enumerate(winners):
                     if (check_winner_vote(member) == True):
                         logger.debug("Selected Winner: " + member.nick)
@@ -165,7 +166,7 @@ async def get_winner(results_channel):
                         await disqualify_winner(member, index)
             else:
                 logger.debug("1 winner")
-                winner = bot.get_guild(int(config['server_id'])).get_member(str((temp_data['submissions'][winner_indexes[0]])))
+                winner = bot.get_guild(config['server_id']).get_member(str(temp_data['submissions'][winner_indexes[0]]))
                 if (check_winner_vote(winner) == True):
                     update_score(winner, 1)
                     winner_message = "Winner: " + winner.nick
@@ -190,7 +191,7 @@ def check_winner_vote(winner):
 async def disqualify_winner(winner, index):
     winner_message = "Winner disqualified: " + str(winner.nick)
     embed = discord.Embed(title=winner_message, description="Winner did not vote, therefore their submission is invalid", colour=0xff0000)
-    await bot.get_channel(int(config['results_channel_id'])).send(embed=embed)
+    await bot.get_channel(config['results_channel_id']).send(embed=embed)
     logger.debug("New winner selected" + str(temp_data['submissions'][index]))
     del temp_data['votes'][index]
     del temp_data['submissions'][index]
@@ -223,7 +224,7 @@ async def embed_scoreboard(users, scores, title, description):
     logger.debug("Scoreboard displayed")
     embed = discord.Embed(title=str(title), description=str(description), colour=0xff0000)
     for index, val in enumerate(users):
-        user = bot.get_guild(int(config['server_id'])).get_member(str(val))
+        user = bot.get_guild(config['server_id']).get_member(str(val))
         score = "Score: " + str(scores[index])
         embed.add_field(name=user.nick, value=score)
     return embed
@@ -236,19 +237,19 @@ async def scoreboard(channel):
 async def auto_scoreboard():
     sorted_scoreboard_dict = sort_scoreboard()
     embed = await embed_scoreboard(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], "SCOREBOARD", "Scoreboard for this term")
-    await bot.get_channel(int(config['results_channel_id'])).send(embed=embed)
+    await bot.get_channel(config['results_channel_id']).send(embed=embed)
 
 async def channel_permissions(before, after, channel_before, channel_after):
-    guild = bot.get_guild(int(config['server_id']))
+    guild = bot.get_guild(config['server_id'])
     await channel_before.set_permissions(guild.default_role, send_messages=before)
     await channel_after.set_permissions(guild.default_role, send_messages=after)
     logger.debug("Permissions updated")
     
 @bot.event    
 async def on_message(message):
-    submission_channel = bot.get_channel(int(config['submission_channel_id']))
-    voting_channel = bot.get_channel(int(int(config['voting_channel_id'])))
-    dev_channel = bot.get_channel(int(config['dev_channel_id']))
+    submission_channel = bot.get_channel(config['submission_channel_id'])
+    voting_channel = bot.get_channel(int(config['voting_channel_id']))
+    dev_channel = bot.get_channel(config['dev_channel_id'])
     now = datetime.datetime.now()
     hour = int(now.strftime("%H"))
     minute = int(now.strftime("%M"))
@@ -344,12 +345,12 @@ async def winner(ctx):
     if (len(winner_indexes) > 1):
         winners = []
         for index, winner_index in enumerate(winner_indexes):
-            winners.append(bot.get_guild(int(config['server_id'])).get_member(str(overall_score['users'][winner_index])))
+            winners.append(bot.get_guild(config['server_id']).get_member(str(overall_score['users'][winner_index])))
         for index, member in enumerate(winners):
             embed.add_field(name=member.nick, value=value_str)
         logger.debug("Command: Multiple winners")
     else:
-        winner = bot.get_guild(int(config['server_id'])).get_member(str((overall_score['users'][winner_indexes[0]])))
+        winner = bot.get_guild(config['server_id']).get_member(str(overall_score['users'][winner_indexes[0]]))
         embed.add_field(name=winner.nick, value=value_str)
         logger.debug("Command: Single winner")
     logger.debug("Winner command")
@@ -359,7 +360,7 @@ async def winner(ctx):
 @bot.command(pass_context=True, description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
 async def test(ctx):
     await ctx.send(random.choice(quotes['rude']))
-    await ctx.send("Test")
+    await ctx.author.send("Test")
     await ctx.message.delete()
 
 @bot.command(pass_context=True, description="All the rude Gordon Ramsay Quotes")
@@ -372,41 +373,20 @@ async def rude_quotes(ctx):
 
 @bot.command(pass_context=True)
 async def say(ctx, channel: str, output: str):
-    if (ctx.author.id == int(config['admin_id'])):
+    if (ctx.author.id == config['admin_id']):
         if (channel == "main"):
             food_chat = bot.get_channel(config['food_chat_id'])
             await food_chat.send(output)
         elif (channel == "submission"):
-            submission_channel = bot.get_channel(int(config['submission_channel_id']))
+            submission_channel = bot.get_channel(config['submission_channel_id'])
             await submission_channel.send(output)
         elif (channel == "voting"):
-            voting_channel = bot.get_channel(int(config['voting_channel_id']))
+            voting_channel = bot.get_channel(config['voting_channel_id'])
             await voting_channel.send(output)  
         elif (channel == "results"):
-            results_channel = bot.get_channel(int(config['results_channel_id']))
+            results_channel = bot.get_channel(config['results_channel_id'])
             await results_channel.send(output)  
         await ctx.message.delete()
-@bot.command(pass_context=True)
-async def warwick_term2(ctx):
-    embed = discord.Embed(title="Warwick Term 2 Leaderboard",
-                          description="Overall Food Flex Scores for Term 2, Year 1", colour=0xff0000)
-    embed.add_field(name="1st: James", value="Score: 12", inline=False)
-    embed.add_field(name="2nd: Dan", value="Score: 10", inline=False)
-    embed.add_field(name="3rd: Ali", value="Score: 1", inline=False)
-    embed.add_field(name="3rd: Harry", value="Score: 1", inline=False)
-    embed.add_field(name="Honourable mention: Joe", value="He tried", inline=False)
-    await ctx.send(embed=embed)
-    await ctx.message.delete()
-
-@bot.command(pass_context=True)
-async def final_score(ctx):
-    embed = discord.Embed(title="Term 2 Leaderboard",
-                          description="Overall Food Flex Scores for Term 2, Year 1", colour=0xff0000)
-    embed.add_field(name="1st: James", value="Score: 12", inline=False)
-    embed.add_field(name="2nd: Dan", value="Score: 10", inline=False)
-    embed.add_field(name="3rd: Will", value="Score: 9", inline=False)
-    await ctx.send(embed=embed)
-    await ctx.message.delete()
 
 @bot.group(pass_context=True)
 async def debug(ctx):
@@ -419,33 +399,33 @@ async def data(ctx):
     embed.add_field(name="Submissions", value=temp_data['submissions'])
     embed.add_field(name="Voters", value=temp_data['voters'])
     embed.add_field(name="Votes", value=temp_data['votes'])
-    await bot.ctx(embed=embed)
+    await ctx.send(embed=embed)
     
 @debug.command(pass_context=True)
 async def submissions(ctx):
-    if (ctx.author.id == int(config['admin_id'])):
-        await submission_period(bot.get_channel(int(config['submission_channel_id'])), bot.get_channel(int(config['voting_channel_id'])))
+    if (ctx.author.id == config['admin_id']):
+        await submission_period(bot.get_channel(config['submission_channel_id']), bot.get_channel(config['voting_channel_id']))
         reset_dict()
         logger.info("Submissions started manually")
         await ctx.message.delete()
 
 @debug.command(pass_context=True)
 async def voting(ctx):
-    if (ctx.author.id == int(config['admin_id'])):
-        await voting_period(bot.get_channel(int(config['submission_channel_id'])), bot.get_channel(int(config['voting_channel_id'])))
+    if (ctx.author.id == config['admin_id']):
+        await voting_period(bot.get_channel(config['submission_channel_id']), bot.get_channel(config['voting_channel_id']))
         logger.debug("Voting started manually")
         await ctx.message.delete()
 
 @debug.command(pass_context=True)
 async def results(ctx):
-    if (ctx.author.id == int(config['admin_id'])):
-        await results_period(bot.get_channel(int(config['voting_channel_id'])), bot.get_channel(int(config['submission_channel_id'])), bot.get_channel(int(config['results_channel_id'])))
+    if (ctx.author.id == config['admin_id']):
+        await results_period(bot.get_channel(config['voting_channel_id']), bot.get_channel(config['submission_channel_id']), bot.get_channel(config['results_channel_id']))
         logger.debug("Results started manually")
         await ctx.message.delete()
 
 @debug.command(pass_context=True)
 async def clear(ctx, list: str):
-    if (ctx.author.id == int(config['admin_id'])):
+    if (ctx.author.id == config['admin_id']):
         if (list == "submissions"):
             temp_data['submissions'].clear()
             logger.debug("Submissions cleared manually")
@@ -460,7 +440,7 @@ async def clear(ctx, list: str):
 
 @debug.command(pass_context=True)
 async def force_json_dump(ctx, file: str):
-    if (ctx.author.id == int(config['admin_id'])):
+    if (ctx.author.id == config['admin_id']):
         if (file == "data"):
             data_dict_to_json()
         elif (file == "score"):
