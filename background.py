@@ -183,7 +183,7 @@ async def debug(ctx):
 
 @debug.command()
 async def submissions(ctx):
-    if (ctx.author.id == config.config['admin_id']):
+    if (await bot.is_owner(ctx.author)):
         await submission_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
         reset_dict()
         logger.info("Submissions started manually")
@@ -191,14 +191,14 @@ async def submissions(ctx):
 
 @debug.command()
 async def voting(ctx):
-    if (ctx.author.id == config.config['admin_id']):
+    if (await bot.is_owner(ctx.author)):
         await voting_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
         logger.debug("Voting started manually")
         await ctx.message.delete()
 
 @debug.command()
 async def results(ctx):
-    if (ctx.author.id == config.config['admin_id']):
+    if (await bot.is_owner(ctx.author)):
         await results_period(bot.get_channel(config.config['voting_channel_id']), bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['results_channel_id']))
         logger.debug("Results started manually")
         await ctx.message.delete()
