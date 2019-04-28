@@ -56,7 +56,7 @@ To install discord.py:
     $ sudo apt install python3-pip
     $ python3 -m pip install -U discord.py
 
-Config:
+`config.json` inside the config directory:
 ```json
 {
     "token_id": "Token as string",
