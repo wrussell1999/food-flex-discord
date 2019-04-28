@@ -12,12 +12,16 @@ logger = config.initilise_logging()
 
 async def submission_period(submission_channel, voting_channel):
     logger.info("SUBMISSIONS")
+    activity = discord.Activity(name="people submit shit food", type=discord.ActivityType.watching)
+    await bot.change_presence(status=discord.Status.online, activity=activity)
     embed = discord.Embed(title="Submissions are open", description="Submit a picture of your cooking!", colour=0xff0000)
     await submission_channel.send(embed=embed)
     await channel_permissions(True, False, submission_channel, voting_channel)
 
 async def voting_period(submission_channel, voting_channel):
     logger.info("VOTING")
+    activity = discord.Activity(name="people vote on shit food", type=discord.ActivityType.watching)
+    await bot.change_presence(status=discord.Status.online, activity=activity)
     embed = discord.Embed(title="VOTING!", description ="Vote for the best cooking of the day!", colour=0xff0000)
     embed.set_footer(text="Respond in the chat with the appropriate letter")
     vote_value = 'A'
@@ -45,6 +49,8 @@ async def vote_reminder():
 
 async def results_period(voting_channel, submission_channel, results_channel):
     logger.info("RESULTS")
+    activity = discord.Activity(name="for shit food", type=discord.ActivityType.watching)
+    await bot.change_presence(status=discord.Status.idle, activity=activity)
     winner_message = await get_winner(results_channel)
     embed = discord.Embed(title="RESULTS", description="", colour=0xff0000)
     embed.set_author(name=winner_message)
