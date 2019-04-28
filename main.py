@@ -4,11 +4,10 @@ import datetime
 import asyncio
 import random
 import builtins
-import logging
 import config
 from data import *
 
-bot = commands.Bot('flex:')
+bot = commands.Bot(command_prefix='flex:', owner_id=config.config['admin_id'])
 builtins.bot = bot
 
 import flex_commands
@@ -21,7 +20,7 @@ logger = config.initilise_logging()
 async def on_ready(): 
     logger.info("Food Flex is online!")
 
-async def my_background_task():
+async def flex_time_periods():
     await bot.wait_until_ready()
     submission_channel = bot.get_channel(config.config['submission_channel_id'])
     voting_channel = bot.get_channel(config.config['voting_channel_id'])
@@ -52,5 +51,5 @@ async def my_background_task():
         await asyncio.sleep(60) # task runs every 60 seconds
 
 token = config.config['token_id']
-bot.loop.create_task(my_background_task())
+bot.loop.create_task(flex_time_periods())
 bot.run(token)

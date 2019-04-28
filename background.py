@@ -176,12 +176,12 @@ async def channel_permissions(before, after, channel_before, channel_after):
     await channel_after.set_permissions(guild.default_role, send_messages=after)
     logger.debug("Permissions updated")
 
-@bot.group(pass_context=True)
+@bot.group()
 async def debug(ctx):
     if (ctx.invoked_subcommand is None):
-        await bot.ctx('Invalid debug command')
+        await ctx.send('Invalid debug command')
 
-@debug.command(pass_context=True)
+@debug.command()
 async def submissions(ctx):
     if (ctx.author.id == config.config['admin_id']):
         await submission_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
@@ -189,21 +189,21 @@ async def submissions(ctx):
         logger.info("Submissions started manually")
         await ctx.message.delete()
 
-@debug.command(pass_context=True)
+@debug.command()
 async def voting(ctx):
     if (ctx.author.id == config.config['admin_id']):
         await voting_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
         logger.debug("Voting started manually")
         await ctx.message.delete()
 
-@debug.command(pass_context=True)
+@debug.command()
 async def results(ctx):
     if (ctx.author.id == config.config['admin_id']):
         await results_period(bot.get_channel(config.config['voting_channel_id']), bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['results_channel_id']))
         logger.debug("Results started manually")
         await ctx.message.delete()
 
-@bot.command(pass_context=True, description="Shows the overall score for the food flex")
+@bot.command(description="Shows the overall score for the food flex")
 async def score(ctx):
     await scoreboard(ctx.channel)
     await ctx.message.delete()

@@ -5,7 +5,7 @@ from data import *
 import config
 from builtins import bot
 
-@bot.command(pass_context=True, description="This explains how the food flex competition works - how to submit and vote")
+@bot.command(description="This explains how the food flex competition works - how to submit and vote")
 async def helpme(ctx):
     embed = discord.Embed(title="Help", description="Use the different channels to submit and vote!", colour=0xff0000)
     embed.set_author(name="Food Flex - How this all works")
@@ -18,7 +18,7 @@ async def helpme(ctx):
     await ctx.message.delete()
 
 
-@bot.command(pass_context=True, description="Winner of the Food Flex so far")
+@bot.command(description="Winner of the Food Flex so far")
 async def winner(ctx):
     if (len(overall_score['score']) != 0):
         embed = discord.Embed(title="Winners", description="Highest score for term 2", colour=0xff0000)
@@ -44,13 +44,13 @@ async def winner(ctx):
         await ctx.send("There are currently no winners")
         await ctx.message.delete()
 
-@bot.command(pass_context=True, description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
+@bot.command(description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
 async def test(ctx):
     await ctx.send(random.choice(quotes['rude']))
     await ctx.author.send("Test")
     await ctx.message.delete()
 
-@bot.command(pass_context=True, description="All the rude Gordon Ramsay quotes")
+@bot.command(description="All the rude Gordon Ramsay quotes")
 async def rude_quotes(ctx):
     embed = discord.Embed(title="Rude Gordon Ramsay quotes", description="All the quotes stored in ramsay_quotes.json", colour=0xff0000)
     for index, val in enumerate(quotes['rude']):
@@ -58,9 +58,9 @@ async def rude_quotes(ctx):
     await ctx.send(embed=embed)
     await ctx.message.delete()
 
-@bot.command(pass_context=True)
+@bot.command()
 async def say(ctx, channel: str, output: str):
-    if (ctx.author.id == config.config['admin_id']):
+    if (await bot.is_owner(ctx.author)):
         if (channel == "main"):
             food_chat = bot.get_channel(config.config['food_chat_id'])
             await food_chat.send(output)
@@ -75,12 +75,12 @@ async def say(ctx, channel: str, output: str):
             await results_channel.send(output)  
         await ctx.message.delete()
 
-@bot.group(pass_context=True)
+@bot.group()
 async def data(ctx):
     if (ctx.invoked_subcommand is None):
-        await bot.ctx('Invalid debug command')
+        await ctx.send('Invalid debug command')
 
-@data.command(pass_context=True, description="Shows the current daily data as dict")
+@data.command(description="Shows the current daily data as dict")
 async def get_data(ctx):
     embed = discord.Embed(title="Daily Data", colour=0xff0000)
     embed.add_field(name="Submissions", value=daily_data['submissions'])
@@ -88,9 +88,9 @@ async def get_data(ctx):
     embed.add_field(name="Votes", value=daily_data['votes'])
     await ctx.send(embed=embed)
 
-@data.command(pass_context=True)
+@data.command()
 async def clear(ctx, list: str):
-    if (ctx.author.id == config.config['admin_id']):
+    if (await bot.is_owner(ctx.author)):
         if (list == "submissions"):
             daily_data['submissions'].clear()
             logger.debug("Submissions cleared manually")
@@ -103,16 +103,16 @@ async def clear(ctx, list: str):
         data_dict_to_json()
         await ctx.message.delete()
 
-@data.command(pass_context=True)
+@data.command()
 async def force_json_dump(ctx, file: str):
-    if (ctx.author.id == config.config['admin_id']):
+    if (await bot.is_owner(ctx.author)):
         if (file == "data"):
             data_dict_to_json()
         elif (file == "score"):
             score_dict_to_json()
         await ctx.message.delete()
 
-@bot.command(pass_context=True)
+@bot.command()
 async def ping(ctx):
     await ctx.send("pong")
     
