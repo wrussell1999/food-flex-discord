@@ -1,5 +1,5 @@
 # Food Flex Discord Bot
-Discord Bot for Food Flex created by Will Russell
+Discord Bot created by Will Russell
 
 ## What does the bot do?
 
@@ -10,32 +10,19 @@ Food Flex is bot that manages:
 
 These events happen between certain times.
 
-### Submissions
+### Submissions (13:00 - 23:59)
 
-This happens between 13:00 GMT and 23:59 GMT.
+When a user uploads a picture of their food to the submissions chat, they are automatically entered into the vote. Users can only vote once. The bot will won't count additional submission pictures, therefore users who may feel that multiple pictures helps show off their 'flexing', are able to post multiple pictures without error.
 
-When a user uploads a picture of their food to the submissions chat, they are automatically entered into the vote. 
+### Voting (00:00 - 11:59)
 
-Users can only vote once. The bot will won't count additional submission pictures, therefore users who may feel that multiple pictures helps show off their 'flexing', are able to post multiple pictures without error.
+Submissions are closed and a voting poll is displayed. Users can vote for their favourite by sending the letter that corresponds to the user. Users can only vote once, and not for themselves. The bot will won't count additional votes. Also, anyone who submitted, and hasn't voted by 11:00, will received a private message to remind them to vote.
 
-### Voting
-
-This happens between 00:00 GMT and 11:59 GMT.
-
-Submissions are closed and a voting poll is displayed. Users can vote for their favourite by sending the letter that corresponds to the user. 
-
-Users can only vote once. The bot will won't count additional votes.
-
-### Results
-
-This happens at 12:00 GMT.
+### Results (12:00)
 
 Voting is closed and a results message will be sent. 
 
-### Other things to note
-
-- You can't vote for yourself
-- If you submit a picture and don't vote, you are disqualified
+**NOTE:** If you submit a picture and don't vote, you are disqualified
 
 ## Tools
 
