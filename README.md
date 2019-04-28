@@ -8,8 +8,6 @@ Food Flex is bot that manages:
 - Voting 
 - Results
 
-These events happen between certain times.
-
 ### Submissions (13:00 - 23:59)
 
 When a user uploads a picture of their food to the submissions chat, they are automatically entered into the vote. Users can only vote once. The bot will won't count additional submission pictures, therefore users who may feel that multiple pictures helps show off their 'flexing', are able to post multiple pictures without error.
@@ -22,7 +20,7 @@ Submissions are closed and a voting poll is displayed. Users can vote for their 
 
 Voting is closed and a results message will be sent. 
 
-**NOTE:** If you submit a picture and don't vote, you are disqualified
+**NOTE:** If you submit a picture and don't vote, you are disqualified.
 
 ## Tools
 
@@ -63,4 +61,4 @@ To run the bot:
 
 
 ## License
-MIT License for all the code written by me
+MIT License for all the code written by me.
