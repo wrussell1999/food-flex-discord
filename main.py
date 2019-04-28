@@ -1,21 +1,23 @@
 import discord
 from discord.ext import commands
-import os
 import datetime
 import asyncio
 import random
+import builtins
 import logging
 import config
-import data
+from data import *
 
-logging.basicConfig(level=logging.INFO)
+bot = commands.Bot('flex:')
+builtins.bot = bot
+
+import flex_commands
+
+
 logger = config.initilise_logging()
-
-
 sorted_scoreboard_dict = {}
 sorted_submissions_dict = {}
     
-bot = commands.Bot(command_prefix='flex:')
 token = config.config['token_id']
 
 @bot.event
@@ -40,15 +42,15 @@ async def my_background_task():
             logger.info("1 hour left for submissions")
             embed = discord.Embed(title="1 hour left for submissions", description="There's still time to submit today's flex!", colour=0xff0000)
             await submission_channel.send(embed=embed)
-        elif ((hour == 00 and minute == 00) and len(data.daily_data['submissions']) > 1):
+        elif ((hour == 00 and minute == 00) and len(daily_data['submissions']) > 1):
             await voting_period(submission_channel, voting_channel)
-        elif (hour == 11 and minute == 00 and len(data.daily_data['submissions']) > 1):
+        elif (hour == 11 and minute == 00 and len(daily_data['submissions']) > 1):
             logger.info("1 hour left for voting")
-            embed = await embed_scoreboard(data.daily_data['submissions'], data.daily_data['votes'], "1 hour left for voting", "There's still time to vote! Here are the current scores")
+            embed = await embed_scoreboard(daily_data['submissions'], daily_data['votes'], "1 hour left for voting", "There's still time to vote! Here are the current scores")
             embed.set_footer(text="Remember to vote for your submission to be valid!")
             await vote_reminder()      
             await voting_channel.send(embed=embed)
-        elif ((hour == 12 and minute == 00) and len(data.daily_data['submissions']) > 1 and len(data.daily_data['voters']) > 0):
+        elif ((hour == 12 and minute == 00) and len(daily_data['submissions']) > 1 and len(daily_data['voters']) > 0):
             await results_period(voting_channel, submission_channel, results_channel)
         await asyncio.sleep(60) # task runs every 60 seconds
 
@@ -63,22 +65,22 @@ async def voting_period(submission_channel, voting_channel):
     embed = discord.Embed(title="VOTING!", description ="Vote for the best cooking of the day!", colour=0xff0000)
     embed.set_footer(text="Respond in the chat with the appropriate letter")
     vote_value = 'A'
-    for value in data.daily_data['submissions']:
+    for value in daily_data['submissions']:
         user = bot.get_guild(config.config['server_id']).get_member(str(value))
         embed.add_field(name=user.nick, value=str(vote_value), inline=True)
         vote_value = chr(ord(vote_value) + 1)    
     await voting_channel.send(embed=embed)
 
-    for value in data.daily_data['submissions']:
-        data.daily_data['votes'].append(0)
-    logger.info(str(data.daily_data['votes']))
+    for value in daily_data['submissions']:
+        daily_data['votes'].append(0)
+    logger.info(str(daily_data['votes']))
     data_dict_to_json()
     await channel_permissions(False, True, submission_channel, voting_channel)
 
 async def vote_reminder():
     logger.debug("Reminding users who submitted")
-    for member_id in data.daily_data['submissions']:
-        if member_id in data.daily_data['voters']:
+    for member_id in daily_data['submissions']:
+        if member_id in daily_data['voters']:
             logger.debug(member_id + " has voted - no reminder")
         else:
             user = bot.get_guild(config.config['server_id']).get_member(member_id)
@@ -90,7 +92,7 @@ async def results_period(voting_channel, submission_channel, results_channel):
     winner_message = await get_winner(results_channel)
     embed = discord.Embed(title="RESULTS", description="", colour=0xff0000)
     embed.set_author(name=winner_message)
-    embed.set_footer(text=random.choice(data.quotes['rude']))
+    embed.set_footer(text=random.choice(quotes['rude']))
     sorted_submissions_dict = sort_submissions()
 
     for index, val in enumerate(sorted_submissions_dict['votes']):
@@ -104,29 +106,29 @@ async def results_period(voting_channel, submission_channel, results_channel):
     await channel_permissions(False, False, voting_channel, submission_channel)
 
 def reset_dict():
-    data.daily_data['submissions'].clear()
-    data.daily_data['votes'].clear()
-    data.daily_data['voters'].clear()
-    logger.debug("data.daily_data reset")
+    daily_data['submissions'].clear()
+    daily_data['votes'].clear()
+    daily_data['voters'].clear()
+    logger.debug("daily_data reset")
 
 async def get_winner(results_channel):
     logger.debug("Getting Winner")
-    max_vote = max(data.daily_data['votes'])
+    max_vote = max(daily_data['votes'])
     if (max_vote > 0):
-        winner_indexes = [i for i, j in enumerate(data.daily_data['votes']) if j == max_vote]
+        winner_indexes = [i for i, j in enumerate(daily_data['votes']) if j == max_vote]
         logger.debug("index of winners: "  + str(winner_indexes))
         winner_message = ""
         sorted_submissions_dict = sort_submissions()
         winner_true = False
 
         while (winner_true == False):
-            if (len(winner_indexes) > 1 and len(data.daily_data['submissions']) > 1):
+            if (len(winner_indexes) > 1 and len(daily_data['submissions']) > 1):
                 logger.debug("Multiple winners")
                 winners = []
                 winner_message = "Winners: "
 
                 for index, winner_index in enumerate(winner_indexes):
-                    winners.append(bot.get_guild(config.config['server_id']).get_member(str(data.daily_data['submissions'][winner_index])))
+                    winners.append(bot.get_guild(config.config['server_id']).get_member(str(daily_data['submissions'][winner_index])))
 
                 for index, member in enumerate(winners):
                     if (check_winner_vote(member) == True):
@@ -139,7 +141,7 @@ async def get_winner(results_channel):
                         await disqualify_winner(member, index)
             else:
                 logger.debug("1 winner")
-                winner = bot.get_guild(config.config['server_id']).get_member(str(data.daily_data['submissions'][winner_indexes[0]]))
+                winner = bot.get_guild(config.config['server_id']).get_member(str(daily_data['submissions'][winner_indexes[0]]))
                 if (check_winner_vote(winner) == True):
                     update_score(winner, 1)
                     winner_message = "Winner: " + winner.nick
@@ -154,7 +156,7 @@ async def get_winner(results_channel):
     return winner_message
 
 def check_winner_vote(winner):
-    if winner.id in data.daily_data['voters']:
+    if winner.id in daily_data['voters']:
         logger.debug("Winner voted - valid")
         return True
     else:
@@ -165,32 +167,32 @@ async def disqualify_winner(winner, index):
     winner_message = "Winner disqualified: " + str(winner.nick)
     embed = discord.Embed(title=winner_message, description="Winner did not vote, therefore their submission is invalid", colour=0xff0000)
     await bot.get_channel(config.config['results_channel_id']).send(embed=embed)
-    logger.debug("New winner selected" + str(data.daily_data['submissions'][index]))
-    del data.daily_data['votes'][index]
-    del data.daily_data['submissions'][index]
+    logger.debug("New winner selected" + str(daily_data['submissions'][index]))
+    del daily_data['votes'][index]
+    del daily_data['submissions'][index]
 
 
 def update_score(winner, score):
     logger.info("Scoreboard updated")
     logger.debug("Score value: " + str(score))
-    if winner.id in data.overall_score['users']:
-        index = data.overall_score['users'].index(winner.id)
-        data.overall_score['score'][index] += score
+    if winner.id in overall_score['users']:
+        index = overall_score['users'].index(winner.id)
+        overall_score['score'][index] += score
     else:
-        data.overall_score['users'].append(winner.id)
-        data.overall_score['score'].append(score)
+        overall_score['users'].append(winner.id)
+        overall_score['score'].append(score)
     score_dict_to_json()
 
 def sort_submissions():
     logger.debug("Sorting submissions into descending vote")
-    sorted_submissions_dict['submissions'] = [x for _, x in sorted(zip(data.daily_data['votes'], data.daily_data['submissions']), reverse=True)]
-    sorted_submissions_dict['votes'] = [x for _, x in sorted(zip(data.daily_data['votes'], data.daily_data['votes']), reverse=True)]
+    sorted_submissions_dict['submissions'] = [x for _, x in sorted(zip(daily_data['votes'], daily_data['submissions']), reverse=True)]
+    sorted_submissions_dict['votes'] = [x for _, x in sorted(zip(daily_data['votes'], daily_data['votes']), reverse=True)]
     return sorted_submissions_dict
 
 def sort_scoreboard():
     logger.debug("Sorting scoreboard into descending score")
-    sorted_scoreboard_dict['users'] = [x for _, x in sorted(zip(data.overall_score['score'], data.overall_score['users']), reverse=True)]
-    sorted_scoreboard_dict['scores'] = [x for _, x in sorted(zip(data.overall_score['score'], data.overall_score['score']), reverse=True)]
+    sorted_scoreboard_dict['users'] = [x for _, x in sorted(zip(overall_score['score'], overall_score['users']), reverse=True)]
+    sorted_scoreboard_dict['scores'] = [x for _, x in sorted(zip(overall_score['score'], overall_score['score']), reverse=True)]
     return sorted_scoreboard_dict
 
 async def embed_scoreboard(users, scores, title, description):
@@ -240,13 +242,13 @@ async def on_message(message):
 
 async def process_submission(message, submission_channel):
     duplicate = False
-    for value in data.daily_data['submissions']:
+    for value in daily_data['submissions']:
         if (message.author.id == value):
             duplicate = True
     if (duplicate == False):
-        data.daily_data['submissions'].append(message.author.id)
+        daily_data['submissions'].append(message.author.id)
         logger.debug("Submission valid")
-        await submission_channel.send(random.choice(data.quotes['rude']))
+        await submission_channel.send(random.choice(quotes['rude']))
         data_dict_to_json()
     elif (duplicate == True):
         logger.warning("User already submitted - submission invalid")
@@ -257,7 +259,7 @@ async def check_vote(message, voting_channel):
     vote = raw[0]
     vote_index = ord(vote) - 65
     logger.debug("vote_index: " + str(vote_index)) # this is an index
-    if (vote_index < len(data.daily_data['submissions']) and vote_index >= 0): # Checks if it's in range
+    if (vote_index < len(daily_data['submissions']) and vote_index >= 0): # Checks if it's in range
         duplicate = validate_vote(vote_index, voting_channel, message)
         if (duplicate == True): 
             logger.warn("User already voted: invalid")
@@ -267,14 +269,14 @@ async def check_vote(message, voting_channel):
 def validate_vote(vote_index, voting_channel, message):
     if (validate_self_vote(vote_index, voting_channel, message) == True):
         return True
-    elif message.author.id in data.daily_data['voters']: 
+    elif message.author.id in daily_data['voters']: 
         return True
     else:
         return False
 
 def validate_self_vote(vote_index, voting_channel, message):
-    if (message.author.id in data.daily_data['submissions']):
-        voter_index = data.daily_data['submissions'].index(message.author.id)
+    if (message.author.id in daily_data['submissions']):
+        voter_index = daily_data['submissions'].index(message.author.id)
         logger.debug("voter_index: " + str(voter_index))
     else:
         voter_index = -1
@@ -285,143 +287,10 @@ def validate_self_vote(vote_index, voting_channel, message):
         return False
 
 async def valid_vote(vote_index, voting_channel, message):
-    data.daily_data['voters'].append(message.author.id)
-    data.daily_data['votes'][vote_index] += 1
-    logger.debug("Vote List after: " + str(data.daily_data['votes']))
+    daily_data['voters'].append(message.author.id)
+    daily_data['votes'][vote_index] += 1
+    logger.debug("Vote List after: " + str(daily_data['votes']))
     data_dict_to_json()
-
-@bot.command(pass_context=True, description="This explains how the food flex competition works - how to submit and vote")
-async def helpme(ctx):
-    embed = discord.Embed(title="Help", description="Use the different channels to submit and vote!", colour=0xff0000)
-    embed.set_author(name="Food Flex - How this all works")
-    embed.add_field(name="#submissions", value="Submit your photos of food here! One submission per user", inline=False)
-    embed.add_field(name="#voting", value="Vote with the letter corresponding to your favourite flex. Only 1 vote per user. You can't vote for yourself", inline=False)
-    embed.add_field(name="#results", value="See who won the most recent food flex!", inline=False)
-    embed.add_field(name="Scoring", value="1 point for those with the highest number of votes")
-    embed.set_footer(text="For more information, contact Will R")
-    await ctx.send(embed=embed)
-    await ctx.message.delete()
-
-@bot.command(pass_context=True, description="Shows the overall score for the food flex")
-async def score(ctx):
-    await scoreboard(ctx.channel)
-    await ctx.message.delete()
-
-@bot.command(pass_context=True, description="Winner of the Food Flex so far")
-async def winner(ctx):
-    if (len(data.overall_score['score']) != 0):
-        embed = discord.Embed(title="Winners", description="Highest score for term 2", colour=0xff0000)
-        embed.set_footer(text="It's all to play for...")
-        max_vote = max(data.overall_score['score'])
-        value_str = "Score: " + str(max_vote)
-        winner_indexes = [i for i, j in enumerate(data.overall_score['score']) if j == max_vote]
-        if (len(winner_indexes) > 1):
-            winners = []
-            for index, winner_index in enumerate(winner_indexes):
-                winners.append(bot.get_guild(config.config['server_id']).get_member(str(data.overall_score['users'][winner_index])))
-            for index, member in enumerate(winners):
-                embed.add_field(name=member.nick, value=value_str)
-            logger.debug("Command: Multiple winners")
-        else:
-            winner = bot.get_guild(config.config['server_id']).get_member(str(data.overall_score['users'][winner_indexes[0]]))
-            embed.add_field(name=winner.nick, value=value_str)
-            logger.debug("Command: Single winner")
-        logger.debug("Winner command")
-        await ctx.send(embed=embed)
-        await ctx.message.delete()
-    else:
-        await ctx.send("There are currently no winners")
-        await ctx.message.delete()
-
-@bot.command(pass_context=True, description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
-async def test(ctx):
-    await ctx.send(random.choice(data.quotes['rude']))
-    await ctx.author.send("Test")
-    await ctx.message.delete()
-
-@bot.command(pass_context=True, description="All the rude Gordon Ramsay data.quotes")
-async def rude_quotes(ctx):
-    embed = discord.Embed(title="Rude Gordon Ramsay data.quotes", description="All the data.quotes stored in ramsay_quotes.json", colour=0xff0000)
-    for index, val in enumerate(data.quotes['rude']):
-        embed.add_field(name=str(index + 1), value=val, inline=False)
-    await ctx.send(embed=embed)
-    await ctx.message.delete()
-
-@bot.command(pass_context=True)
-async def say(ctx, channel: str, output: str):
-    if (ctx.author.id == config.config['admin_id']):
-        if (channel == "main"):
-            food_chat = bot.get_channel(config.config['food_chat_id'])
-            await food_chat.send(output)
-        elif (channel == "submission"):
-            submission_channel = bot.get_channel(config.config['submission_channel_id'])
-            await submission_channel.send(output)
-        elif (channel == "voting"):
-            voting_channel = bot.get_channel(config.config['voting_channel_id'])
-            await voting_channel.send(output)  
-        elif (channel == "results"):
-            results_channel = bot.get_channel(config.config['results_channel_id'])
-            await results_channel.send(output)  
-        await ctx.message.delete()
-
-@bot.group(pass_context=True)
-async def debug(ctx):
-    if (ctx.invoked_subcommand is None):
-        await bot.ctx('Invalid debug command')
-
-@debug.command(pass_context=True, description="Shows the current daily data as dict")
-async def data(ctx):
-    embed = discord.Embed(title="data.json", description="", colour=0xff0000)
-    embed.add_field(name="Submissions", value=data.daily_data['submissions'])
-    embed.add_field(name="Voters", value=data.daily_data['voters'])
-    embed.add_field(name="Votes", value=data.daily_data['votes'])
-    await ctx.send(embed=embed)
-    
-@debug.command(pass_context=True)
-async def submissions(ctx):
-    if (ctx.author.id == config.config['admin_id']):
-        await submission_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
-        reset_dict()
-        logger.info("Submissions started manually")
-        await ctx.message.delete()
-
-@debug.command(pass_context=True)
-async def voting(ctx):
-    if (ctx.author.id == config.config['admin_id']):
-        await voting_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
-        logger.debug("Voting started manually")
-        await ctx.message.delete()
-
-@debug.command(pass_context=True)
-async def results(ctx):
-    if (ctx.author.id == config.config['admin_id']):
-        await results_period(bot.get_channel(config.config['voting_channel_id']), bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['results_channel_id']))
-        logger.debug("Results started manually")
-        await ctx.message.delete()
-
-@debug.command(pass_context=True)
-async def clear(ctx, list: str):
-    if (ctx.author.id == config.config['admin_id']):
-        if (list == "submissions"):
-            data.daily_data['submissions'].clear()
-            logger.debug("Submissions cleared manually")
-        elif(list == "voters"):
-            data.daily_data['voters'].clear()
-            logger.debug("Voters cleared manually")
-        elif(list == "votes"):
-            data.daily_data['votes'].clear()
-            logger.debug("Votes cleared manually")
-        data_dict_to_json()
-        await ctx.message.delete()
-
-@debug.command(pass_context=True)
-async def force_json_dump(ctx, file: str):
-    if (ctx.author.id == config.config['admin_id']):
-        if (file == "data"):
-            data_dict_to_json()
-        elif (file == "score"):
-            score_dict_to_json()
-        await ctx.message.delete()
 
 bot.loop.create_task(my_background_task())
 bot.run(token)
