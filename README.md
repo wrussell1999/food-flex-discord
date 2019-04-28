@@ -56,6 +56,20 @@ To install discord.py:
     $ sudo apt install python3-pip
     $ python3 -m pip install -U discord.py
 
+Config:
+```json
+{
+    "token_id": "Token as string",
+    "server_id": int,
+    "food_chat_id": int,
+    "submission_channel_id": int,
+    "voting_channel_id": int,
+    "results_channel_id": int,
+    "dev_channel_id": int,
+    "admin_id": int
+}
+```
+
 To run the bot: 
 
     $ python3 main.py

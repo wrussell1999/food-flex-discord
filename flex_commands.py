@@ -6,7 +6,7 @@ import config
 #from main import scoreboard, submission_period, voting_period, results_period, reset_dict
 from builtins import bot
 
-logger = config.initilise_logging()
+
 
 @bot.command(pass_context=True, description="This explains how the food flex competition works - how to submit and vote")
 async def helpme(ctx):
@@ -18,11 +18,6 @@ async def helpme(ctx):
     embed.add_field(name="Scoring", value="1 point for those with the highest number of votes")
     embed.set_footer(text="For more information, contact Will R")
     await ctx.send(embed=embed)
-    await ctx.message.delete()
-
-@bot.command(pass_context=True, description="Shows the overall score for the food flex")
-async def score(ctx):
-    await scoreboard(ctx.channel)
     await ctx.message.delete()
 
 @bot.command(pass_context=True, description="Winner of the Food Flex so far")
@@ -83,11 +78,11 @@ async def say(ctx, channel: str, output: str):
         await ctx.message.delete()
 
 @bot.group(pass_context=True)
-async def debug(ctx):
+async def datag(ctx):
     if (ctx.invoked_subcommand is None):
         await bot.ctx('Invalid debug command')
 
-@debug.command(pass_context=True, description="Shows the current daily data as dict")
+@data.command(pass_context=True, description="Shows the current daily data as dict")
 async def data(ctx):
     embed = discord.Embed(title="Daily Data", colour=0xff0000)
     embed.add_field(name="Submissions", value=daily_data['submissions'])
@@ -95,29 +90,13 @@ async def data(ctx):
     embed.add_field(name="Votes", value=daily_data['votes'])
     await ctx.send(embed=embed)
     
-@debug.command(pass_context=True)
-async def submissions(ctx):
-    if (ctx.author.id == config.config['admin_id']):
-        await submission_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
-        reset_dict()
-        logger.info("Submissions started manually")
-        await ctx.message.delete()
 
-@debug.command(pass_context=True)
-async def voting(ctx):
-    if (ctx.author.id == config.config['admin_id']):
-        await voting_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
-        logger.debug("Voting started manually")
-        await ctx.message.delete()
+@bot.group(pass_context=True)
+async def debug(ctx):
+    if (ctx.invoked_subcommand is None):
+        await bot.ctx('Invalid debug command')
 
-@debug.command(pass_context=True)
-async def results(ctx):
-    if (ctx.author.id == config.config['admin_id']):
-        await results_period(bot.get_channel(config.config['voting_channel_id']), bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['results_channel_id']))
-        logger.debug("Results started manually")
-        await ctx.message.delete()
-
-@debug.command(pass_context=True)
+@data.command(pass_context=True)
 async def clear(ctx, list: str):
     if (ctx.author.id == config.config['admin_id']):
         if (list == "submissions"):
@@ -132,7 +111,7 @@ async def clear(ctx, list: str):
         data_dict_to_json()
         await ctx.message.delete()
 
-@debug.command(pass_context=True)
+@data.command(pass_context=True)
 async def force_json_dump(ctx, file: str):
     if (ctx.author.id == config.config['admin_id']):
         if (file == "data"):
@@ -144,3 +123,4 @@ async def force_json_dump(ctx, file: str):
 @bot.command(pass_context=True)
 async def ping(ctx):
     await ctx.send("pong")
+    
