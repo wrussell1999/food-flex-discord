@@ -104,6 +104,6 @@ venv.bak/
 .mypy_cache/
 
 # Food Flex
-config/*
+config/config.json
 data/scoreboard.json
 data/daily_data.json
