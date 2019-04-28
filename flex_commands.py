@@ -3,10 +3,7 @@ from discord.ext import commands
 import random
 from data import *
 import config
-#from main import scoreboard, submission_period, voting_period, results_period, reset_dict
 from builtins import bot
-
-
 
 @bot.command(pass_context=True, description="This explains how the food flex competition works - how to submit and vote")
 async def helpme(ctx):
@@ -19,6 +16,7 @@ async def helpme(ctx):
     embed.set_footer(text="For more information, contact Will R")
     await ctx.send(embed=embed)
     await ctx.message.delete()
+
 
 @bot.command(pass_context=True, description="Winner of the Food Flex so far")
 async def winner(ctx):
@@ -78,23 +76,17 @@ async def say(ctx, channel: str, output: str):
         await ctx.message.delete()
 
 @bot.group(pass_context=True)
-async def datag(ctx):
+async def data(ctx):
     if (ctx.invoked_subcommand is None):
         await bot.ctx('Invalid debug command')
 
 @data.command(pass_context=True, description="Shows the current daily data as dict")
-async def data(ctx):
+async def get_data(ctx):
     embed = discord.Embed(title="Daily Data", colour=0xff0000)
     embed.add_field(name="Submissions", value=daily_data['submissions'])
     embed.add_field(name="Voters", value=daily_data['voters'])
     embed.add_field(name="Votes", value=daily_data['votes'])
     await ctx.send(embed=embed)
-    
-
-@bot.group(pass_context=True)
-async def debug(ctx):
-    if (ctx.invoked_subcommand is None):
-        await bot.ctx('Invalid debug command')
 
 @data.command(pass_context=True)
 async def clear(ctx, list: str):
