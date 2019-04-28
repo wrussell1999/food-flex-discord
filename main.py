@@ -18,6 +18,8 @@ logger = config.initilise_logging()
 
 @bot.event
 async def on_ready(): 
+    activity = discord.Game(name="in the kitchen", type=3)
+    await bot.change_presence(status=discord.Status.online, activity=activity)
     logger.info("Food Flex is online!")
 
 async def flex_time_periods():

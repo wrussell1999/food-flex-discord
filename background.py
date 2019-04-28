@@ -50,7 +50,6 @@ async def results_period(voting_channel, submission_channel, results_channel):
     embed.set_author(name=winner_message)
     embed.set_footer(text=random.choice(quotes['rude']))
     sorted_submissions_dict = sort_submissions()
-
     for index, val in enumerate(sorted_submissions_dict['votes']):
         votes_str = "Votes: "
         votes_str = votes_str + str(val)
@@ -198,7 +197,7 @@ async def voting(ctx):
 
 @debug.command()
 async def results(ctx):
-    if (await bot.is_owner(ctx.author)):
+    if (await bot.is_owner(ctx.author) and len(daily_data['voters']) != 0):
         await results_period(bot.get_channel(config.config['voting_channel_id']), bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['results_channel_id']))
         logger.debug("Results started manually")
         await ctx.message.delete()
