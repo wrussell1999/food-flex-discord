@@ -22,6 +22,10 @@ Voting is closed and a results message will be sent.
 
 **NOTE:** If you submit a picture and don't vote, you are disqualified.
 
+## Docs
+
+See the wiki for documentation on commands, json data and more.
+
 ## Tools
 
 - This was built using the discord API wrapper discord.py in Python.

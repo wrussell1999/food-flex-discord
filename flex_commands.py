@@ -17,18 +17,13 @@ async def helpme(ctx):
     await ctx.send(embed=embed)
     await ctx.message.delete()
 
-@bot.group()
-async def debug(ctx):
-    if ctx.invoked_subcommand is None:
-        await ctx.send('Invalid debug command')
-
 @bot.command()
 async def say(ctx, channel: str, output: str):
     if await bot.is_owner(ctx.author):
         if channel == "main":
             food_chat = bot.get_channel(config.config['food_chat_id'])
             await food_chat.send(output)
-        elif channel == "submission":
+        elif channel == "submissions":
             submission_channel = bot.get_channel(config.config['submission_channel_id'])
             await submission_channel.send(output)
         elif channel == "voting":
@@ -38,6 +33,11 @@ async def say(ctx, channel: str, output: str):
             results_channel = bot.get_channel(config.config['results_channel_id'])
             await results_channel.send(output)  
         await ctx.message.delete()
+
+@bot.group()
+async def debug(ctx):
+    if ctx.invoked_subcommand is None:
+        await ctx.send('Invalid debug command')
 
 @debug.command(description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
 async def test(ctx):
