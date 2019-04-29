@@ -32,14 +32,16 @@ Voting is closed and a results message will be sent.
 ## Development
 
 Clone this repo:
-
-    $ git clone https://github.com/wrussell1999/food-flex-discord
-    $ cd food-flex-discord
+```bash
+$ git clone https://github.com/wrussell1999/food-flex-discord
+$ cd food-flex-discord
+```
 
 To install discord.py:
-
-    $ sudo apt install python3-pip
-    $ python3 -m pip install -U discord.py
+```bash
+$ sudo apt install python3-pip
+$ python3 -m pip install -U discord.py
+```
 
 `config.json` inside the config directory:
 ```json
