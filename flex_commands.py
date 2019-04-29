@@ -49,6 +49,20 @@ async def test(ctx):
 async def ping(ctx):
     await ctx.send("pong")
 
+@debug.command()
+async def force_status(ctx, period: str):
+    if await bot.is_owner(ctx.author):
+        activity = discord.Activity(name="for shit food", type=discord.ActivityType.watching)
+        if period == "submissions":
+            activity = discord.Activity(name="people submit shit food", type=discord.ActivityType.watching)
+            await bot.change_presence(status=discord.Status.online, activity=activity)
+        elif period == "voting":
+            activity = discord.Activity(name="people vote on shit food", type=discord.ActivityType.watching)
+            await bot.change_presence(status=discord.Status.online, activity=activity)
+        elif period == "results":
+            await bot.change_presence(status=discord.Status.idle, activity=activity)
+    await ctx.message.delete()
+
 @bot.group()
 async def data(ctx):
     if ctx.invoked_subcommand is None:
