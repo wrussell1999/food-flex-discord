@@ -19,13 +19,12 @@ async def on_message(message):
     second = int(now.strftime("%S"))
     await bot.process_commands(message)
 
-    if ((len(message.attachments) > 0) and (hour >= 12 and hour <= 23) and (message.channel == submission_channel)): # SUBMISSION
-        logger.debug("SUBMISSION MESSAGE: " + str(hour) + ":" + str(minute))
+    if len(message.attachments) > 0 and (hour >= 12 and hour <= 23) and (message.channel == submission_channel): # SUBMISSION
         logger.info("Submission from " + message.author.nick)
         await process_submission(message, submission_channel)
 
-    if (len(message.attachments) == 0 and (hour >= 00 and hour < 12) and message.channel == voting_channel and len(str(message.clean_content)) == 1): # VOTING
-        logger.debug("VOTING MESSAGE: " + str(hour) + ":" + str(minute))
+    if len(message.attachments) == 0 and (hour >= 00 and hour < 12) and message.channel == voting_channel and len(str(message.clean_content)) == 1: # VOTING
+        logger.debug("Vote from: " + message.author.nick + ", Vote: " + message)
         await check_vote(message, voting_channel)
 
 async def process_submission(message, submission_channel):
@@ -33,13 +32,13 @@ async def process_submission(message, submission_channel):
     for value in daily_data['submissions']:
         if (message.author.id == value):
             duplicate = True
-    if (duplicate == False):
+    if duplicate == False:
         daily_data['submissions'].append(message.author.id)
-        logger.debug("Submission valid")
+        logger.info("Submission valid")
         await submission_channel.send(random.choice(quotes['rude']))
         data_dict_to_json()
     elif (duplicate == True):
-        logger.warning("User already submitted - submission invalid")
+        logger.info("Submission invalid")
 
 async def check_vote(message, voting_channel):
     logger.info("Vote by: " + str(message.author.nick))
@@ -47,15 +46,15 @@ async def check_vote(message, voting_channel):
     vote = raw[0]
     vote_index = ord(vote) - 65
     logger.debug("vote_index: " + str(vote_index)) # this is an index
-    if (vote_index < len(daily_data['submissions']) and vote_index >= 0): # Checks if it's in range
+    if vote_index < len(daily_data['submissions']) and vote_index >= 0: # Checks if it's in range
         duplicate = validate_vote(vote_index, voting_channel, message)
         if (duplicate == True): 
-            logger.warn("User already voted: invalid")
-        elif(duplicate == False): 
+            logger.info("Vote invalid")
+        elif duplicate == False: 
             await valid_vote(vote_index, voting_channel, message)
 
 def validate_vote(vote_index, voting_channel, message):
-    if (validate_self_vote(vote_index, voting_channel, message) == True):
+    if validate_self_vote(vote_index, voting_channel, message) == True:
         return True
     elif message.author.id in daily_data['voters']: 
         return True
@@ -63,12 +62,11 @@ def validate_vote(vote_index, voting_channel, message):
         return False
 
 def validate_self_vote(vote_index, voting_channel, message):
-    if (message.author.id in daily_data['submissions']):
+    if message.author.id in daily_data['submissions']:
         voter_index = daily_data['submissions'].index(message.author.id)
-        logger.debug("voter_index: " + str(voter_index))
     else:
         voter_index = -1
-    if (voter_index == vote_index):
+    if voter_index == vote_index:
         logger.warn("Invalid vote: same submission")
         return True
     else:

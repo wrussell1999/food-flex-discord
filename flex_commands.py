@@ -20,13 +20,13 @@ async def helpme(ctx):
 
 @bot.command(description="Winner of the Food Flex so far")
 async def winner(ctx):
-    if (len(overall_score['score']) != 0):
+    if len(overall_score['score']) != 0:
         embed = discord.Embed(title="Winners", description="Highest score for term 2", colour=0xff0000)
         embed.set_footer(text="It's all to play for...")
         max_vote = max(overall_score['score'])
         value_str = "Score: " + str(max_vote)
         winner_indexes = [i for i, j in enumerate(overall_score['score']) if j == max_vote]
-        if (len(winner_indexes) > 1):
+        if len(winner_indexes) > 1:
             winners = []
             for index, winner_index in enumerate(winner_indexes):
                 winners.append(bot.get_guild(config.config['server_id']).get_member(str(overall_score['users'][winner_index])))
@@ -37,7 +37,7 @@ async def winner(ctx):
             winner = bot.get_guild(config.config['server_id']).get_member(str(overall_score['users'][winner_indexes[0]]))
             embed.add_field(name=winner.nick, value=value_str)
             logger.debug("Command: Single winner")
-        logger.debug("Winner command")
+
         await ctx.send(embed=embed)
         await ctx.message.delete()
     else:
@@ -60,24 +60,24 @@ async def rude_quotes(ctx):
 
 @bot.command()
 async def say(ctx, channel: str, output: str):
-    if (await bot.is_owner(ctx.author)):
-        if (channel == "main"):
+    if await bot.is_owner(ctx.author):
+        if channel == "main":
             food_chat = bot.get_channel(config.config['food_chat_id'])
             await food_chat.send(output)
-        elif (channel == "submission"):
+        elif channel == "submission":
             submission_channel = bot.get_channel(config.config['submission_channel_id'])
             await submission_channel.send(output)
-        elif (channel == "voting"):
+        elif channel == "voting":
             voting_channel = bot.get_channel(config.config['voting_channel_id'])
             await voting_channel.send(output)  
-        elif (channel == "results"):
+        elif channel == "results":
             results_channel = bot.get_channel(config.config['results_channel_id'])
             await results_channel.send(output)  
         await ctx.message.delete()
 
 @bot.group()
 async def data(ctx):
-    if (ctx.invoked_subcommand is None):
+    if ctx.invoked_subcommand is None:
         await ctx.send('Invalid debug command')
 
 @data.command(description="Shows the current daily data as dict")
@@ -90,14 +90,14 @@ async def get_data(ctx):
 
 @data.command()
 async def clear(ctx, list: str):
-    if (await bot.is_owner(ctx.author)):
-        if (list == "submissions"):
+    if await bot.is_owner(ctx.author):
+        if list == "submissions":
             daily_data['submissions'].clear()
             logger.debug("Submissions cleared manually")
-        elif(list == "voters"):
+        elif list == "voters":
             daily_data['voters'].clear()
             logger.debug("Voters cleared manually")
-        elif(list == "votes"):
+        elif list == "votes":
             daily_data['votes'].clear()
             logger.debug("Votes cleared manually")
         data_dict_to_json()
@@ -105,10 +105,10 @@ async def clear(ctx, list: str):
 
 @data.command()
 async def force_json_dump(ctx, file: str):
-    if (await bot.is_owner(ctx.author)):
-        if (file == "data"):
+    if await bot.is_owner(ctx.author):
+        if file == "data":
             data_dict_to_json()
-        elif (file == "score"):
+        elif file == "score":
             score_dict_to_json()
         await ctx.message.delete()
 

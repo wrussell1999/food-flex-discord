@@ -75,15 +75,15 @@ def reset_dict():
 async def get_winner(results_channel):
     logger.debug("Getting Winner")
     max_vote = max(daily_data['votes'])
-    if (max_vote > 0):
+    if max_vote > 0:
         winner_indexes = [i for i, j in enumerate(daily_data['votes']) if j == max_vote]
         logger.debug("index of winners: "  + str(winner_indexes))
         winner_message = ""
         sorted_submissions_dict = sort_submissions()
         winner_true = False
 
-        while (winner_true == False):
-            if (len(winner_indexes) > 1 and len(daily_data['submissions']) > 1):
+        while winner_true == False:
+            if len(winner_indexes) > 1 and len(daily_data['submissions']) > 1:
                 logger.debug("Multiple winners")
                 winners = []
                 winner_message = "Winners: "
@@ -92,7 +92,7 @@ async def get_winner(results_channel):
                     winners.append(bot.get_guild(config.config['server_id']).get_member(str(daily_data['submissions'][winner_index])))
 
                 for index, member in enumerate(winners):
-                    if (check_winner_vote(member) == True):
+                    if check_winner_vote(member) == True:
                         logger.debug("Selected Winner: " + member.nick)
                         update_score(member, 1)
                         winner_message += str(member.nick) + ", "
@@ -103,7 +103,7 @@ async def get_winner(results_channel):
             else:
                 logger.debug("1 winner")
                 winner = bot.get_guild(config.config['server_id']).get_member(str(daily_data['submissions'][winner_indexes[0]]))
-                if (check_winner_vote(winner) == True):
+                if check_winner_vote(winner) == True:
                     update_score(winner, 1)
                     winner_message = "Winner: " + winner.nick
                     logger.info("Winner: " + str(winner.nick))
@@ -183,12 +183,12 @@ async def channel_permissions(before, after, channel_before, channel_after):
 
 @bot.group()
 async def debug(ctx):
-    if (ctx.invoked_subcommand is None):
+    if ctx.invoked_subcommand is None:
         await ctx.send('Invalid debug command')
 
 @debug.command()
 async def submissions(ctx):
-    if (await bot.is_owner(ctx.author)):
+    if await bot.is_owner(ctx.author):
         await submission_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
         reset_dict()
         logger.info("Submissions started manually")
@@ -196,14 +196,14 @@ async def submissions(ctx):
 
 @debug.command()
 async def voting(ctx):
-    if (await bot.is_owner(ctx.author)):
+    if await bot.is_owner(ctx.author):
         await voting_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
         logger.debug("Voting started manually")
         await ctx.message.delete()
 
 @debug.command()
 async def results(ctx):
-    if (await bot.is_owner(ctx.author) and len(daily_data['voters']) != 0):
+    if await bot.is_owner(ctx.author) and len(daily_data['voters']) != 0:
         await results_period(bot.get_channel(config.config['voting_channel_id']), bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['results_channel_id']))
         logger.debug("Results started manually")
         await ctx.message.delete()
