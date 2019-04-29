@@ -5,6 +5,8 @@ import random
 from builtins import bot
 from data import *
 import config
+import submissions
+import voting
 
 logger = config.initilise_logging()
 
@@ -21,8 +23,8 @@ async def on_message(message):
 
     if len(message.attachments) > 0 and (hour >= 12 and hour <= 23) and (message.channel == submission_channel): # SUBMISSION
         logger.info("Submission from " + message.author.nick)
-        await process_submission(message, submission_channel)
+        await submissions.process_submission(message, submission_channel)
 
     if len(message.attachments) == 0 and (hour >= 00 and hour < 12) and message.channel == voting_channel and len(str(message.clean_content)) == 1: # VOTING
         logger.info("Vote from: " + message.author.nick + ", Vote: " + message)
-        await check_vote(message, voting_channel)
+        await voting.check_vote(message, voting_channel)
