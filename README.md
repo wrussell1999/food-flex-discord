@@ -1,5 +1,8 @@
 # Food Flex Discord Bot
 Discord Bot created by Will Russell
+<p align="center">
+  <img width="270" height="480" src="https://bit.ly/2IS6QXg">
+</p>
 
 ## What does the bot do?
 
