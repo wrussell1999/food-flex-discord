@@ -49,7 +49,7 @@ async def test(ctx):
 async def ping(ctx):
     await ctx.send("pong")
 
-@debug.command()
+@debug.command(description="Arguments: submission, voting, results")
 async def force_status(ctx, period: str):
     if await bot.is_owner(ctx.author):
         activity = discord.Activity(name="for shit food", type=discord.ActivityType.watching)
@@ -102,7 +102,7 @@ async def get_data(ctx):
     embed.add_field(name="Votes", value=daily_data['votes'])
     await ctx.send(embed=embed)
 
-@data.command()
+@data.command(description="Arguments: submissions, voters, votes")
 async def clear(ctx, list: str):
     if await bot.is_owner(ctx.author):
         if list == "submissions":
@@ -117,7 +117,7 @@ async def clear(ctx, list: str):
         data_dict_to_json()
         await ctx.message.delete()
 
-@data.command()
+@data.command(description="Arguments: data, score")
 async def force_json_dump(ctx, file: str):
     if await bot.is_owner(ctx.author):
         if file == "data":
