@@ -7,7 +7,6 @@ from data import *
 import config
 from permissions import *
 
-
 logger = config.initilise_logging()
 
 async def voting_period(submission_channel, voting_channel):
