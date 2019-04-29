@@ -17,7 +17,7 @@ async def voting_period(submission_channel, voting_channel):
     embed.set_footer(text="Respond in the chat with the appropriate letter")
     vote_value = 'A'
     for value in daily_data['submissions']:
-        user = bot.get_guild(config.config['server_id']).get_member(str(value))
+        user = bot.get_guild(config.config['server_id']).get_member(value)
         embed.add_field(name=user.nick, value=str(vote_value), inline=True)
         vote_value = chr(ord(vote_value) + 1)    
     await voting_channel.send(embed=embed)

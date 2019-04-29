@@ -46,7 +46,7 @@ async def get_winner(results_channel):
                 winner_message = "Winners: "
 
                 for index, winner_index in enumerate(winner_indexes):
-                    winners.append(bot.get_guild(config.config['server_id']).get_member(str(daily_data['submissions'][winner_index])))
+                    winners.append(bot.get_guild(config.config['server_id']).get_member(daily_data['submissions'][winner_index]))
 
                 for index, member in enumerate(winners):
                     if check_winner_vote(member) == True:
@@ -59,7 +59,7 @@ async def get_winner(results_channel):
                         await disqualify_winner(member, index)
             else:
                 logger.debug("1 winner")
-                winner = bot.get_guild(config.config['server_id']).get_member(str(daily_data['submissions'][winner_indexes[0]]))
+                winner = bot.get_guild(config.config['server_id']).get_member(daily_data['submissions'][winner_indexes[0]])
                 if check_winner_vote(winner) == True:
                     update_score(winner, 1)
                     winner_message = "Winner: " + winner.nick

@@ -31,7 +31,7 @@ async def embed_scoreboard(users, scores, title, description):
     logger.debug("Scoreboard displayed")
     embed = discord.Embed(title=str(title), description=str(description), colour=0xff0000)
     for index, val in enumerate(users):
-        user = bot.get_guild(config.config['server_id']).get_member(str(val))
+        user = bot.get_guild(config.config['server_id']).get_member(val)
         score = "Score: " + str(scores[index])
         embed.add_field(name=user.nick, value=score)
     return embed
