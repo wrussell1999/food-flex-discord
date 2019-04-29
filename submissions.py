@@ -5,7 +5,7 @@ import random
 from builtins import bot
 from data import *
 import config
-from permissions import *
+from setup_period import *
 
 logger = config.initilise_logging()
 async def submission_period(submission_channel, voting_channel):
@@ -29,7 +29,7 @@ async def process_submission(message, submission_channel):
     elif (duplicate == True):
         logger.info("Submission invalid")
 
-@debug.command()
+@bot.command()
 async def submissions(ctx):
     if await bot.is_owner(ctx.author):
         await submission_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))

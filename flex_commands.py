@@ -17,8 +17,44 @@ async def helpme(ctx):
     await ctx.send(embed=embed)
     await ctx.message.delete()
 
+@bot.group()
+async def debug(ctx):
+    if ctx.invoked_subcommand is None:
+        await ctx.send('Invalid debug command')
 
-@bot.command(description="Winner of the Food Flex so far")
+@bot.command()
+async def say(ctx, channel: str, output: str):
+    if await bot.is_owner(ctx.author):
+        if channel == "main":
+            food_chat = bot.get_channel(config.config['food_chat_id'])
+            await food_chat.send(output)
+        elif channel == "submission":
+            submission_channel = bot.get_channel(config.config['submission_channel_id'])
+            await submission_channel.send(output)
+        elif channel == "voting":
+            voting_channel = bot.get_channel(config.config['voting_channel_id'])
+            await voting_channel.send(output)  
+        elif channel == "results":
+            results_channel = bot.get_channel(config.config['results_channel_id'])
+            await results_channel.send(output)  
+        await ctx.message.delete()
+
+@debug.command(description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
+async def test(ctx):
+    await ctx.send(random.choice(quotes['rude']))
+    await ctx.author.send("Test")
+    await ctx.message.delete()
+
+@debug.command()
+async def ping(ctx):
+    await ctx.send("pong")
+
+@bot.group()
+async def data(ctx):
+    if ctx.invoked_subcommand is None:
+        await ctx.send('Invalid debug command')
+
+@data.command(description="Winner of the Food Flex so far")
 async def winner(ctx):
     if len(overall_score['score']) != 0:
         embed = discord.Embed(title="Winners", description="Highest score for term 2", colour=0xff0000)
@@ -43,42 +79,6 @@ async def winner(ctx):
     else:
         await ctx.send("There are currently no winners")
         await ctx.message.delete()
-
-@bot.command(description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
-async def test(ctx):
-    await ctx.send(random.choice(quotes['rude']))
-    await ctx.author.send("Test")
-    await ctx.message.delete()
-
-@bot.command(description="All the rude Gordon Ramsay quotes")
-async def rude_quotes(ctx):
-    embed = discord.Embed(title="Rude Gordon Ramsay quotes", description="All the quotes stored in ramsay_quotes.json", colour=0xff0000)
-    for index, val in enumerate(quotes['rude']):
-        embed.add_field(name=str(index + 1), value=val, inline=False)
-    await ctx.send(embed=embed)
-    await ctx.message.delete()
-
-@bot.command()
-async def say(ctx, channel: str, output: str):
-    if await bot.is_owner(ctx.author):
-        if channel == "main":
-            food_chat = bot.get_channel(config.config['food_chat_id'])
-            await food_chat.send(output)
-        elif channel == "submission":
-            submission_channel = bot.get_channel(config.config['submission_channel_id'])
-            await submission_channel.send(output)
-        elif channel == "voting":
-            voting_channel = bot.get_channel(config.config['voting_channel_id'])
-            await voting_channel.send(output)  
-        elif channel == "results":
-            results_channel = bot.get_channel(config.config['results_channel_id'])
-            await results_channel.send(output)  
-        await ctx.message.delete()
-
-@bot.group()
-async def data(ctx):
-    if ctx.invoked_subcommand is None:
-        await ctx.send('Invalid debug command')
 
 @data.command(description="Shows the current daily data as dict")
 async def get_data(ctx):
@@ -112,7 +112,10 @@ async def force_json_dump(ctx, file: str):
             score_dict_to_json()
         await ctx.message.delete()
 
-@bot.command()
-async def ping(ctx):
-    await ctx.send("pong")
-    
+@data.command(description="All the rude Gordon Ramsay quotes")
+async def rude_quotes(ctx):
+    embed = discord.Embed(title="Rude Gordon Ramsay quotes", description="All the quotes stored in ramsay_quotes.json", colour=0xff0000)
+    for index, val in enumerate(quotes['rude']):
+        embed.add_field(name=str(index + 1), value=val, inline=False)
+    await ctx.send(embed=embed)
+    await ctx.message.delete()

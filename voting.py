@@ -5,7 +5,7 @@ import random
 from builtins import bot
 from data import *
 import config
-from permissions import *
+from setup_period import *
 
 logger = config.initilise_logging()
 
@@ -76,7 +76,7 @@ async def is_valid(vote_index, voting_channel, message):
     logger.debug("Vote List after: " + str(daily_data['votes']))
     data_dict_to_json()
 
-@debug.command()
+@bot.command()
 async def voting(ctx):
     if await bot.is_owner(ctx.author):
         await voting_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))

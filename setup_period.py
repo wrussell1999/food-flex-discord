@@ -14,3 +14,8 @@ async def channel_permissions(before, after, channel_before, channel_after):
     await channel_after.set_permissions(guild.default_role, send_messages=after)
     logger.debug("Permissions updated")
 
+def reset_daily_data():
+    daily_data['submissions'].clear()
+    daily_data['votes'].clear()
+    daily_data['voters'].clear()
+
