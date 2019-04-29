@@ -2,9 +2,10 @@ import discord
 from discord.ext import commands
 import datetime
 import random
+from builtins import bot
 from data import *
 import config
-from builtins import bot
+from permissions import *
 
 logger = config.initilise_logging()
 sorted_submissions_dict = {}
@@ -32,7 +33,6 @@ def reset_daily_data():
     daily_data['submissions'].clear()
     daily_data['votes'].clear()
     daily_data['voters'].clear()
-    logger.debug("daily_data reset")
 
 async def get_winner(results_channel):
     logger.debug("Getting Winner")
@@ -99,3 +99,10 @@ def sort_submissions():
     sorted_submissions_dict['submissions'] = [x for _, x in sorted(zip(daily_data['votes'], daily_data['submissions']), reverse=True)]
     sorted_submissions_dict['votes'] = [x for _, x in sorted(zip(daily_data['votes'], daily_data['votes']), reverse=True)]
     return sorted_submissions_dict
+
+@debug.command()
+async def results(ctx):
+    if await bot.is_owner(ctx.author) and len(daily_data['voters']) != 0:
+        await results_period(bot.get_channel(config.config['voting_channel_id']), bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['results_channel_id']))
+        logger.debug("Results started manually")
+        await ctx.message.delete()

@@ -2,9 +2,10 @@ import discord
 from discord.ext import commands
 import datetime
 import random
+from builtins import bot
 from data import *
 import config
-from builtins import bot
+from permissions import *
 
 logger = config.initilise_logging()
 async def submission_period(submission_channel, voting_channel):
@@ -27,3 +28,11 @@ async def process_submission(message, submission_channel):
         data_dict_to_json()
     elif (duplicate == True):
         logger.info("Submission invalid")
+
+@debug.command()
+async def submissions(ctx):
+    if await bot.is_owner(ctx.author):
+        await submission_period(bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
+        reset_daily_data()
+        logger.info("Submissions started manually")
+        await ctx.message.delete()

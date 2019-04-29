@@ -2,9 +2,9 @@ import discord
 from discord.ext import commands
 import datetime
 import random
+from builtins import bot
 from data import *
 import config
-from builtins import bot
 
 logger = config.initilise_logging()
 

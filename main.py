@@ -12,7 +12,11 @@ builtins.bot = bot
 
 import flex_commands
 import messages
-from background import *
+import permissions
+from submissions import *
+from voting import *
+from results import *
+from scoreboard import *
 
 logger = config.initilise_logging()
 
@@ -51,6 +55,11 @@ async def check_time_periods():
         elif hour == 12 and minute == 00 and len(daily_data['submissions']) > 1 and len(daily_data['voters']) > 0:
             await results_period(voting_channel, submission_channel, results_channel)
         await asyncio.sleep(60) # task runs every 60 seconds
+
+@bot.group()
+async def debug(ctx):
+    if ctx.invoked_subcommand is None:
+        await ctx.send('Invalid debug command')
 
 token = config.config['token_id']
 bot.loop.create_task(check_time_periods())

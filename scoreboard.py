@@ -2,13 +2,12 @@ import discord
 from discord.ext import commands
 import datetime
 import random
+from builtins import bot
 from data import *
 import config
-from builtins import bot
 
 logger = config.initilise_logging()
 sorted_scoreboard_dict = {}
-
 
 def update_score(winner, score):
     logger.info("Scoreboard updated")
@@ -45,3 +44,9 @@ async def auto_scoreboard():
     sorted_scoreboard_dict = sort_scoreboard()
     embed = await embed_scoreboard(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], "SCOREBOARD", "Scoreboard for this term")
     await bot.get_channel(config.config['results_channel_id']).send(embed=embed)
+
+    
+@bot.command(description="Shows the overall score for the food flex")
+async def score(ctx):
+    await scoreboard(ctx.channel)
+    await ctx.message.delete()
