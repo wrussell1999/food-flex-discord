@@ -32,7 +32,7 @@ async def check_time_periods():
     voting_channel = bot.get_channel(config.config['voting_channel_id'])
     results_channel = bot.get_channel(config.config['results_channel_id'])
 
-    while not bot.is_closed:
+    while not bot.is_closed():
         now = datetime.datetime.now()
         hour = int(now.strftime("%H"))
         minute = int(now.strftime("%M"))
