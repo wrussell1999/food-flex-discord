@@ -79,12 +79,12 @@ async def winner(ctx):
         if len(winner_indexes) > 1:
             winners = []
             for index, winner_index in enumerate(winner_indexes):
-                winners.append(bot.get_guild(config.config['server_id']).get_member(str(overall_score['users'][winner_index])))
+                winners.append(bot.get_guild(config.config['server_id']).get_member(overall_score['users'][winner_index]))
             for index, member in enumerate(winners):
                 embed.add_field(name=member.nick, value=value_str)
             logger.debug("Command: Multiple winners")
         else:
-            winner = bot.get_guild(config.config['server_id']).get_member(str(overall_score['users'][winner_indexes[0]]))
+            winner = bot.get_guild(config.config['server_id']).get_member(overall_score['users'][winner_indexes[0]])
             embed.add_field(name=winner.nick, value=value_str)
             logger.debug("Command: Single winner")
 

@@ -32,7 +32,7 @@ async def vote_reminder():
     logger.debug("Reminding users who submitted")
     for member_id in daily_data['submissions']:
         if member_id in daily_data['voters']:
-            logger.debug(member_id + " has voted - no reminder")
+            logger.debug(str(member_id) + " has voted - no reminder")
         else:
             user = bot.get_guild(config.config['server_id']).get_member(member_id)
             await user.send("Remember to vote for your submission to be valid!!!")
