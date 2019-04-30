@@ -18,7 +18,7 @@ async def voting_period(submission_channel, voting_channel):
     vote_value = 'A'
     for value in daily_data['submissions']:
         user = bot.get_guild(config.config['server_id']).get_member(value)
-        embed.add_field(name=user.nick, value=str(vote_value), inline=True)
+        embed.add_field(name=user.nick, value=str(vote_value), inline=False)
         vote_value = chr(ord(vote_value) + 1)    
     await voting_channel.send(embed=embed)
 
