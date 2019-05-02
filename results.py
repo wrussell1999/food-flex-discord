@@ -34,33 +34,31 @@ async def results_period(voting_channel, submission_channel, results_channel):
     await channel_permissions(False, False, voting_channel, submission_channel)
 
 async def get_winner(results_channel):
-    if len(daily_data['votes']) > 0:
-        while True:
-            max_vote = max(daily_data['votes'])
-            winner_indexes = [i for i, j in enumerate(daily_data['votes']) if j == max_vote]
-            logger.debug("index of winners: " + str(winner_indexes))
+    for index, value in enumerate(daily_data['submissions']):
+        if not check_winner_vote(value):
+            disqualify_winner(value, index)
 
-            if len(winner_indexes) > 1 and len(daily_data['submissions']) > 1:
-                winner_message = "Winners: "
-                for index, winner_index in enumerate(winner_indexes): 
-                    member = bot.get_guild(config.config['server_id']).get_member(daily_data['submissions'][winner_index])
-                    if check_winner_vote(member) == True:
-                        update_score(member, 1)
-                        winner_message += str(member.nick) + ", "
-                    else:
-                        await disqualify_winner(member, index)
-                    return winner_message
-            else:
-                winner = bot.get_guild(config.config['server_id']).get_member(['submissions'][winner_indexes[0]])
-                if check_winner_vote(winner) == True:
-                    update_score(winner, 1)
-                    return "Winner: " + winner.nick
-                else:
-                    await disqualify_winner(winner, winner_indexes[0])
-    else:
-        embed = discord.Embed(title="No winner", description="The potential winners were disqualified", colour=0xff0000)
+    if len(daily_data['submissions']) == 0:
+        embed = discord.Embed(
+            title="No winner", description="The potential winners were disqualified", colour=0xff0000)
         await results_channel.send(embed=embed)
         return "No winner"
+
+    max_vote = max(daily_data['votes'])
+    winner_message = "Winner: "
+    winner_indexes = [i for i, j in enumerate(
+        daily_data['votes']) if j == max_vote]
+
+    if len(winner_indexes) > 1:
+        winner_message = "Winners: "
+
+    for index, value in enumerate(daily_data['submissions']):
+        if daily_data['votes'][index] == max_vote:
+            winner = bot.get_guild(
+                config.config['server_id']).get_member(value)
+            winner_message += winner.nick + ", "
+            update_score(winner, 1)
+    return winner_message
 
 def check_winner_vote(winner):
     if winner.id in daily_data['voters']:
