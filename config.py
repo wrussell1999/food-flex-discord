@@ -5,7 +5,7 @@ with open("config/config.json") as file:
     config = json.load(file)
 
 def initilise_logging():
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.DEBUG)
     logger = logging.getLogger('food-flex')
     logger.setLevel(logging.INFO)
     handler = logging.FileHandler(filename='data/foodflex.log', encoding='utf-8', mode='w')

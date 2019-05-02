@@ -36,3 +36,13 @@ async def submissions(ctx):
         reset_daily_data()
         logger.info("Submissions started manually")
         await ctx.message.delete()
+
+@bot.command()
+async def close_submissions(ctx):
+    if await bot.is_owner(ctx.author):
+        activity = discord.Activity(name="people submit shit food", type=discord.ActivityType.watching)
+        await bot.change_presence(status=discord.Status.online, activity=activity)
+        embed = discord.Embed(title="Submissions are closed", description="We are currently working hard to fix some problems! Check back later!", colour=0xff0000)
+        await submission_channel.send(embed=embed)
+        await channel_permissions(False, False, bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['voting_channel_id']))
+
