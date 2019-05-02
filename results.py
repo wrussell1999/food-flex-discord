@@ -17,10 +17,12 @@ async def results_period(voting_channel, submission_channel, results_channel):
     activity = discord.Activity(name="for shit food", type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.idle, activity=activity)
     winner_message = await get_winner(results_channel)
+    logger.debug(winner_message)
     embed = discord.Embed(title="RESULTS", description="", colour=0xff0000)
     embed.set_author(name=winner_message)
     embed.set_footer(text=random.choice(quotes['rude']))
     sorted_submissions_dict = sort_submissions()
+
     for index, val in enumerate(sorted_submissions_dict['votes']):
         votes_str = "Votes: "
         votes_str = votes_str + str(val)
@@ -33,10 +35,7 @@ async def results_period(voting_channel, submission_channel, results_channel):
 
 async def get_winner(results_channel):
     if len(daily_data['votes']) > 0:
-        winner_message = ""
-        winner_selected = False
-
-        while winner_selected == False:
+        while True:
             max_vote = max(daily_data['votes'])
             winner_indexes = [i for i, j in enumerate(daily_data['votes']) if j == max_vote]
             logger.debug("index of winners: " + str(winner_indexes))
@@ -48,24 +47,20 @@ async def get_winner(results_channel):
                     if check_winner_vote(member) == True:
                         update_score(member, 1)
                         winner_message += str(member.nick) + ", "
-                        logger.info(winner_message)
-                        winner_selected = True
                     else:
                         await disqualify_winner(member, index)
+                    return winner_message
             else:
                 winner = bot.get_guild(config.config['server_id']).get_member(['submissions'][winner_indexes[0]])
                 if check_winner_vote(winner) == True:
                     update_score(winner, 1)
-                    winner_message = "Winner: " + winner.nick
-                    logger.info(winner_message)
-                    winner_selected = True
+                    return "Winner: " + winner.nick
                 else:
                     await disqualify_winner(winner, winner_indexes[0])
     else:
         embed = discord.Embed(title="No winner", description="The potential winners were disqualified", colour=0xff0000)
         await results_channel.send(embed=embed)
-        winner_message = "No winner"
-    return winner_message
+        return "No winner"
 
 def check_winner_vote(winner):
     if winner.id in daily_data['voters']:
