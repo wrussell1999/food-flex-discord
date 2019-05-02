@@ -50,7 +50,7 @@ async def check_time_periods():
             logger.info("1 hour left for voting")
             embed = await embed_scoreboard(daily_data['submissions'], daily_data['votes'], "1 hour left for voting", "There's still time to vote! Here are the current scores")
             embed.set_footer(text="Remember to vote for your submission to be valid!")
-            await vote_reminder()      
+            await private_vote_reminder()
             await voting_channel.send(embed=embed)
         elif hour == 12 and minute == 00 and len(daily_data['submissions']) > 1 and len(daily_data['voters']) > 0:
             await results_period(voting_channel, submission_channel, results_channel)

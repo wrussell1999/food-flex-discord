@@ -37,12 +37,6 @@ async def scoreboard(channel):
     sorted_scoreboard_dict = sort_scoreboard()
     embed = await embed_scoreboard(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], "SCOREBOARD", "Scoreboard for this term")
     await channel.send(embed=embed)
-
-async def auto_scoreboard():
-    sorted_scoreboard_dict = sort_scoreboard()
-    embed = await embed_scoreboard(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], "SCOREBOARD", "Scoreboard for this term")
-    await bot.get_channel(config.config['results_channel_id']).send(embed=embed)
-
     
 @bot.command(description="Shows the overall score for the food flex")
 async def score(ctx):
