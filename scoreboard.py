@@ -11,7 +11,6 @@ logger = config.initilise_logging()
 sorted_scoreboard_dict = {}
 
 def update_score(winner, score):
-    logger.info("Scoreboard updated")
     logger.debug("Score value: " + str(score))
     if winner.id in overall_score['users']:
         index = overall_score['users'].index(winner.id)
@@ -22,18 +21,16 @@ def update_score(winner, score):
     score_dict_to_json()
 
 def sort_scoreboard():
-    logger.debug("Sorting scoreboard into descending score")
     sorted_scoreboard_dict['users'] = [x for _, x in sorted(zip(overall_score['score'], overall_score['users']), reverse=True)]
     sorted_scoreboard_dict['scores'] = [x for _, x in sorted(zip(overall_score['score'], overall_score['score']), reverse=True)]
     return sorted_scoreboard_dict
 
 async def embed_scoreboard(users, scores, title, description):
-    logger.debug("Scoreboard displayed")
     embed = discord.Embed(title=str(title), description=str(description), colour=0xff0000)
     for index, val in enumerate(users):
         user = bot.get_guild(config.config['server_id']).get_member(val)
         score = "Score: " + str(scores[index])
-        embed.add_field(name=user.nick, value=score)
+        embed.add_field(name=user.nick, value=score, inline=False)
     return embed
 
 async def scoreboard(channel):

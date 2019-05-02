@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import datetime
+import asyncio
 import random
 from builtins import bot
 from data import *
@@ -24,48 +25,40 @@ async def results_period(voting_channel, submission_channel, results_channel):
         votes_str = "Votes: "
         votes_str = votes_str + str(val)
         user_obj = bot.get_guild(config.config['server_id']).get_member(sorted_submissions_dict['submissions'][index])
-        embed.add_field(name=user_obj.nick, value=votes_str, inline=True)
+        embed.add_field(name=user_obj.nick, value=votes_str, inline=False)
     await results_channel.send(embed=embed)
     reset_daily_data()
     data_dict_to_json()
     await channel_permissions(False, False, voting_channel, submission_channel)
 
 async def get_winner(results_channel):
-    logger.debug("Getting Winner")
-    max_vote = max(daily_data['votes'])
-    if max_vote > 0:
-        winner_indexes = [i for i, j in enumerate(daily_data['votes']) if j == max_vote]
-        logger.debug("index of winners: "  + str(winner_indexes))
+    if len(daily_data['votes']) > 0:
         winner_message = ""
-        sorted_submissions_dict = sort_submissions()
-        winner_true = False
+        winner_selected = False
 
-        while winner_true == False:
+        while winner_selected == False:
+            max_vote = max(daily_data['votes'])
+            winner_indexes = [i for i, j in enumerate(daily_data['votes']) if j == max_vote]
+            logger.debug("index of winners: " + str(winner_indexes))
+
             if len(winner_indexes) > 1 and len(daily_data['submissions']) > 1:
-                logger.debug("Multiple winners")
-                winners = []
                 winner_message = "Winners: "
-
-                for index, winner_index in enumerate(winner_indexes):
-                    winners.append(bot.get_guild(config.config['server_id']).get_member(daily_data['submissions'][winner_index]))
-
-                for index, member in enumerate(winners):
+                for index, winner_index in enumerate(winner_indexes): 
+                    member = bot.get_guild(config.config['server_id']).get_member(daily_data['submissions'][winner_index])
                     if check_winner_vote(member) == True:
-                        logger.debug("Selected Winner: " + member.nick)
                         update_score(member, 1)
                         winner_message += str(member.nick) + ", "
                         logger.info(winner_message)
-                        winner_true = True
+                        winner_selected = True
                     else:
                         await disqualify_winner(member, index)
             else:
-                logger.debug("1 winner")
-                winner = bot.get_guild(config.config['server_id']).get_member(daily_data['submissions'][winner_indexes[0]])
+                winner = bot.get_guild(config.config['server_id']).get_member(['submissions'][winner_indexes[0]])
                 if check_winner_vote(winner) == True:
                     update_score(winner, 1)
                     winner_message = "Winner: " + winner.nick
-                    logger.info("Winner: " + str(winner.nick))
-                    winner_true = True
+                    logger.info(winner_message)
+                    winner_selected = True
                 else:
                     await disqualify_winner(winner, winner_indexes[0])
     else:
@@ -89,6 +82,7 @@ async def disqualify_winner(winner, index):
     logger.debug("New winner selected" + str(daily_data['submissions'][index]))
     del daily_data['votes'][index]
     del daily_data['submissions'][index]
+    await asyncio.sleep(5)
 
 def sort_submissions():
     logger.debug("Sorting submissions into descending vote")
@@ -96,7 +90,7 @@ def sort_submissions():
     sorted_submissions_dict['votes'] = [x for _, x in sorted(zip(daily_data['votes'], daily_data['votes']), reverse=True)]
     return sorted_submissions_dict
 
-@bot.command()
+@bot.command(description="Results for a current day. Requires at least one voter")
 async def results(ctx):
     if await bot.is_owner(ctx.author) and len(daily_data['voters']) != 0:
         await results_period(bot.get_channel(config.config['voting_channel_id']), bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['results_channel_id']))
