@@ -61,7 +61,7 @@ async def get_winner(results_channel):
     return winner_message
 
 def check_winner_vote(winner):
-    if winner.id in daily_data['voters']:
+    if winner in daily_data['voters']:
         logger.debug("Winner voted - valid")
         return True
     else:
