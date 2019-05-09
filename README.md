@@ -1,5 +1,5 @@
 # Food Flex Discord Bot
-Discord Bot created by Will Russell
+[Discord Bot](https://discordbots.org/bot/502391189270560773) created by Will Russell
 <p align="center">
   <img src="https://cdn.discordapp.com/attachments/501947007653511172/572491463112523780/unknown.png">
 </p>
