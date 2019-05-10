@@ -16,8 +16,8 @@ def update_score(winner, score):
         index = overall_score['users'].index(winner.id)
         overall_score['score'][index] += score
     else:
-        overall_score['users'].append(winner.id)
-        overall_score['score'].append(score)
+        overall_score[guild]['users'].append(winner.id)
+        overall_score[guild]['score'].append(score)
     score_dict_to_json()
 
 def sort_scoreboard():

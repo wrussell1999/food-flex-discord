@@ -19,6 +19,8 @@ async def on_message(message):
     hour = int(now.strftime("%H"))
     minute = int(now.strftime("%M"))
     second = int(now.strftime("%S"))
+    guild = message.server
+    
     await bot.process_commands(message)
 
     if len(message.attachments) > 0 and (hour >= 12 and hour <= 23) and (message.channel == submission_channel): # SUBMISSION
