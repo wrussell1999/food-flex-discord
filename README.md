@@ -1,11 +1,11 @@
-# Food Flex Discord Bot
+# Food Flex Discord Bot [![Discord Bots](https://discordbots.org/api/widget/status/502391189270560773.svg)](https://discordbots.org/bot/502391189270560773)
+
 [Discord Bot](https://discordbots.org/bot/502391189270560773) created by Will Russell
 <p align="center">
   <img src="https://cdn.discordapp.com/attachments/501947007653511172/572491463112523780/unknown.png">
 </p>
 
 ## What does the bot do?
-
 Food Flex is bot that manages:
 - Submissions
 - Voting 
@@ -68,6 +68,9 @@ To run the bot:
 
     $ python3 main.py
 
+<a href="https://discordbots.org/bot/502391189270560773" >
+  <img src="https://discordbots.org/api/widget/502391189270560773.svg" alt="Food Flex Judge" />
+</a>
 
 ## License
 MIT License for all the code written by me.
