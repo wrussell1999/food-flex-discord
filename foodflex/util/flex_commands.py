@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import random
-from data import *
+from .data import *
 from . import config
 from builtins import bot
 

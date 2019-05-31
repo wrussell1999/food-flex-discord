@@ -4,10 +4,10 @@ import datetime
 import asyncio
 import random
 from builtins import bot
-from data import *
-import config
-from setup_period import *
-from scoreboard import *
+from ..util.data import *
+from ..util import config
+from ..util.setup_period import *
+from .scoreboard import *
 
 logger = config.initilise_logging()
 sorted_submissions_dict = {}

@@ -3,10 +3,10 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from data import *
-import config
-import submissions
-import voting
+from ..util.data import *
+from ..util import config
+from . import submissions
+from . import voting
 
 logger = config.initilise_logging()
 

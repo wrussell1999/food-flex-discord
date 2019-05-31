@@ -3,9 +3,9 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from data import *
-from . import config
-from setup_period import *
+from ..util.data import *
+from ..util import config
+from ..util.setup_period import *
 
 logger = config.initilise_logging()
 async def submission_period(submission_channel, voting_channel):
