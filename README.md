@@ -55,7 +55,7 @@ $ python3 -m pip install -U discord.py
 `config.json` inside the config directory:
 ```json
 {
-    "token_id": "Token as string",
+    "token": "Token as string",
     "server_id": int,
     "food_chat_id": int,
     "submission_channel_id": int,

@@ -37,7 +37,7 @@ async def results_period(voting_channel, submission_channel, results_channel):
 async def get_winner(results_channel):
     for index, value in enumerate(daily_data['submissions']):
         if not check_winner_vote(value):
-            disqualify_winner(value, index, results_channel)
+            await disqualify_winner(value, index, results_channel)
 
     if len(daily_data['submissions']) == 0:
         embed = discord.Embed(

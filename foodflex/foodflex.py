@@ -20,7 +20,7 @@ from .periods.scoreboard import *
 
 def main():
     logger = config.initilise_logging()
-    token = config.config['token_id']
+    token = config.config['token']
     bot.loop.create_task(check_time_periods())
     bot.run(token)
 
