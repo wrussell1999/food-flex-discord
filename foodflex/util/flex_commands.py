@@ -1,8 +1,8 @@
 import discord
 from discord.ext import commands
 import random
-from data import *
-import config
+from .data import *
+from . import config
 from builtins import bot
 
 @bot.command(description="This explains how the food flex competition works - how to submit and vote")

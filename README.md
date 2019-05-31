@@ -42,6 +42,8 @@ Clone this repo:
 ```bash
 $ git clone https://github.com/wrussell1999/food-flex-discord
 $ cd food-flex-discord
+$ python3 -m venv .venv
+$ source .venv/bin/activate
 ```
 
 To install discord.py:
@@ -53,7 +55,7 @@ $ python3 -m pip install -U discord.py
 `config.json` inside the config directory:
 ```json
 {
-    "token_id": "Token as string",
+    "token": "Token as string",
     "server_id": int,
     "food_chat_id": int,
     "submission_channel_id": int,
@@ -66,7 +68,7 @@ $ python3 -m pip install -U discord.py
 
 To run the bot: 
 
-    $ python3 main.py
+    $ python3 -m foodflex
 
 <a href="https://discordbots.org/bot/502391189270560773" >
   <img src="https://discordbots.org/api/widget/502391189270560773.svg" alt="Food Flex Judge" />

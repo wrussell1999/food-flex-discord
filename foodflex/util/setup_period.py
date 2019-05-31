@@ -3,8 +3,8 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from data import *
-import config
+from .data import *
+from . import config
 
 logger = config.initilise_logging()
 
