@@ -1,5 +1,5 @@
 import json
-import config
+from . import config
 
 with open("data/quotes.json") as quote_file:
     quotes = json.load(quote_file)

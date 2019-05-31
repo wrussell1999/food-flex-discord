@@ -4,26 +4,28 @@ import datetime
 import asyncio
 import random
 import builtins
-import config
-from data import *
+from .util import config
+from .util.data import *
 
 bot = commands.Bot(command_prefix='flex:', owner_id=config.config['admin_id'])
 builtins.bot = bot
 
-import flex_commands
-import messages
-import setup_period
-from submissions import *
-from voting import *
-from results import *
-from scoreboard import *
+from .util import flex_commands
+from .util import setup_period
+from .periods import messages
+from .periods.submissions import *
+from .periods.voting import *
+from .periods.results import *
+from .periods.scoreboard import *
 
-logger = config.initilise_logging()
+def main():
+    logger = config.initilise_logging()
+    token = config.config['token_id']
+    bot.loop.create_task(check_time_periods())
+    bot.run(token)
 
 @bot.event
 async def on_ready(): 
-    activity = discord.Activity(name="people cook shit food", type=discord.ActivityType.watching)
-    await bot.change_presence(status=discord.Status.idle, activity=activity)
     logger.info("Food Flex is online!")
 
 async def check_time_periods():
@@ -55,7 +57,3 @@ async def check_time_periods():
         elif hour == 12 and minute == 00 and len(daily_data['submissions']) > 1 and len(daily_data['voters']) > 0:
             await results_period(voting_channel, submission_channel, results_channel)
         await asyncio.sleep(60) # task runs every 60 seconds
-
-token = config.config['token_id']
-bot.loop.create_task(check_time_periods())
-bot.run(token)

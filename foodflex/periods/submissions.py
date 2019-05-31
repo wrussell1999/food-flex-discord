@@ -4,7 +4,7 @@ import datetime
 import random
 from builtins import bot
 from data import *
-import config
+from . import config
 from setup_period import *
 
 logger = config.initilise_logging()
