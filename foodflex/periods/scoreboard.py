@@ -25,7 +25,7 @@ def sort_scoreboard():
     sorted_scoreboard_dict['scores'] = [x for _, x in sorted(zip(overall_score['score'], overall_score['score']), reverse=True)]
     return sorted_scoreboard_dict
 
-async def embed_scoreboard(users, scores, title, description):
+def embed_scoreboard(users, scores, title, description):
     embed = discord.Embed(title=str(title), description=str(description), colour=0xff0000)
     for index, val in enumerate(users):
         user = bot.get_guild(config.config['server_id']).get_member(val)
@@ -35,7 +35,7 @@ async def embed_scoreboard(users, scores, title, description):
 
 async def scoreboard(channel):
     sorted_scoreboard_dict = sort_scoreboard()
-    embed = await embed_scoreboard(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], "SCOREBOARD", "Scoreboard for this term")
+    embed = embed_scoreboard(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], "SCOREBOARD", "Scoreboard for this term")
     await channel.send(embed=embed)
     
 @bot.command(description="Shows the overall score for the food flex")

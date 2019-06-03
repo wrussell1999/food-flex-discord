@@ -13,7 +13,7 @@ async def voting_period(channel):
     logger.info("VOTING")
     activity = discord.Activity(name="people vote on shit food", type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.online, activity=activity)
-    embed = discord.Embed(title="VOTING!", description ="Vote for the best cooking of the day!", colour=0xff0000)
+    embed = discord.Embed(title="VOTING!", description="Vote for the best cooking of the day!", colour=0xff0000)
     embed.set_footer(text="Respond in the chat with the appropriate letter")
     vote_value = 'A'
     for value in daily_data['submissions']:
@@ -31,7 +31,9 @@ async def private_vote_reminder():
     for member_id in daily_data['submissions']:
         if member_id not in daily_data['voters']:
             user = bot.get_guild(config.config['server_id']).get_member(member_id)
-            await user.send("Remember to vote for your submission to be valid!!!")
+            embed = discord.Embed(title="REMINDER!", description="Remember to vote for your submission to be valid!!!")
+            embed.set_footer(text="You will be disqualified if you don't vote")
+            await user.send(embed=embed)
             logger.debug("Vote reminder sent for " + str(user.nick))
 
 async def check_vote(message, channel):
