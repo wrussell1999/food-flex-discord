@@ -27,7 +27,7 @@ async def update_leaderboard():
         message = await channel.fetch_message(config.config['leaderboard_message_id'])
         await update_scores(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], message)
     except:
-        await create_leaderboard()
+        await create_leaderboard(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'])
         
 def sort_leaderboard():
     sorted_scoreboard_dict['users'] = [x for _, x in sorted(
@@ -48,7 +48,7 @@ async def create_leaderboard(users, scores):
 def get_embed(users, scores):
     now = datetime.datetime.now()
     date_str = "Overall scores this term - " + \
-        str(now.day) + "." + str(now.month) + "." + str(now.year)
+        str(now.day) + "/" + str(now.month) + "/" + str(now.year)
     embed = discord.Embed(
         title="LEADERBOARD", description=date_str, colour=0xff0000)
     for index, val in enumerate(users):
