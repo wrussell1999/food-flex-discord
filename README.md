@@ -31,10 +31,12 @@ See the wiki for documentation on commands, json data and more.
 
 ## Tools
 
+You may want to use a similar set up for hosting your own Food Flex:
+
 - This was built using the discord API wrapper discord.py in Python.
 - The bot on my server is hosted on a remote Raspberry Pi.
 - The bot can be accessed via SSH.
-- Screen was used to create sessions over SSH, that would remain active when the SSH session disconnects. This means the bot will always be online.
+- `screen` was used to create sessions over SSH, that would remain active when the SSH session disconnects. This means the bot will always be online.
 
 ## Development
 
@@ -55,20 +57,21 @@ $ python3 -m pip install -U discord.py
 `config.json` inside the config directory:
 ```json
 {
-    "token": "Token as string",
+    "token": "TOKEN",
+    "admin_id": int,
     "server_id": int,
     "food_chat_id": int,
-    "submission_channel_id": int,
-    "voting_channel_id": int,
-    "results_channel_id": int,
-    "dev_channel_id": int,
-    "admin_id": int
+    "food_flex_channel_id": int,
+    "leaderboard_channel_id": int,
+    "leaderboard_message_id": int
 }
 ```
 
 To run the bot: 
 
     $ python3 -m foodflex
+
+## Status
 
 <a href="https://discordbots.org/bot/502391189270560773" >
   <img src="https://discordbots.org/api/widget/502391189270560773.svg" alt="Food Flex Judge" />
