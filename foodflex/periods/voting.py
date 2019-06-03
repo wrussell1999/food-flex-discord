@@ -37,7 +37,7 @@ async def private_vote_reminder():
 
 async def check_vote(message, voting_channel):
     logger.info("Vote by: " + str(message.author.nick))
-    vote_index = ord(message.clean_content[0]) - 65
+    vote_index = ord(message.clean_content[0].upper()) - 65
     logger.debug("vote_index: " + str(vote_index)) # this is an index
     if vote_index < len(daily_data['submissions']) and vote_index >= 0: # Checks if it's in range
         duplicate = check_duplicate(vote_index, voting_channel, message)
