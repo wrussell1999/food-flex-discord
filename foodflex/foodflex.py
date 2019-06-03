@@ -16,7 +16,7 @@ from .periods import messages
 from .periods.submissions import *
 from .periods.voting import *
 from .periods.results import *
-from .periods.scoreboard import *
+from .periods.leaderboard import *
 
 def main():
     logger = config.initilise_logging()

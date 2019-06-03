@@ -36,7 +36,7 @@ async def private_vote_reminder():
             await user.send(embed=embed)
             logger.debug("Vote reminder sent for " + str(user.nick))
 
-async def check_vote(message, channel):
+async def check_vote(message):
     logger.info("Vote by: " + str(message.author.nick))
     if message.clean_content == ':b:':
         vote_index = 1
@@ -47,6 +47,7 @@ async def check_vote(message, channel):
         duplicate = check_duplicate(vote_index, message)
         if duplicate == False: 
             await is_valid(vote_index, message)
+            await message.author.send("Your vote has been submitted successfully")
 
 def check_duplicate(vote_index, message):
     if check_self_vote(vote_index, message) == True or message.author.id in daily_data['voters']:

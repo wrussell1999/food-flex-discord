@@ -24,4 +24,4 @@ async def on_message(message):
 
         if len(message.attachments) == 0 and (hour >= 00 and hour < 12) and (len(str(message.clean_content)) == 1 or message.clean_content == ':b:'): # VOTING
             logger.info("Vote from: " + message.author.nick + ", Vote: " + str(message.clean_content))
-            await voting.check_vote(message, channel)
+            await voting.check_vote(message)

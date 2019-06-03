@@ -7,7 +7,7 @@ from builtins import bot
 from ..util.data import *
 from ..util import config
 from ..util.setup_period import *
-from .scoreboard import *
+from .leaderboard import *
 
 logger = config.initilise_logging()
 sorted_submissions_dict = {}
