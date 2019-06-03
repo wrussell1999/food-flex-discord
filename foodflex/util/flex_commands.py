@@ -9,9 +9,9 @@ from builtins import bot
 async def helpme(ctx):
     embed = discord.Embed(title="Help", description="Use the different channels to submit and vote!", colour=0xff0000)
     embed.set_author(name="Food Flex - How this all works")
-    embed.add_field(name="#submissions", value="Submit your photos of food here! One submission per user", inline=False)
-    embed.add_field(name="#voting", value="Vote with the letter corresponding to your favourite flex. Only 1 vote per user. You can't vote for yourself", inline=False)
-    embed.add_field(name="#results", value="See who won the most recent food flex!", inline=False)
+    embed.add_field(name="Submissions", value="Submit your photos of food here! One submission per user", inline=False)
+    embed.add_field(name="Voting", value="Vote with the letter corresponding to your favourite flex. Only 1 vote per user. You can't vote for yourself", inline=False)
+    embed.add_field(name="Results", value="See who won the most recent food flex!", inline=False)
     embed.add_field(name="Scoring", value="1 point for those with the highest number of votes")
     embed.set_footer(text="For more information, contact Will R")
     await ctx.send(embed=embed)

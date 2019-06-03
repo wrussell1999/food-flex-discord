@@ -31,7 +31,7 @@ async def process_submission(message, channel):
 @bot.command()
 async def submissions(ctx):
     if await bot.is_owner(ctx.author):
-        await submission_period(food_flex_channel=bot.get_channel(config.config['food_flex_chat_id']))
+        await submission_period(bot.get_channel(config.config['food_flex_channel_id']))
         reset_daily_data()
         logger.info("Submissions started manually")
         await ctx.message.delete()
@@ -42,6 +42,6 @@ async def close_submissions(ctx):
         activity = discord.Activity(name="people submit shit food", type=discord.ActivityType.watching)
         await bot.change_presence(status=discord.Status.online, activity=activity)
         embed = discord.Embed(title="Submissions are closed", description="We are currently working hard to fix some problems! Check back later!", colour=0xff0000)
-        channel = bot.get_channel(config.config['food_flex_chat_id'])
+        channel = bot.get_channel(config.config['food_flex_channel_id'])
         await channel.send(embed=embed)
 

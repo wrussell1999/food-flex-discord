@@ -11,7 +11,7 @@ logger = config.initilise_logging()
 
 @bot.event    
 async def on_message(message):
-    channel = bot.get_channel(config.config['food_flex_chat_id'])
+    channel = bot.get_channel(config.config['food_flex_channel_id'])
     now = datetime.datetime.now()
     hour = int(now.strftime("%H"))
     minute = int(now.strftime("%M"))
