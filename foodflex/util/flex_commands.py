@@ -17,21 +17,15 @@ async def helpme(ctx):
     await ctx.send(embed=embed)
     await ctx.message.delete()
 
-@bot.command()
-async def say(ctx, channel: str, output: str):
+@bot.command(description="Arguments: channel_nick, output")
+async def say(ctx, channel_nick: str, output: str):
     if await bot.is_owner(ctx.author):
-        if channel == "main":
-            food_chat = bot.get_channel(config.config['food_chat_id'])
-            await food_chat.send(output)
-        elif channel == "submissions":
-            submission_channel = bot.get_channel(config.config['submission_channel_id'])
-            await submission_channel.send(output)
-        elif channel == "voting":
-            voting_channel = bot.get_channel(config.config['voting_channel_id'])
-            await voting_channel.send(output)  
-        elif channel == "results":
-            results_channel = bot.get_channel(config.config['results_channel_id'])
-            await results_channel.send(output)  
+        if channel_nick == "main":
+            channel = bot.get_channel(config.config['food_chat_id'])
+            await channel.send(output)
+        elif channel_nick == "flex":
+            channel = bot.get_channel(config.config['food_flex_channel_id'])
+            await channel.send(output)
         await ctx.message.delete()
 
 @bot.group()

@@ -23,7 +23,7 @@ async def process_submission(message, channel):
     if duplicate == False:
         daily_data['submissions'].append(message.author.id)
         logger.info("Submission valid")
-        await channel.send(random.choice(quotes['rude']))
+        await channel.send(random.choice(quotes['rude']))   
         data_dict_to_json()
     elif (duplicate == True):
         logger.info("Submission invalid")

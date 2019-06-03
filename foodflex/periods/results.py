@@ -12,11 +12,11 @@ from .scoreboard import *
 logger = config.initilise_logging()
 sorted_submissions_dict = {}
 
-async def results_period(voting_channel, submission_channel, results_channel):
+async def results_period(channel):
     logger.info("RESULTS")
     activity = discord.Activity(name="for shit food", type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.idle, activity=activity)
-    winner_message = await get_winner(results_channel)
+    winner_message = await get_winner(channel)
     logger.debug(winner_message)
 
     embed = discord.Embed(title="RESULTS", description="", colour=0xff0000)
@@ -28,21 +28,19 @@ async def results_period(voting_channel, submission_channel, results_channel):
         votes = "Votes: " + str(val)
         user = bot.get_guild(config.config['server_id']).get_member(sorted_submissions_dict['submissions'][index])
         embed.add_field(name=user.nick, value=votes, inline=False)
-    await results_channel.send(embed=embed)
-
+    await channel.send(embed=embed)
     reset_daily_data()
     data_dict_to_json()
-    await channel_permissions(False, False, voting_channel, submission_channel)
 
-async def get_winner(results_channel):
+async def get_winner(channel):
     for index, value in enumerate(daily_data['submissions']):
         if not check_winner_vote(value):
-            await disqualify_winner(value, index, results_channel)
+            await disqualify_winner(value, index, channel)
 
     if len(daily_data['submissions']) == 0:
         embed = discord.Embed(
             title="No winner", description="The potential winners were disqualified", colour=0xff0000)
-        await results_channel.send(embed=embed)
+        await channel.send(embed=embed)
         return "No winner"
 
     max_vote = max(daily_data['votes'])
@@ -86,6 +84,6 @@ def sort_submissions():
 @bot.command(description="Results for a current day. Requires at least one voter")
 async def results(ctx):
     if await bot.is_owner(ctx.author) and len(daily_data['voters']) != 0:
-        await results_period(bot.get_channel(config.config['voting_channel_id']), bot.get_channel(config.config['submission_channel_id']), bot.get_channel(config.config['results_channel_id']))
+        await results_period(bot.get_channel(config.config['food_flex_channel_id ']))
         logger.debug("Results started manually")
         await ctx.message.delete()

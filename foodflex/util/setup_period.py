@@ -12,4 +12,3 @@ def reset_daily_data():
     daily_data['submissions'].clear()
     daily_data['votes'].clear()
     daily_data['voters'].clear()
-
