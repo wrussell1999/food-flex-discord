@@ -20,13 +20,11 @@ def update_score(winner, score):
         overall_score['score'].append(score)
     score_dict_to_json()
 
-def update_leaderboard():
+async def update_leaderboard():
     channel = bot.get_channel(config.config['leaderboard_channel_id'])
-    embed = discord.Embed(
-        title="LEADERBOARD", description="Overall scores this term", colour=0xff0000)
     sorted_scoreboard_dict = sort_leaderboard()
-    message = channel.fetch_message(config['leaderboard_messsage_id'])
-    get_scores(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], message)
+    message = await channel.fetch_message(config.config['leaderboard_message_id'])
+    await display_scores(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], message)
 
 def sort_leaderboard():
     sorted_scoreboard_dict['users'] = [x for _, x in sorted(
@@ -35,10 +33,15 @@ def sort_leaderboard():
         zip(overall_score['score'], overall_score['score']), reverse=True)]
     return sorted_scoreboard_dict
 
-def get_scores(users, scores, message):
-    embed = embed
+async def display_scores(users, scores, message):
+    embed = discord.Embed(
+        title="LEADERBOARD", description="Overall scores this term", colour=0xff0000)
     for index, val in enumerate(users):
         user = bot.get_guild(config.config['server_id']).get_member(val)
         score = "Score: " + str(scores[index])
         embed.add_field(name=user.nick, value=score, inline=False)
     await message.edit(embed=embed)
+
+@bot.command()
+async def test_scores(ctx):
+    await update_leaderboard()
