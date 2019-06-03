@@ -11,17 +11,17 @@ logger = config.initilise_logging()
 
 @bot.event    
 async def on_message(message):
-    food_flex_channel = bot.get_channel(config.config['food_flex_chat_id'])
+    channel = bot.get_channel(config.config['food_flex_chat_id'])
     now = datetime.datetime.now()
     hour = int(now.strftime("%H"))
     minute = int(now.strftime("%M"))
     await bot.process_commands(message)
 
-    if message.channel == food_flex_channel:
+    if message.channel == channel:
         if len(message.attachments) > 0 and hour >= 12 and hour <= 23: # SUBMISSION
             logger.info("Submission from " + message.author.nick)
-            await submissions.process_submission(message, food_flex_channel)
+            await submissions.process_submission(message, channel)
 
         if len(message.attachments) == 0 and (hour >= 00 and hour < 12) and (len(str(message.clean_content)) == 1 or message.clean_content == ':b:'): # VOTING
             logger.info("Vote from: " + message.author.nick + ", Vote: " + str(message.clean_content))
-            await voting.check_vote(message, food_flex_channel)
+            await voting.check_vote(message, channel)
