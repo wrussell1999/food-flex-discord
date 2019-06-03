@@ -34,8 +34,10 @@ def sort_leaderboard():
     return sorted_scoreboard_dict
 
 async def display_scores(users, scores, message):
+    now = datetime.datetime.now()
+    date_str = "Overall scores this term - " + str(now.day) + "."+ str(now.month) + "." + str(now.year)
     embed = discord.Embed(
-        title="LEADERBOARD", description="Overall scores this term", colour=0xff0000)
+        title="LEADERBOARD", description=date_str, colour=0xff0000)
     for index, val in enumerate(users):
         user = bot.get_guild(config.config['server_id']).get_member(val)
         score = "Score: " + str(scores[index])
