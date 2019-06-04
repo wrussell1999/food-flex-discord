@@ -38,7 +38,7 @@ async def results_period(channel):
 
 async def get_winner(channel):
     for index, value in enumerate(daily_data['submissions']):
-        if not check_winner_vote(value):
+        if not check_user_vote(value):
             await disqualify_winner(value, index, channel)
 
     if len(daily_data['submissions']) == 0:
@@ -63,8 +63,8 @@ async def get_winner(channel):
     return winner_message
 
 
-def check_winner_vote(winner):
-    if winner in daily_data['voters']:
+def check_user_vote(user):
+    if user in daily_data['voters']:
         logger.debug("Winner voted - valid")
         return True
     else:
@@ -86,14 +86,17 @@ async def disqualify_winner(winner_id, index, channel):
 
 def sort_submissions():
     logger.debug("Sorting submissions into descending vote")
-    sorted_submissions_dict['submissions'] = [x for _, x in sorted(zip(daily_data['votes'], daily_data['submissions']), reverse=True)]
-    sorted_submissions_dict['votes'] = [x for _, x in sorted(zip(daily_data['votes'], daily_data['votes']), reverse=True)]
+    sorted_submissions_dict['submissions'] = [x for _, x in sorted(
+        zip(daily_data['votes'], daily_data['submissions']), reverse=True)]
+    sorted_submissions_dict['votes'] = [x for _, x in sorted(
+        zip(daily_data['votes'], daily_data['votes']), reverse=True)]
     return sorted_submissions_dict
 
 
 @bot.command(description="Results for a current day. Requires at least one voter")
 async def results(ctx):
     if await bot.is_owner(ctx.author) and len(daily_data['voters']) != 0:
-        await results_period(bot.get_channel(config.config['food_flex_channel_id']))
+        await results_period(bot.get_channel(
+            config.config['food_flex_channel_id']))
         logger.debug("Results started manually")
         await ctx.message.delete()
