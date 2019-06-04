@@ -52,15 +52,21 @@ async def ping(ctx):
 @debug.command(description="Arguments: submission, voting, results")
 async def force_status(ctx, period: str):
     if await bot.is_owner(ctx.author):
-        activity = discord.Activity(name="for shit food", type=discord.ActivityType.watching)
+        activity = discord.Activity(name="for shit food",
+                                    type=discord.ActivityType.watching)
         if period == "submissions":
-            activity = discord.Activity(name="people submit shit food", type=discord.ActivityType.watching)
-            await bot.change_presence(status=discord.Status.online, activity=activity)
+            activity = discord.Activity(name="people submit shit food",
+                                        type=discord.ActivityType.watching)
+            await bot.change_presence(status=discord.Status.online,
+                                      activity=activity)
         elif period == "voting":
-            activity = discord.Activity(name="people vote on shit food", type=discord.ActivityType.watching)
-            await bot.change_presence(status=discord.Status.online, activity=activity)
+            activity = discord.Activity(name="people vote on shit food",
+                                        type=discord.ActivityType.watching)
+            await bot.change_presence(status=discord.Status.online,
+                                      activity=activity)
         elif period == "results":
-            await bot.change_presence(status=discord.Status.idle, activity=activity)
+            await bot.change_presence(status=discord.Status.idle,
+                                      activity=activity)
     await ctx.message.delete()
 
 
@@ -134,7 +140,9 @@ async def force_json_dump(ctx, file: str):
 
 @data.command(description="All the rude Gordon Ramsay quotes")
 async def rude_quotes(ctx):
-    embed = discord.Embed(title="Rude Gordon Ramsay quotes", description="All the quotes stored in ramsay_quotes.json", colour=0xff0000)
+    embed = discord.Embed(title="Rude Gordon Ramsay quotes",
+                          description="All the quotes stored in ramsay_quotes.json",
+                          colour=0xff0000)
     for index, val in enumerate(quotes['rude']):
         embed.add_field(name=str(index + 1), value=val, inline=False)
     await ctx.send(embed=embed)
