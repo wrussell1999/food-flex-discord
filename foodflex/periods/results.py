@@ -12,6 +12,7 @@ from .leaderboard import *
 logger = config.initilise_logging()
 sorted_submissions_dict = {}
 
+
 async def results_period(channel):
     logger.info("RESULTS")
     activity = discord.Activity(name="for shit food", type=discord.ActivityType.watching)
@@ -32,6 +33,7 @@ async def results_period(channel):
     await update_leaderboard()
     reset_daily_data()
     data_dict_to_json()
+
 
 async def get_winner(channel):
     for index, value in enumerate(daily_data['submissions']):
@@ -59,6 +61,7 @@ async def get_winner(channel):
             update_score(winner, 1)
     return winner_message
 
+
 def check_winner_vote(winner):
     if winner in daily_data['voters']:
         logger.debug("Winner voted - valid")
@@ -67,7 +70,10 @@ def check_winner_vote(winner):
         logger.warning("Winner disqualified")
         return False
 
-async def disqualify_winner(winner, index, channel):
+
+async def disqualify_winner(winner_id, index, channel):
+    winner = bot.get_guild(
+        config.config['server_id']).get_member(winner_id)
     winner_message = "Winner disqualified: " + str(winner.nick)
     embed = discord.Embed(
         title=winner_message, description="Winner did not vote, therefore their submission is invalid", colour=0xff0000)
@@ -76,11 +82,13 @@ async def disqualify_winner(winner, index, channel):
     del daily_data['submissions'][index]
     await asyncio.sleep(5)
 
+
 def sort_submissions():
     logger.debug("Sorting submissions into descending vote")
     sorted_submissions_dict['submissions'] = [x for _, x in sorted(zip(daily_data['votes'], daily_data['submissions']), reverse=True)]
     sorted_submissions_dict['votes'] = [x for _, x in sorted(zip(daily_data['votes'], daily_data['votes']), reverse=True)]
     return sorted_submissions_dict
+
 
 @bot.command(description="Results for a current day. Requires at least one voter")
 async def results(ctx):
