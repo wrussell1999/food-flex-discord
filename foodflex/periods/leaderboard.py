@@ -10,6 +10,7 @@ from ..util.setup_period import *
 logger = config.initilise_logging()
 sorted_scoreboard_dict = {}
 
+
 def update_score(winner, score):
     logger.debug("Score value: " + str(score))
     if winner.id in overall_score['users']:
@@ -20,15 +21,20 @@ def update_score(winner, score):
         overall_score['score'].append(score)
     score_dict_to_json()
 
+
 async def update_leaderboard():
     channel = bot.get_channel(config.config['leaderboard_channel_id'])
     sorted_scoreboard_dict = sort_leaderboard()
     try:
-        message = await channel.fetch_message(config.config['leaderboard_message_id'])
-        await update_scores(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'], message)
+        message = await channel.fetch_message(
+            config.config['leaderboard_message_id'])
+        await update_scores(sorted_scoreboard_dict['users'], 
+                            sorted_scoreboard_dict['scores'], message)
     except:
-        await create_leaderboard(sorted_scoreboard_dict['users'], sorted_scoreboard_dict['scores'])
-        
+        await create_leaderboard(sorted_scoreboard_dict['users'],
+                                 sorted_scoreboard_dict['scores'])
+
+
 def sort_leaderboard():
     sorted_scoreboard_dict['users'] = [x for _, x in sorted(
         zip(overall_score['score'], overall_score['users']), reverse=True)]
@@ -36,14 +42,17 @@ def sort_leaderboard():
         zip(overall_score['score'], overall_score['score']), reverse=True)]
     return sorted_scoreboard_dict
 
+
 async def update_scores(users, scores, message):
     embed = get_embed(users, scores)
     await message.edit(embed=embed)
+
 
 async def create_leaderboard(users, scores):
     embed = get_embed(users, scores)
     channel = bot.get_channel(config.config['leaderboard_channel_id'])
     await channel.send(embed=embed)
+
 
 def get_embed(users, scores):
     now = datetime.datetime.now()
@@ -56,6 +65,7 @@ def get_embed(users, scores):
         score = "Score: " + str(scores[index])
         embed.add_field(name=user.nick, value=score, inline=False)
     return embed
+
 
 @bot.command()
 async def refresh_scores(ctx):

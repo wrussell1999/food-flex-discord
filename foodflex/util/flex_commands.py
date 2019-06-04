@@ -5,6 +5,7 @@ from .data import *
 from . import config
 from builtins import bot
 
+
 @bot.command(description="This explains how the food flex competition works - how to submit and vote")
 async def helpme(ctx):
     embed = discord.Embed(title="Help", description="Use the different channels to submit and vote!", colour=0xff0000)
@@ -17,6 +18,7 @@ async def helpme(ctx):
     await ctx.send(embed=embed)
     await ctx.message.delete()
 
+
 @bot.command(description="Arguments: channel_nick, output")
 async def say(ctx, channel_nick: str, output: str):
     if await bot.is_owner(ctx.author):
@@ -28,10 +30,12 @@ async def say(ctx, channel_nick: str, output: str):
             await channel.send(output)
         await ctx.message.delete()
 
+
 @bot.group()
 async def debug(ctx):
     if ctx.invoked_subcommand is None:
         await ctx.send('Invalid debug command')
+
 
 @debug.command(description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
 async def test(ctx):
@@ -39,9 +43,11 @@ async def test(ctx):
     await ctx.author.send("Test")
     await ctx.message.delete()
 
+
 @debug.command()
 async def ping(ctx):
     await ctx.send("pong")
+
 
 @debug.command(description="Arguments: submission, voting, results")
 async def force_status(ctx, period: str):
@@ -57,10 +63,12 @@ async def force_status(ctx, period: str):
             await bot.change_presence(status=discord.Status.idle, activity=activity)
     await ctx.message.delete()
 
+
 @bot.group()
 async def data(ctx):
     if ctx.invoked_subcommand is None:
         await ctx.send('Invalid debug command')
+
 
 @data.command(description="Winner of the Food Flex so far")
 async def winner(ctx):
@@ -88,6 +96,7 @@ async def winner(ctx):
         await ctx.send("There are currently no winners")
         await ctx.message.delete()
 
+
 @data.command(description="Shows the current daily data as dict")
 async def get_data(ctx):
     embed = discord.Embed(title="Daily Data", colour=0xff0000)
@@ -95,6 +104,7 @@ async def get_data(ctx):
     embed.add_field(name="Voters", value=daily_data['voters'])
     embed.add_field(name="Votes", value=daily_data['votes'])
     await ctx.send(embed=embed)
+
 
 @data.command(description="Arguments: submissions, voters, votes")
 async def clear(ctx, list: str):
@@ -111,6 +121,7 @@ async def clear(ctx, list: str):
         data_dict_to_json()
         await ctx.message.delete()
 
+
 @data.command(description="Arguments: data, score")
 async def force_json_dump(ctx, file: str):
     if await bot.is_owner(ctx.author):
@@ -119,6 +130,7 @@ async def force_json_dump(ctx, file: str):
         elif file == "score":
             score_dict_to_json()
         await ctx.message.delete()
+
 
 @data.command(description="All the rude Gordon Ramsay quotes")
 async def rude_quotes(ctx):

@@ -27,7 +27,8 @@ async def results_period(channel):
     sorted_submissions_dict = sort_submissions()
     for index, val in enumerate(sorted_submissions_dict['votes']):
         votes = "Votes: " + str(val)
-        user = bot.get_guild(config.config['server_id']).get_member(sorted_submissions_dict['submissions'][index])
+        user = bot.get_guild(config.config['server_id']).get_member(
+            sorted_submissions_dict['submissions'][index])
         embed.add_field(name=user.nick, value=votes, inline=False)
     await channel.send(embed=embed)
     await update_leaderboard()

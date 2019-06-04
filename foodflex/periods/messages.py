@@ -9,7 +9,8 @@ from . import voting
 
 logger = config.initilise_logging()
 
-@bot.event    
+
+@bot.event
 async def on_message(message):
     channel = bot.get_channel(config.config['food_flex_channel_id'])
     now = datetime.datetime.now()
@@ -18,7 +19,7 @@ async def on_message(message):
     await bot.process_commands(message)
 
     if message.channel == channel:
-        if len(message.attachments) > 0 and hour >= 12 and hour <= 23: # SUBMISSION
+        if len(message.attachments) > 0 and hour >= 12 and hour <= 23:  # SUBMISSION
             logger.info("Submission from " + message.author.nick)
             await submissions.process_submission(message, channel)
 

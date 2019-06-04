@@ -4,6 +4,7 @@ import logging
 with open("config/config.json") as file:
     config = json.load(file)
 
+
 def initilise_logging():
     logging.basicConfig(level=logging.INFO) # discord.py
     logger = logging.getLogger('food-flex')  # food-flex

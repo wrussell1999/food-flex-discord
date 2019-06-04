@@ -8,6 +8,7 @@ from . import config
 
 logger = config.initilise_logging()
 
+
 def reset_daily_data():
     daily_data['submissions'].clear()
     daily_data['votes'].clear()

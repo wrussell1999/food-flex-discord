@@ -12,10 +12,12 @@ with open("data/daily_data.json") as temp_file:
 
 logger = config.initilise_logging()
 
+
 def score_dict_to_json():
     logger.debug("'scoreboard' dumped to scoreboard.json")
     with open('data/scoreboard.json', 'w') as json_file:
         json.dump(overall_score, json_file)
+
 
 def data_dict_to_json():
     logger.debug("'data' dumped to daily_data.json")

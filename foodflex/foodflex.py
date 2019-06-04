@@ -59,4 +59,4 @@ async def check_time_periods():
                 embed=embed)
         elif hour == 12 and minute == 00 and len(daily_data['submissions']) > 1 and len(daily_data['voters']) > 0:
             await results_period(channel)
-        await asyncio.sleep(1) 
+        await asyncio.sleep(60) 

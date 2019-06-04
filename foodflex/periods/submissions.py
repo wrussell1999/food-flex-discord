@@ -8,12 +8,15 @@ from ..util import config
 from ..util.setup_period import *
 
 logger = config.initilise_logging()
+
+
 async def submission_period(channel):
     logger.info("SUBMISSIONS")
     activity = discord.Activity(name="people submit shit food", type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.online, activity=activity)
     embed = discord.Embed(title="Submissions are open", description="Submit a picture of your cooking!", colour=0xff0000)
     await channel.send(embed=embed)
+
 
 async def process_submission(message, channel):
     duplicate = False
@@ -28,6 +31,7 @@ async def process_submission(message, channel):
     elif (duplicate == True):
         logger.info("Submission invalid")
 
+
 @bot.command()
 async def submissions(ctx):
     if await bot.is_owner(ctx.author):
@@ -35,6 +39,7 @@ async def submissions(ctx):
         reset_daily_data()
         logger.info("Submissions started manually")
         await ctx.message.delete()
+
 
 @bot.command()
 async def close_submissions(ctx):
@@ -44,4 +49,3 @@ async def close_submissions(ctx):
         embed = discord.Embed(title="Submissions are closed", description="We are currently working hard to fix some problems! Check back later!", colour=0xff0000)
         channel = bot.get_channel(config.config['food_flex_channel_id'])
         await channel.send(embed=embed)
-
