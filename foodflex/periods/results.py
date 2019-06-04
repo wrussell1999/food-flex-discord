@@ -85,6 +85,6 @@ def sort_submissions():
 @bot.command(description="Results for a current day. Requires at least one voter")
 async def results(ctx):
     if await bot.is_owner(ctx.author) and len(daily_data['voters']) != 0:
-        await results_period(bot.get_channel(config.config['food_flex_channel_id ']))
+        await results_period(bot.get_channel(config.config['food_flex_channel_id']))
         logger.debug("Results started manually")
         await ctx.message.delete()
