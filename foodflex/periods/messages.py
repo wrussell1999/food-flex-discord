@@ -24,7 +24,16 @@ async def on_message(message):
             await submissions.process_submission(message, channel)
 
         if len(message.attachments) == 0 and (hour >= 00 and hour < 12) and \
-                (len(str(message.clean_content)) == 1 or message.clean_content == ':b:'): # VOTING
+                check_vote_period(message):
             logger.info("Vote from: " + message.author.nick + ", Vote: " +
                         str(message.clean_content))
             await voting.check_vote(message)
+
+
+def check_vote_period(message):
+    if len(message.clean_content) == 0:
+        return True
+    elif message.clean_content == ":b:":
+        return True
+    else:
+        return False

@@ -6,7 +6,7 @@ with open("config/config.json") as file:
 
 
 def initilise_logging():
-    logging.basicConfig(level=logging.INFO) # discord.py
+    logging.basicConfig(level=logging.INFO)  # discord.py
     logger = logging.getLogger('food-flex')  # food-flex
     logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(filename='data/foodflex.log', encoding='utf-8', mode='w')
