@@ -10,6 +10,9 @@ with open("data/scoreboard.json") as score_file:
 with open("data/daily_data.json") as temp_file:
     daily_data = json.load(temp_file)
 
+with open("data/strings.json") as strings_file:
+    strings = json.load(strings_file)
+
 logger = config.initilise_logging()
 
 
