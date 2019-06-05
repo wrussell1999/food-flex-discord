@@ -46,7 +46,7 @@ async def private_vote_reminder():
 
 async def check_vote(message):
     logger.info("Vote by: " + str(message.author.nick))
-    if message.clean_content == ':b:':
+    if message.clean_content == ':b:' or message.clean_content == "🅱️":
         vote_index = 1
     else:
         vote_index = ord(message.clean_content[0].upper()) - 65

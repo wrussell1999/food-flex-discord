@@ -33,7 +33,9 @@ async def on_message(message):
 def check_vote_period(message):
     if len(message.clean_content) == 0:
         return True
-    elif message.clean_content == ":b:":
+    elif message.clean_content.strip() == ":b:":
+        return True
+    elif message.clean_content == "🅱️":
         return True
     else:
         return False
