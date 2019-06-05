@@ -13,15 +13,15 @@ Food Flex is bot that manages:
 
 ### Submissions (13:00 - 23:59)
 
-When a user uploads a picture of their food to the submissions chat, they are automatically entered into the vote. Users can only vote once. The bot will won't count additional submission pictures, therefore users who may feel that multiple pictures helps show off their 'flexing', are able to post multiple pictures without error.
+When a user uploads a picture of their food to the chat, they are automatically entered into the vote. Users can only submit once. The bot will won't count additional submission pictures, therefore users who may feel that multiple pictures helps show off their 'flexing', are able to post multiple pictures without error.
 
 ### Voting (00:00 - 11:59)
 
-Submissions are closed and a voting poll is displayed. Users can vote for their favourite by sending the letter that corresponds to the user. Users can only vote once, and not for themselves. The bot will won't count additional votes. Also, anyone who submitted, and hasn't voted by 11:00, will received a private message to remind them to vote.
+Submissions are closed and a voting poll is displayed. Users can vote for their favourite by sending the letter that corresponds to the user. Users can only vote once, and not for themselves. The bot will won't count additional votes. Also, anyone who submitted, and hasn't voted by 11:00, will received a private message to remind them to vote. You will receive a private message to confirm your vote.
 
 ### Results (12:00)
 
-Voting is closed and a results message will be sent. 
+Voting is closed and a results message will be sent to the chat. 
 
 **NOTE:** If you submit a picture and don't vote, you are disqualified.
 
@@ -70,12 +70,6 @@ $ python3 -m pip install -U discord.py
 To run the bot: 
 
     $ python3 -m foodflex
-
-## Status
-
-<a href="https://discordbots.org/bot/502391189270560773" >
-  <img src="https://discordbots.org/api/widget/502391189270560773.svg" alt="Food Flex Judge" />
-</a>
 
 ## License
 MIT License for all the code written by me.
