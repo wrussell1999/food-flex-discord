@@ -30,8 +30,8 @@ async def voting_period(channel):
 
 async def private_vote_reminder():
     for user in daily_data:
-        if daily_data[str(user)]['submitted'] is True and \
-                daily_data[str(user)]['voted'] is False:
+        if daily_data[str(user)]['submitted'] and \
+                not daily_data[str(user)]['voted']:
             user = bot.get_guild(
                 config.config['server_id']).get_member(
                 str(user))
@@ -45,21 +45,20 @@ async def private_vote_reminder():
 
 async def check_vote(message):
     logger.info("Vote by: " + str(message.author.nick))
-  
+
     vote = message.clean_content[0]
     if message.clean_content == ':b:' or message.clean_content == "🅱️":
         vote = 'B'
 
     user_id = str(message.author.id)
-    if daily_data[user_id]['voted'] is False or \
+    if not daily_data[user_id]['voted'] or \
             daily_data[user_id]['vote_index'] is not vote:
-        
+
         daily_data[user_id]['voted'] = True
         for user in daily_data:
             if daily_data[str(user)]['vote_index'] is vote:
                 daily_data[str(user)]['votes'] += 1
         data_dict_to_json()
-        
         await message.author.send(
             "Your vote has been submitted successfully")
     else:
