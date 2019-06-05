@@ -3,7 +3,7 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from ..util.data import *
+from ..util.data import overall_score
 from ..util import config
 from ..util.setup_period import *
 
