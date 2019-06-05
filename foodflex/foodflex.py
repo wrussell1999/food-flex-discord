@@ -1,10 +1,3 @@
-from .periods.leaderboard import *
-from .periods.results import *
-from .periods.voting import *
-from .periods.submissions import *
-from .periods import messages
-from .util import setup_period
-from .util import flex_commands
 import discord
 from discord.ext import commands
 import datetime
@@ -16,6 +9,14 @@ from .util.data import *
 
 bot = commands.Bot(command_prefix='flex:', owner_id=config.config['admin_id'])
 builtins.bot = bot
+
+from .periods.leaderboard import *
+from .periods.results import *
+from .periods.voting import *
+from .periods.submissions import *
+from .periods import messages
+from .util import setup_period
+from .util import flex_commands
 
 
 def main():
