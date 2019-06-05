@@ -52,6 +52,8 @@ async def create_leaderboard(users, scores):
     embed = get_embed(users, scores)
     channel = bot.get_channel(config.config['leaderboard_channel_id'])
     await channel.send(embed=embed)
+    message_id = channel.last_message_id()
+    config.config['leaderboard_message_id'] = message_id
 
 
 def get_embed(users, scores):
