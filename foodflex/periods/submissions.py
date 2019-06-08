@@ -64,7 +64,7 @@ async def submission_command(message):
     channel = bot.get_channel(
         config.config['food_flex_channel_id'])
     guild = bot.get_guild(config.config['guild_id'])
-    await channel.set_permissions(guild.default_roke, attach_files=False)
+    await channel.set_permissions(guild.default_role, attach_files=True)
     await submission_period(channel)
     message.delete()
 
@@ -83,6 +83,6 @@ async def close(ctx):
         channel = bot.get_channel(config.config['food_flex_channel_id'])
 
         guild = bot.get_guild(config.config['guild_id'])
-        await channel.set_permissions(guild.default_roke, attach_files=False)
+        await channel.set_permissions(guild.default_role, attach_files=False)
         await channel.send(embed=embed)
         ctx.message.delete()
