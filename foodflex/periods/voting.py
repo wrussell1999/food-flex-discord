@@ -28,39 +28,69 @@ async def voting_period(channel):
 
 
 async def check_vote(message):
-    logger.info("Vote by: " + str(message.author.nick))
+    logger.info("Vote '{}' from '{}' ({})".format( \
+        message.clean_content, message.author.nick, str(message.author.id)))
 
-    vote = message.clean_content[0]
-    if message.clean_content in [':b:', '🅱️']:
+    # votes must be a single letter
+    if len(message.clean_content) != 1:
+        await log_and_dm("Invalid vote!\nVotes must be a single letter", message.author)
+        return
+
+    # make sure votes are upper case
+    vote = message.clean_content.upper()
+
+    # convent 🅱 to B
+    if message.clean_content == '🅱':
         vote = 'B'
 
     user_id = str(message.author.id)
 
-    if user_id not in daily_data:
-        user = bot.get_guild(
-            config.config['guild_id']).get_member(message.author.id)
+    if user_id in daily_data:
+        # this person has submitted/voted before
+        if daily_data[user_id]['vote_letter'] == vote:
+            await log_and_dm("Invalid vote!\nYou cannot vote for yourself", message.author)
+            return
+
+        if daily_data[user_id]['voted']:
+            await log_and_dm("Invalid vote!\nYou have already voted", message.author)
+            return
+    else:
+        # person has not submitted so we need to create an entry for them
         daily_data[user_id] = {
-            "nick": str(user.nick),
+            "nick": message.author.nick,
             "submitted": False,
-            "voted": True,
+            "voted": False, # only set to true when they make a valid vote
             "votes": 0,
             "vote_letter": None
         }
-    else:
-        if not daily_data[user_id]['voted'] or \
-                daily_data[user_id]['vote_letter'] is not vote:
 
-            daily_data[user_id]['voted'] = True
-            for user in daily_data:
-                if daily_data[str(user)]['vote_letter'] == vote:
-                    daily_data[str(user)]['votes'] += 1
+    # create a dict that maps letters to user_ids of people who submitted
+    # this could be stored somewhere and remove the need for 'vote_letter'
+    # in the future
+    letter_to_user_id = {}
+    for user_id in daily_data:
+        letter = daily_data[user_id]['vote_letter']
+        if letter != None:
+            letter_to_user_id[letter] = user_id
 
-            save_data()
-            await message.author.send(
-                "Your vote has been submitted successfully")
-        else:
-            await message.author.send("Invalid vote!")
+    logger.debug("Vote letter to user_id map: " + letter_to_user_id.__str__())
 
+    # add one to the number of votes that the person we are voting for has
+    try:
+        user_id_voted_for = letter_to_user_id[vote]
+        daily_data[user_id_voted_for]['votes'] += 1
+        daily_data[user_id]['voted'] = True
+        await log_and_dm("Vote has been submitted successfully for '{}'".format( \
+            daily_data[user_id_voted_for]['nick']), message.author)
+        save_data()
+    except KeyError as e:
+        # the letter voted for does not refer to anyone
+        await log_and_dm("Invalid vote!\nCan't find user for letter '{}'".format( \
+            vote), message.author)
+
+async def log_and_dm(reason, person):
+    await person.send(reason)
+    logger.info(reason)
 
 async def individual_vote_reminder():
     for user in daily_data:
