@@ -1,9 +1,11 @@
 import discord
 from discord.ext import commands
 import random
-from .data import save_data, save_leaderboard, daily_data, leaderboard_data, quotes
-from . import config
+import foodflex.util.data as data
+import foodflex.util.config as config
 from builtins import bot
+
+logger = config.initilise_logging()
 
 
 @bot.command(description="This explains how the food flex competition works - how to submit and vote")
@@ -42,7 +44,7 @@ async def debug(ctx):
 
 @debug.command(description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
 async def test(ctx):
-    await ctx.send(random.choice(quotes['rude']))
+    await ctx.send(random.choice(data.quotes['rude']))
     await ctx.author.send("Test")
     await ctx.message.delete()
 
@@ -53,7 +55,7 @@ async def ping(ctx):
 
 
 @debug.command(description="Arguments: submission, voting, results")
-async def force_status(ctx, period: str):
+async def status(ctx, period: str):
     if await bot.is_owner(ctx.author):
         activity = discord.Activity(name="for shit food",
                                     type=discord.ActivityType.watching)
@@ -74,54 +76,53 @@ async def force_status(ctx, period: str):
 
 
 @bot.group()
-async def data(ctx):
+async def data_tools(ctx):
     if ctx.invoked_subcommand is None:
         await ctx.send('Invalid debug command')
 
 
-@data.command(description="Winner of the Food Flex so far")
+@data_tools.command(description="Winner of the Food Flex so far")
 async def winner(ctx):
     await ctx.message.delete()
 
 
-@data.command(description="Shows the current daily data as dict")
-async def get_data(ctx):
-    print(data)
-    await ctx.send(str(data))
+@data_tools.command(description="Shows the current daily data as dict")
+async def daily_data(ctx):
+    await ctx.send(str(data.daily_data))
 
 
-@data.command(description="Arguments: submissions, voters, votes")
+@data_tools.command(description="Arguments: submissions, voters, votes")
 async def clear(ctx, list: str):
     if await bot.is_owner(ctx.author):
         if list == "submissions":
-            daily_data['submissions'].clear()
+            data.daily_data['submissions'].clear()
             logger.debug("Submissions cleared manually")
         elif list == "voters":
-            daily_data['voters'].clear()
+            data.daily_data['voters'].clear()
             logger.debug("Voters cleared manually")
         elif list == "votes":
-            daily_data['votes'].clear()
+            data.daily_data['votes'].clear()
             logger.debug("Votes cleared manually")
-        save_data()
+        data.save_data()
         await ctx.message.delete()
 
 
-@data.command(description="Arguments: data, score")
-async def force_json_dump(ctx, file: str):
+@data_tools.command(description="Arguments: data, score")
+async def save(ctx, file: str):
     if await bot.is_owner(ctx.author):
         if file == "data":
-            save_data()
+            data.save_data()
         elif file == "score":
-            save_leaderboard()
+            data.save_leaderboard()
         await ctx.message.delete()
 
 
-@data.command(description="All the rude Gordon Ramsay quotes")
+@data_tools.command(description="All the rude Gordon Ramsay quotes")
 async def rude_quotes(ctx):
     embed = discord.Embed(title="Rude Gordon Ramsay quotes",
                           description="All the quotes stored in ramsay_quotes.json",
                           colour=0xff0000)
-    for index, val in enumerate(quotes['rude']):
+    for index, val in enumerate(data.quotes['rude']):
         embed.add_field(name=str(index + 1), value=val, inline=False)
     await ctx.send(embed=embed)
     await ctx.message.delete()

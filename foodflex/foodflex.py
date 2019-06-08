@@ -13,9 +13,9 @@ logger = config.initilise_logging()
 
 # Imports are after bot, so that the other modules can access them
 import foodflex.periods.leaderboard as leaderboard
-import foodflex.periods.results as results
-import foodflex.periods.voting as voting
 import foodflex.periods.submissions as submissions
+import foodflex.periods.voting as voting
+import foodflex.periods.results as results
 import foodflex.periods.messages as messages
 import foodflex.util.commands as commands
 
