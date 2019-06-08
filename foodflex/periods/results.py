@@ -19,14 +19,14 @@ async def results_period(channel):
         name="for shit food", type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.idle, activity=activity)
 
-    winner_message = await get_winner(channel)
-
-    embed = discord.Embed(title="RESULTS", description="", colour=0xff0000)
-    embed.set_author(name=winner_message)
-
     users = [(daily_data[key]['nick'], daily_data[key]['votes'])
              for key in daily_data if daily_data[key]['submitted'] is True]
     users.sort(key=lambda tuple: tuple[1], reverse=True)
+
+    winner_message = await get_winner(channel, users)
+
+    embed = discord.Embed(title="Results", description="", colour=0xff0000)
+    embed.set_author(name=winner_message)
 
     for user in users:
         votes = "Votes: " + str(user[1])
@@ -36,13 +36,16 @@ async def results_period(channel):
     await update_leaderboard()
 
     reset_daily_data()
-    data_dict_to_json()
+    save_data()
 
 
-async def get_winner(channel):
-    for index, value in enumerate(daily_data['submissions']):
-        if not check_user_vote(value):
-            await disqualify_winner(value, index, channel)
+async def get_winner(channel, users):
+    [await disqualify_winner(key, users, channel) 
+     for key in daily_data if not daily_data[key]['voted']]
+
+    no_winners = False
+    [no_winners is True for key in daily_data
+     if not daily_data[key]['voted'] and daily_data[key]['submitted']]
 
     if len(daily_data) == 0:  # won't work
         embed = discord.Embed(
@@ -52,10 +55,11 @@ async def get_winner(channel):
         await channel.send(embed=embed)
         return "No winner"
 
-    max_vote = max(daily_data['votes'])
+    max_vote = users[0][1]
     winner_message = "Winner: "
-    max_index = [i for i, j in enumerate(
-        daily_data['votes']) if j == max_vote]
+    max_index = [index for index, vote in enumerate(
+        daily_data['votes']) if vote == max_vote]
+    
     if len(max_index) > 1:
         winner_message = "Winners: "
 
@@ -77,22 +81,24 @@ def check_user_vote(user):
         return False
 
 
-async def disqualify_winner(winner_id, index, channel):
-    winner = bot.get_guild(
-        config['server_id']).get_member(winner_id)
-    winner_message = "Winner disqualified: " + str(winner.nick)
+async def disqualify_winner(key, users, channel):
+    user = bot.get_guild(
+        config['server_id']).get_member(key)
+
+    winner_message = "Winner disqualified: " + str(user.nick)
+
     embed = discord.Embed(
         title=winner_message, description="Winner did not vote, therefore " +
         "their submission is invalid", colour=0xff0000)
+
     await channel.send(embed=embed)
-    del daily_data['votes'][index]
-    del daily_data['submissions'][index]
-    await asyncio.sleep(5)
+    del daily_data[str(user.id)]
+    await asyncio.sleep(1)
 
 
 @bot.command(description="Results for a current day. Requires at least one voter")
 async def results(ctx):
-    if await bot.is_owner(ctx.author) and len(daily_data['voters']) != 0:
+    if await bot.is_owner(ctx.author):
         await results_period(bot.get_channel(
             config['food_flex_channel_id']))
         logger.debug("Results started manually")
