@@ -63,7 +63,7 @@ def get_embed(users, scores):
     embed = discord.Embed(
         title="LEADERBOARD", description=date_str, colour=0xff0000)
     for index, val in enumerate(users):
-        user = bot.get_guild(config.config['server_id']).get_member(val)
+        user = bot.get_guild(config.config['guild_id']).get_member(val)
         score = "Score: " + str(scores[index])
         embed.add_field(name=user.nick, value=score, inline=False)
     return embed

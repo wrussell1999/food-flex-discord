@@ -25,8 +25,8 @@ async def process_submission(message, channel):
     if str(message.author.id) in daily_data:
         logger.info("Submission invalid")
     else:
-        user = bot.get_server(
-            config.config['server_id']).get_member(message.author.id)
+        user = bot.get_guild(
+            config.config['guild_id']).get_member(message.author.id)
         daily_data[user_id_key] = {
             "nick": str(user.nick),
             "submitted": True,

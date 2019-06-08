@@ -1,6 +1,6 @@
 {   
     "token": "STRING",
-    "server_id": ,
+    "guild_id": ,
     "admin_id":,
     "food_chat_id": ,
     "food_flex_channel_id": ,

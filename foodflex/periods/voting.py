@@ -39,7 +39,7 @@ async def check_vote(message):
 
     if user_id not in daily_data:
         user = bot.get_guild(
-            config.config['server_id']).get_member(message.author.id)
+            config.config['guild_id']).get_member(message.author.id)
         print(user.nick)
         daily_data[user_id] = {
             "nick": str(user.nick),
@@ -68,7 +68,7 @@ async def individual_vote_reminder():
         if daily_data[str(user)]['submitted'] and \
                 not daily_data[str(user)]['voted']:
             user = bot.get_guild(
-                config.config['server_id']).get_member(
+                config.config['guild_id']).get_member(
                 str(user))
             embed = discord.Embed(title="REMINDER!",
                                   description="Remember to vote for " +
