@@ -3,7 +3,7 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from ..util.data import daily_data, save_data, strings, config
+from ..util.data import daily_data, save_data, strings, config, letter_to_user_id
 from ..util import config
 from . import submissions
 
@@ -20,8 +20,8 @@ async def voting_period(channel):
                           colour=0xff0000)
     embed.set_footer(text="Respond in the chat with the appropriate letter")
 
-    for letter in submissions.letter_to_user_id:
-        user_id = submissions.letter_to_user_id[letter]
+    for letter in letter_to_user_id:
+        user_id = letter_to_user_id[letter]
         embed.add_field(name=daily_data[user_id]['nick'],
                         value=letter,
                         inline=False)
@@ -47,7 +47,6 @@ async def check_vote(message):
     if message.clean_content == '🅱':
         vote = 'B'
 
-    letter_to_user_id = submissions.letter_to_user_id
     logger.debug("Vote letter to user_id map: " + letter_to_user_id.__str__())
 
     if user_id in daily_data:

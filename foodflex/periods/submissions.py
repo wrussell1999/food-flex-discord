@@ -3,11 +3,10 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from ..util.data import daily_data, quotes, save_data
+from ..util.data import daily_data, quotes, save_data, letter_to_user_id
 from ..util import config
 
 logger = config.initilise_logging()
-letter_to_user_id = {}
 
 async def submission_period(channel):
     logger.info('SUBMISSIONS')
