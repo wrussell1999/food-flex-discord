@@ -51,13 +51,13 @@ async def update_leaderboard():
 def get_embed(users):
     # Gets the date
     now = datetime.datetime.now()
-    date_str = "Overall scores this term - " + \
+    date_str = "Updated: " + \
         str(now.day) + "/" + str(now.month) + "/" + str(now.year)
 
     # Makes an embed
     embed = discord.Embed(
-        title="Leaderboard", description=date_str, colour=0xff0000)
-
+        title="Leaderboard", description="Overall scores this term", colour=0xff0000)
+    embed.set_footer(text=date_str)
     # Adds the users to the embed
     for value in users:
         score = "Score: " + str(value[1])
