@@ -5,7 +5,6 @@ import random
 from builtins import bot
 from ..util.data import leaderboard_data, save_leaderboard
 from ..util import config
-from ..util.setup_period import *
 
 logger = config.initilise_logging()
 sorted_scoreboard_dict = {}

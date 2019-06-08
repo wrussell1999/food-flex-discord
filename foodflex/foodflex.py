@@ -15,8 +15,7 @@ from .periods.results import *
 from .periods.voting import *
 from .periods.submissions import *
 from .periods import messages
-from .util import setup_period
-from .util import flex_commands
+from .util import commands
 
 
 def main():

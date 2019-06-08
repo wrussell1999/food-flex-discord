@@ -5,7 +5,6 @@ import random
 from builtins import bot
 from ..util.data import daily_data, quotes
 from ..util import config
-from ..util.setup_period import *
 
 logger = config.initilise_logging()
 

@@ -6,7 +6,6 @@ import random
 from builtins import bot
 from ..util.data import quotes, leaderboard_data, daily_data, strings, save_leaderboard, save_data
 from ..util.config import config, initilise_logging
-from ..util.setup_period import *
 from .leaderboard import *
 
 logger = initilise_logging()
