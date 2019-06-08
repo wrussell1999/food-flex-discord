@@ -3,7 +3,7 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from ..util.data import daily_data, quotes
+from ..util.data import daily_data, quotes, save_data
 from ..util import config
 
 logger = config.initilise_logging()
