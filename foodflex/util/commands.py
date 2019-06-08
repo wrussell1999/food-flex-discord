@@ -22,11 +22,14 @@ async def helpme(ctx):
 @bot.command(description="Arguments: channel_nick, output")
 async def say(ctx, channel_nick: str, output: str):
     if await bot.is_owner(ctx.author):
-        if channel_nick == "main":
+        if channel_nick == "chat":
             channel = bot.get_channel(config.config['food_chat_id'])
             await channel.send(output)
         elif channel_nick == "flex":
             channel = bot.get_channel(config.config['food_flex_channel_id'])
+            await channel.send(output)
+        elif channel_nick == "leaderboard":
+            channel = bot.get_channel(config.config['leaderboard_channel_id'])
             await channel.send(output)
         await ctx.message.delete()
 
