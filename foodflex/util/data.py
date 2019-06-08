@@ -19,7 +19,7 @@ logger = config.initilise_logging()
 def save_leaderboard():
     logger.debug("'scoreboard' dumped to scoreboard.json")
     with open('data/leaderboard.json', 'w') as json_file:
-        json.dump(overall_score, json_file)
+        json.dump(leaderboard_data, json_file)
 
 
 def save_data():
