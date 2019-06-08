@@ -14,7 +14,7 @@ logger = config.initilise_logging()
 def update_score(winner, score):
     logger.debug("Score value: " + str(score))
 
-    if winner.id not in data.leaderboard_data:
+    if str(winner.id) not in data.leaderboard_data:
         data.leaderboard_data[str(winner.id)] = {
             'nick': winner.nick,
             'score': 1
