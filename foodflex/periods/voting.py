@@ -110,4 +110,4 @@ async def voting(ctx):
         await voting_period(bot.get_channel(
             config.config['food_flex_channel_id']))
         logger.debug("Voting started manually")
-        # await ctx.message.delete()
+        await ctx.message.delete()
