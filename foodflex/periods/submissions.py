@@ -3,7 +3,7 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from ..util.data import *
+from ..util.data import daily_data, quotes
 from ..util import config
 from ..util.setup_period import *
 
@@ -36,7 +36,7 @@ async def process_submission(message, channel):
             "vote_index": chr(ord('A') + len(daily_data))
         }
         await channel.send(random.choice(quotes['rude']))
-        data_dict_to_json()
+        save_data()
         logger.info("Submission valid")
 
 
@@ -58,7 +58,8 @@ async def close_submissions(ctx):
         await bot.change_presence(status=discord.Status.online,
                                   activity=activity)
         embed = discord.Embed(title="Submissions are closed",
-                              description="We are currently working hard to fix some problems! Check back later!",
+                              description="We are currently working hard to " + 
+                              "fix some problems! Check back later!",
                               colour=0xff0000)
         channel = bot.get_channel(config.config['food_flex_channel_id'])
         await channel.send(embed=embed)

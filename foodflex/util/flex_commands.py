@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 import random
-from .data import *
+from .data import save_data, save_leaderboard, daily_data, leaderboard_data, quotes
 from . import config
 from builtins import bot
 
@@ -78,38 +78,13 @@ async def data(ctx):
 
 @data.command(description="Winner of the Food Flex so far")
 async def winner(ctx):
-    if len(overall_score['score']) != 0:
-        embed = discord.Embed(title="Winners", description="Highest score for term 2", colour=0xff0000)
-        embed.set_footer(text="It's all to play for...")
-        max_vote = max(overall_score['score'])
-        value_str = "Score: " + str(max_vote)
-        winner_indexes = [i for i, j in enumerate(overall_score['score']) if j == max_vote]
-        if len(winner_indexes) > 1:
-            winners = []
-            for index, winner_index in enumerate(winner_indexes):
-                winners.append(bot.get_guild(config.config['server_id']).get_member(overall_score['users'][winner_index]))
-            for index, member in enumerate(winners):
-                embed.add_field(name=member.nick, value=value_str)
-            logger.debug("Command: Multiple winners")
-        else:
-            winner = bot.get_guild(config.config['server_id']).get_member(overall_score['users'][winner_indexes[0]])
-            embed.add_field(name=winner.nick, value=value_str)
-            logger.debug("Command: Single winner")
-
-        await ctx.send(embed=embed)
-        await ctx.message.delete()
-    else:
-        await ctx.send("There are currently no winners")
-        await ctx.message.delete()
+    await ctx.message.delete()
 
 
 @data.command(description="Shows the current daily data as dict")
 async def get_data(ctx):
-    embed = discord.Embed(title="Daily Data", colour=0xff0000)
-    embed.add_field(name="Submissions", value=daily_data['submissions'])
-    embed.add_field(name="Voters", value=daily_data['voters'])
-    embed.add_field(name="Votes", value=daily_data['votes'])
-    await ctx.send(embed=embed)
+    print(data)
+    await ctx.send(str(data))
 
 
 @data.command(description="Arguments: submissions, voters, votes")
@@ -124,7 +99,7 @@ async def clear(ctx, list: str):
         elif list == "votes":
             daily_data['votes'].clear()
             logger.debug("Votes cleared manually")
-        data_dict_to_json()
+        save_data()
         await ctx.message.delete()
 
 
@@ -132,9 +107,9 @@ async def clear(ctx, list: str):
 async def force_json_dump(ctx, file: str):
     if await bot.is_owner(ctx.author):
         if file == "data":
-            data_dict_to_json()
+            save_data()
         elif file == "score":
-            score_dict_to_json()
+            save_leaderboard()
         await ctx.message.delete()
 
 

@@ -3,9 +3,9 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from ..util.data import *
+from ..util.data import daily_data, data_dict_to_json, strings, config
 from ..util import config
-from ..util.setup_period import daily_data, data_dict_to_json, strings, config
+from ..util.setup_period import *
 
 logger = config.initilise_logging()
 
@@ -47,10 +47,22 @@ async def check_vote(message):
     logger.info("Vote by: " + str(message.author.nick))
 
     vote = message.clean_content[0]
-    if message.clean_content == ':b:' or message.clean_content == "🅱️":
+    if message.clean_content in [':b:', '🅱️']:
         vote = 'B'
 
     user_id = str(message.author.id)
+
+    if user_id not in daily_data:
+        user = bot.get_guild(
+            config.config['server_id']).get_member(message.author.id)
+        print(user.nick)
+        daily_data[user_id] = {
+            "nick": str(user.nick),
+            "submitted": False,
+            "voted": True,
+            "votes": 0,
+            "vote_index": None
+        }
     if not daily_data[user_id]['voted'] or \
             daily_data[user_id]['vote_index'] is not vote:
 
@@ -58,7 +70,7 @@ async def check_vote(message):
         for user in daily_data:
             if daily_data[str(user)]['vote_index'] is vote:
                 daily_data[str(user)]['votes'] += 1
-        data_dict_to_json()
+        save_data()
         await message.author.send(
             "Your vote has been submitted successfully")
     else:
