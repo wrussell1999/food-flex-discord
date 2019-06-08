@@ -3,8 +3,9 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from ..util.data import daily_data, save_data, strings, config
-from ..util import config
+import foodflex.util.data as data
+import foodflex.util.config as config
+import foodflex.periods.leaderboard as leaderboard
 
 logger = config.initilise_logging()
 
@@ -14,14 +15,14 @@ async def voting_period(channel):
     activity = discord.Activity(name="people vote on shit food",
                                 type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.online, activity=activity)
-    embed = discord.Embed(title="Voting is open",
-                          description="Vote for the best cooking of the day!",
+    embed = discord.Embed(title=data.strings['voting_open_title'],
+                          description=data.strings['voting_open'],
                           colour=0xff0000)
-    embed.set_footer(text="Respond in the chat with the appropriate letter")
+    embed.set_footer(text=data.strings['voting_open_footer'])
 
-    for value in daily_data:
-        embed.add_field(name=daily_data[str(value)]['nick'],
-                        value=daily_data[str(value)]['vote_letter'],
+    for value in data.daily_data:
+        embed.add_field(name=data.daily_data[str(value)]['nick'],
+                        value=data.daily_data[str(value)]['vote_letter'],
                         inline=False)
 
     await channel.send(embed=embed)
@@ -36,10 +37,10 @@ async def check_vote(message):
 
     user_id = str(message.author.id)
 
-    if user_id not in daily_data:
+    if user_id not in data.daily_data:
         user = bot.get_guild(
             config.config['guild_id']).get_member(message.author.id)
-        daily_data[user_id] = {
+        data.daily_data[user_id] = {
             "nick": str(user.nick),
             "submitted": False,
             "voted": True,
@@ -47,32 +48,46 @@ async def check_vote(message):
             "vote_letter": None
         }
     else:
-        if not daily_data[user_id]['voted'] or \
-                daily_data[user_id]['vote_letter'] is not vote:
+        if not data.daily_data[user_id]['voted'] or \
+                data.daily_data[user_id]['vote_letter'] is not vote:
 
-            daily_data[user_id]['voted'] = True
-            for user in daily_data:
-                if daily_data[str(user)]['vote_letter'] == vote:
-                    daily_data[str(user)]['votes'] += 1
+            data.daily_data[user_id]['voted'] = True
+            for user in data.daily_data:
+                if data.daily_data[str(user)]['vote_letter'] == vote:
+                    data.daily_data[str(user)]['votes'] += 1
 
             save_data()
-            await message.author.send(
-                "Your vote has been submitted successfully")
+            await message.author.send(data.strings['voting_success'])
         else:
-            await message.author.send("Invalid vote!")
+            await message.author.send(data.strings['voting_fail'])
 
+async def voting_reminder():
+    channel = bot.get_channel(config.config['food_flex_channel_id'])
+    embed = discord.Embed(title=data.strings['voting_reminder_title'],
+                          description=data.strings['voting_reminder'])
+
+    # Gets users as a list of tuples (user, score)
+    users = [(data.leaderboard_data[key]['nick'],
+             data.leaderboard_data[key]['score'])
+             for key in data.leaderboard_data]
+    users.sort(key=lambda tuple: tuple[1], reverse=True)
+
+    # Gets the embed with users in it
+    embed = await leaderboard.get_embed(users)
+    embed.set_footer(
+        text="")
+    await channel.send(embed=embed)
 
 async def individual_vote_reminder():
-    for user in daily_data:
-        if daily_data[str(user)]['submitted'] and \
-                not daily_data[str(user)]['voted']:
+    for user in data.daily_data:
+        if data.daily_data[str(user)]['submitted'] and \
+                not data.daily_data[str(user)]['voted']:
             user = bot.get_guild(
                 config.config['guild_id']).get_member(
                 str(user))
-            embed = discord.Embed(title="REMINDER!",
-                                  description="Remember to vote for " +
-                                  "your submission to be valid!!!")
-            embed.set_footer(text="You will be disqualified if you don't vote")
+            embed = discord.Embed(title=data.strings['voting_dm_reminder_title'],
+                                  description=data.strings['voting_dm_reminder'])
+            embed.set_footer(text=data.strings['voting_dm_reminder_footer'])
             await user.send(embed=embed)
             logger.debug("Vote reminder sent for " + str(user.nick))
 

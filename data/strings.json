@@ -5,6 +5,18 @@
     "submission_closed_title": "Submissions are closed",
     "submission_closed": "We are currently working hard to fix some problems!",
     "submission_closed_activity": "bus get fixed",
-    "voting_open_title": "Voting is open!"
+    "submission_reminder_title": "1 hour left for submissions",
+    "submission_reminder": "There's still time to submit today's flex!",
+    "voting_open_title": "Voting is open!",
+    "voting_open": "Vote for the best cooking of the day!",
+    "voting_open_footer": "Respond in the chat with the appropriate letter",
+    "voting_reminder_title": "1 hour left for voting",
+    "voting_reminder": "There's still time to vote! Here are the current scores",
+    "voting_reminder_footer": "Remember to vote for your submission to be valid!",
+    "voting_dm_reminder_title": "Reminder!",
+    "voting_dm_reminder": "Remember to vote for your submission to be valid!!!",
+    "voting_dm_reminder_footer": "You will be disqualified if you don't vote",
+    "voting_success": "Your vote has been submitted succesfully",
+    "voting_fail": "Invalid vote"
 
 }
