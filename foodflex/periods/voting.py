@@ -59,8 +59,10 @@ async def check_vote(message):
         save_data()
         await message.author.send(
             "Your vote has been submitted successfully")
+        return True
     else:
         await message.author.send("Invalid vote!")
+        return False
 
 
 async def individual_vote_reminder():
