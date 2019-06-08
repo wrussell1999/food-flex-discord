@@ -108,7 +108,6 @@ config/config.json
 data/scoreboard.json
 data/daily_data.json
 
-# vscode
-
+# VSCode
 .vscode/
 XDG_CACHE_HOME/

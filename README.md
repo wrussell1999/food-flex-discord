@@ -40,7 +40,7 @@ You may want to use a similar set up for hosting your own Food Flex:
 
 ## Development
 
-Clone this repo:
+### Setup repository
 ```bash
 $ git clone https://github.com/wrussell1999/food-flex-discord
 $ cd food-flex-discord
@@ -48,25 +48,34 @@ $ python3 -m venv .venv
 $ source .venv/bin/activate
 ```
 
-To install discord.py:
-
-_Virtual environment:_
+### Install dependencies
+_With virtual environment_
 ```bash
 $ pip3 install -r requirements.txt
 ```
-or
-
+_Without virtual environment_
 ```bash
 $ sudo apt install python3-pip
 $ python3 -m pip install -U discord.py
 ```
 
-`config.json` inside the config directory:
+### Create Discord Bot
+[This guide](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) will show you how to create a Discord Bot for your Discord server.
+
+Doing this will allow us to get a token, which we need to add to the `config.json`...
+
+
+### Config file
+`config.json` can be found inside the config directory.
+
+Go to Discord and turn on Developer Mode. With this, you can now right-click on guilds, channels, catergories, users, messages, etc. and get their ID (a snowflake stored as an int for `discord.py`). Use this to get the following IDs needed for `config.json`.
+
+_Note: Token is stored as a string, and IDs (snowflakes) are stored as integers._
 ```json
 {
-    "token": "TOKEN",
+    "token": "String",
     "admin_id": int,
-    "server_id": int,
+    "guild_id": int,
     "food_chat_id": int,
     "food_flex_channel_id": int,
     "leaderboard_channel_id": int,
@@ -74,7 +83,7 @@ $ python3 -m pip install -U discord.py
 }
 ```
 
-To run the bot: 
+### Run the bot 
 
     $ python3 -m foodflex
 
