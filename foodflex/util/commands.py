@@ -1,8 +1,13 @@
 import discord
 from discord.ext import commands
 import random
+
 import foodflex.util.data as data
 import foodflex.util.config as config
+import foodflex.periods.submissions as submissions
+import foodflex.periods.voting as voting
+import foodflex.periods.results as results
+import foodflex.periods.leaderboard as leaderboard
 from builtins import bot
 
 logger = config.initilise_logging()
@@ -45,13 +50,7 @@ async def debug(ctx):
 @debug.command(description="Just a test to see if the bot is responding. It posts a rude quote from Ramsay.")
 async def test(ctx):
     await ctx.send(random.choice(data.quotes['rude']))
-    await ctx.author.send("Test")
     await ctx.message.delete()
-
-
-@debug.command()
-async def ping(ctx):
-    await ctx.send("pong")
 
 
 @debug.command(description="Arguments: submission, voting, results")
@@ -126,3 +125,75 @@ async def rude_quotes(ctx):
         embed.add_field(name=str(index + 1), value=val, inline=False)
     await ctx.send(embed=embed)
     await ctx.message.delete()
+
+
+@data.command()
+async def refresh_leaderboard(ctx):
+    await ctx.message.delete()
+    await leaderboard.update_leaderboard()
+
+
+@bot.group()
+async def submissions(ctx):
+    if ctx.invoked_subcommand is None:
+        await ctx.send('Invalid command')
+
+
+@submissions.command()
+async def open(ctx):
+    if await bot.is_owner(ctx.author):
+        await submission_command(ctx.message)
+        data.daily_data.clear()
+        logger.info('Submissions started manually')
+
+
+@submissions.command()
+async def resume(ctx):
+    if await bot.is_owner(ctx.author):
+        await submission_command(ctx.message)
+        logger.info('Submissions resumed manually')
+
+
+async def submission_command(message):
+    channel = bot.get_channel(
+        config.config['food_flex_channel_id'])
+    guild = bot.get_guild(config.config['guild_id'])
+    await channel.set_permissions(guild.default_role, attach_files=True)
+    await submissions.submission_period(channel)
+    message.delete()
+
+
+@submissions.command()
+async def close(ctx):
+    if await bot.is_owner(ctx.author):
+        activity = discord.Activity(name='bugs get fixed',
+                                    type=discord.ActivityType.watching)
+        await bot.change_presence(status=discord.Status.online,
+                                  activity=activity)
+        embed = discord.Embed(title=data.strings['submission_closed_title'],
+                              description=data.strings['submission_closed'],
+                              colour=0xff0000)
+        channel = bot.get_channel(config.config['food_flex_channel_id'])
+
+        guild = bot.get_guild(config.config['guild_id'])
+        await channel.set_permissions(guild.default_role, attach_files=False)
+        await channel.send(embed=embed)
+        ctx.message.delete()
+
+
+@bot.command()
+async def voting(ctx):
+    if await bot.is_owner(ctx.author):
+        await voting.voting_period(bot.get_channel(
+            config.config['food_flex_channel_id']))
+        logger.debug("Voting started manually")
+        await ctx.message.delete()
+
+
+@bot.command(description="Results for a current day. Requires at least one voter")
+async def results(ctx):
+    if await bot.is_owner(ctx.author):
+        await results.results_period(bot.get_channel(
+            config['food_flex_channel_id']))
+        logger.debug("Results started manually")
+        await ctx.message.delete()

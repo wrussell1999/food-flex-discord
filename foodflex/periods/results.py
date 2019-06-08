@@ -86,12 +86,3 @@ async def disqualify_winner(key, users, channel):
     await channel.send(embed=embed)
     del data.daily_data[str(user.id)]
     await asyncio.sleep(1)
-
-
-@bot.command(description="Results for a current day. Requires at least one voter")
-async def results(ctx):
-    if await bot.is_owner(ctx.author):
-        await results_period(bot.get_channel(
-            config['food_flex_channel_id']))
-        logger.debug("Results started manually")
-        await ctx.message.delete()

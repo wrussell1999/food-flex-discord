@@ -119,12 +119,3 @@ async def individual_vote_reminder():
             embed.set_footer(text=data.strings['voting_dm_reminder_footer'])
             await user.send(embed=embed)
             logger.debug("Vote reminder sent for " + str(user.nick))
-
-
-@bot.command()
-async def voting(ctx):
-    if await bot.is_owner(ctx.author):
-        await voting_period(bot.get_channel(
-            config.config['food_flex_channel_id']))
-        logger.debug("Voting started manually")
-        await ctx.message.delete()
