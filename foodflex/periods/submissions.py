@@ -10,12 +10,12 @@ logger = config.initilise_logging()
 
 
 async def submission_period(channel):
-    logger.info("SUBMISSIONS")
-    activity = discord.Activity(name="people submit shit food",
+    logger.info('SUBMISSIONS')
+    activity = discord.Activity(name='people submit shit food',
                                 type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.online, activity=activity)
-    embed = discord.Embed(title="Submissions are open",
-                          description="Submit a picture of your cooking!",
+    embed = discord.Embed(title='Submissions are open',
+                          description='Submit a picture of your cooking!',
                           colour=0xff0000)
     await channel.send(embed=embed)
 
@@ -23,42 +23,66 @@ async def submission_period(channel):
 async def process_submission(message, channel):
     user_id_key = str(message.author.id)
     if str(message.author.id) in daily_data:
-        logger.info("Submission invalid")
+        logger.info('Submission invalid')
     else:
         user = bot.get_guild(
             config.config['guild_id']).get_member(message.author.id)
         daily_data[user_id_key] = {
-            "nick": str(user.nick),
-            "submitted": True,
-            "voted": False,
-            "votes": 0,
-            "vote_letter": chr(ord('A') + len(daily_data))
+            'nick': str(user.nick),
+            'submitted': True,
+            'voted': False,
+            'votes': 0,
+            'vote_letter': chr(ord('A') + len(daily_data))
         }
         await channel.send(random.choice(quotes['rude']))
         save_data()
-        logger.info("Submission valid")
+        logger.info('Submission valid')
 
 
-@bot.command()
+@bot.group()
 async def submissions(ctx):
+    if ctx.invoked_subcommand is None:
+        await ctx.send('Invalid command')
+
+
+@submissions.command()
+async def open(ctx):
     if await bot.is_owner(ctx.author):
-        await submission_period(bot.get_channel(
-            config.config['food_flex_channel_id']))
+        await submission_command(ctx.message)
         daily_data.clear()
-        logger.info("Submissions started manually")
-        await ctx.message.delete()
+        logger.info('Submissions started manually')
 
 
-@bot.command()
-async def close_submissions(ctx):
+@submissions.command()
+async def resume(ctx):
     if await bot.is_owner(ctx.author):
-        activity = discord.Activity(name="bugs get fixed",
+        await submission_command(ctx.message)
+        logger.info('Submissions resumed manually')
+
+
+async def submission_command(message):
+    channel = bot.get_channel(
+        config.config['food_flex_channel_id'])
+    guild = bot.get_guild(config.config['guild_id'])
+    await channel.set_permissions(guild.default_roke, attach_files=False)
+    await submission_period(channel)
+    message.delete()
+
+
+@submissions.command()
+async def close(ctx):
+    if await bot.is_owner(ctx.author):
+        activity = discord.Activity(name='bugs get fixed',
                                     type=discord.ActivityType.watching)
         await bot.change_presence(status=discord.Status.online,
                                   activity=activity)
-        embed = discord.Embed(title="Submissions are closed",
-                              description="We are currently working hard to " + 
-                              "fix some problems! Check back later!",
+        embed = discord.Embed(title='Submissions are closed',
+                              description='We are currently working hard to ' +
+                              'fix some problems! Check back later!',
                               colour=0xff0000)
         channel = bot.get_channel(config.config['food_flex_channel_id'])
+
+        guild = bot.get_guild(config.config['guild_id'])
+        await channel.set_permissions(guild.default_roke, attach_files=False)
         await channel.send(embed=embed)
+        ctx.message.delete()

@@ -28,7 +28,7 @@ async def update_leaderboard():
     try:
         message = await channel.fetch_message(
             config.config['leaderboard_message_id'])
-        await update_scores(sorted_scoreboard_dict['users'], 
+        await update_scores(sorted_scoreboard_dict['users'],
                             sorted_scoreboard_dict['scores'], message)
     except:
         await create_leaderboard(sorted_scoreboard_dict['users'],

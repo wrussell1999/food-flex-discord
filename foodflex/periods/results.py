@@ -39,7 +39,7 @@ async def results_period(channel):
 
 
 async def get_winner(channel, users):
-    [await disqualify_winner(key, users, channel) 
+    [await disqualify_winner(key, users, channel)
      for key in daily_data if not daily_data[key]['voted']]
 
     no_winners = False
@@ -58,7 +58,7 @@ async def get_winner(channel, users):
     winner_message = "Winner: "
     max_index = [index for index, vote in enumerate(
         daily_data['votes']) if vote == max_vote]
-    
+
     if len(max_index) > 1:
         winner_message = "Winners: "
 

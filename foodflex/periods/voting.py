@@ -5,7 +5,6 @@ import random
 from builtins import bot
 from ..util.data import daily_data, save_data, strings, config
 from ..util import config
-from ..util.setup_period import *
 
 logger = config.initilise_logging()
 
@@ -40,7 +39,6 @@ async def check_vote(message):
     if user_id not in daily_data:
         user = bot.get_guild(
             config.config['guild_id']).get_member(message.author.id)
-        print(user.nick)
         daily_data[user_id] = {
             "nick": str(user.nick),
             "submitted": False,
@@ -48,19 +46,20 @@ async def check_vote(message):
             "votes": 0,
             "vote_letter": None
         }
-    if not daily_data[user_id]['voted'] or \
-            daily_data[user_id]['vote_letter'] is not vote:
-
-        daily_data[user_id]['voted'] = True
-        for user in daily_data:
-            if daily_data[str(user)]['vote_letter'] == vote:
-                daily_data[str(user)]['votes'] += 1
-            
-        save_data()
-        await message.author.send(
-            "Your vote has been submitted successfully")
     else:
-        await message.author.send("Invalid vote!")
+        if not daily_data[user_id]['voted'] or \
+                daily_data[user_id]['vote_letter'] is not vote:
+
+            daily_data[user_id]['voted'] = True
+            for user in daily_data:
+                if daily_data[str(user)]['vote_letter'] == vote:
+                    daily_data[str(user)]['votes'] += 1
+
+            save_data()
+            await message.author.send(
+                "Your vote has been submitted successfully")
+        else:
+            await message.author.send("Invalid vote!")
 
 
 async def individual_vote_reminder():
