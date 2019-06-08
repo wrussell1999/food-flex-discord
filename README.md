@@ -49,6 +49,13 @@ $ source .venv/bin/activate
 ```
 
 To install discord.py:
+
+_Virtual environment:_
+```bash
+$ pip3 install -r requirements.txt
+```
+or
+
 ```bash
 $ sudo apt install python3-pip
 $ python3 -m pip install -U discord.py
