@@ -3,7 +3,7 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from ..util.data import overall_score
+from ..util.data import leaderboard_data, save_leaderboard
 from ..util import config
 from ..util.setup_period import *
 
@@ -13,13 +13,14 @@ sorted_scoreboard_dict = {}
 
 def update_score(winner, score):
     logger.debug("Score value: " + str(score))
-    if winner.id in overall_score['users']:
-        index = overall_score['users'].index(winner.id)
-        overall_score['score'][index] += score
+
+    if winner.id in leaderboard_data['users']:
+        index = leaderboard_data['users'].index(winner.id)
+        leaderboard_data['score'][index] += score
     else:
-        overall_score['users'].append(winner.id)
-        overall_score['score'].append(score)
-    score_dict_to_json()
+        leaderboard_data['users'].append(winner.id)
+        leaderboard_data['score'].append(score)
+    save_leaderboard()
 
 
 async def update_leaderboard():
@@ -35,11 +36,11 @@ async def update_leaderboard():
                                  sorted_scoreboard_dict['scores'])
 
 
-def sort_leaderboard():
+def sort_leaderboard():  # FIX ME
     sorted_scoreboard_dict['users'] = [x for _, x in sorted(
-        zip(overall_score['score'], overall_score['users']), reverse=True)]
+        zip(leaderboard_data['score'], leaderboard_data['users']), reverse=True)]
     sorted_scoreboard_dict['scores'] = [x for _, x in sorted(
-        zip(overall_score['score'], overall_score['score']), reverse=True)]
+        zip(leaderboard_data['score'], leaderboard_data['score']), reverse=True)]
     return sorted_scoreboard_dict
 
 

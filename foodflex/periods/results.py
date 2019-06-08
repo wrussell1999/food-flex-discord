@@ -4,7 +4,7 @@ import datetime
 import asyncio
 import random
 from builtins import bot
-from ..util.data import quotes, overall_score, daily_data, strings, score_dict_to_json, data_dict_to_json
+from ..util.data import quotes, leaderboard_data, daily_data, strings, save_leaderboard, save_data
 from ..util.config import config, initilise_logging
 from ..util.setup_period import *
 from .leaderboard import *
