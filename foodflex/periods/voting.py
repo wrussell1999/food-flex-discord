@@ -52,9 +52,9 @@ async def check_vote(message):
     if user_id in data.daily_data:
         # this person has submitted/voted before
         try:
-            voting_for = letter_to_user_id[vote]
+            voting_for = data.letter_to_user_id[vote]
             if voting_for == user_id:
-                await log_and_dm("Invalid vote!\nYou cannot vote for yourself", 
+                await log_and_dm("Invalid vote!\nYou cannot vote for yourself",
                                  message.author)
                 return
         except:
@@ -74,11 +74,11 @@ async def check_vote(message):
 
     # add one to the number of votes that the person we are voting for has
     try:
-        user_id_voted_for = letter_to_user_id[vote]
-        daily_data[user_id_voted_for]['votes'] += 1
-        daily_data[user_id]['voted'] = True
+        user_id_voted_for = data.letter_to_user_id[vote]
+        data.daily_data[user_id_voted_for]['votes'] += 1
+        data.daily_data[user_id]['voted'] = True
         await log_and_dm("Vote has been submitted successfully for '{}'".format( \
-            daily_data[user_id_voted_for]['nick']), message.author)
+            data.daily_data[user_id_voted_for]['nick']), message.author)
         save_data()
     except KeyError as e:
         # the letter voted for does not refer to anyone

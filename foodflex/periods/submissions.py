@@ -25,13 +25,13 @@ async def process_submission(message, channel):
         logger.info('Submission invalid')
     else:
         new_letter = chr(ord('A') + len(data.daily_data))
-        daily_data[user_id] = {
+        data.daily_data[user_id] = {
             'nick': message.author.nick,
             'submitted': True,
             'voted': False,
             'votes': 0
         }
-        letter_to_user_id[new_letter] = user_id
+        data.letter_to_user_id[new_letter] = user_id
         await channel.send(random.choice(data.quotes['rude']))
         data.save_data()
         logger.info('Submission valid, assigned letter \'{}\''.format(new_letter))
