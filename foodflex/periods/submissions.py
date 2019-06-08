@@ -7,7 +7,7 @@ from ..util.data import daily_data, quotes, save_data
 from ..util import config
 
 logger = config.initilise_logging()
-
+letter_to_user_id = {}
 
 async def submission_period(channel):
     logger.info('SUBMISSIONS')
@@ -21,23 +21,21 @@ async def submission_period(channel):
 
 
 async def process_submission(message, channel):
-    user_id_key = str(message.author.id)
-    if str(message.author.id) in daily_data:
+    user_id = str(message.author.id)
+    if user_id in daily_data:
         logger.info('Submission invalid')
     else:
-        user = bot.get_guild(
-            config.config['guild_id']).get_member(message.author.id)
-        daily_data[user_id_key] = {
-            'nick': str(user.nick),
+        new_letter = chr(ord('A') + len(daily_data))
+        daily_data[user_id] = {
+            'nick': message.author.nick,
             'submitted': True,
             'voted': False,
-            'votes': 0,
-            'vote_letter': chr(ord('A') + len(daily_data))
+            'votes': 0
         }
+        letter_to_user_id[new_letter] = user_id
         await channel.send(random.choice(quotes['rude']))
         save_data()
-        logger.info('Submission valid')
-
+        logger.info('Submission valid, assigned letter \'{}\''.format(new_letter))
 
 @bot.group()
 async def submissions(ctx):

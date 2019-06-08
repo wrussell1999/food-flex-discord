@@ -5,6 +5,7 @@ import random
 from builtins import bot
 from ..util.data import daily_data, save_data, strings, config
 from ..util import config
+from . import submissions
 
 logger = config.initilise_logging()
 
@@ -19,17 +20,20 @@ async def voting_period(channel):
                           colour=0xff0000)
     embed.set_footer(text="Respond in the chat with the appropriate letter")
 
-    for value in daily_data:
-        embed.add_field(name=daily_data[str(value)]['nick'],
-                        value=daily_data[str(value)]['vote_letter'],
+    for letter in submissions.letter_to_user_id:
+        user_id = submissions.letter_to_user_id[letter]
+        embed.add_field(name=daily_data[user_id]['nick'],
+                        value=letter,
                         inline=False)
 
     await channel.send(embed=embed)
 
 
 async def check_vote(message):
+    user_id = str(message.author.id)
+
     logger.info("Vote '{}' from '{}' ({})".format( \
-        message.clean_content, message.author.nick, str(message.author.id)))
+        message.clean_content, message.author.nick, user_id))
 
     # votes must be a single letter
     if len(message.clean_content) != 1:
@@ -43,13 +47,18 @@ async def check_vote(message):
     if message.clean_content == '🅱':
         vote = 'B'
 
-    user_id = str(message.author.id)
+    letter_to_user_id = submissions.letter_to_user_id
+    logger.debug("Vote letter to user_id map: " + letter_to_user_id.__str__())
 
     if user_id in daily_data:
         # this person has submitted/voted before
-        if daily_data[user_id]['vote_letter'] == vote:
-            await log_and_dm("Invalid vote!\nYou cannot vote for yourself", message.author)
-            return
+        try:
+            voting_for = letter_to_user_id[vote]
+            if voting_for == user_id:
+                await log_and_dm("Invalid vote!\nYou cannot vote for yourself", message.author)
+                return
+        except:
+            pass
 
         if daily_data[user_id]['voted']:
             await log_and_dm("Invalid vote!\nYou have already voted", message.author)
@@ -60,20 +69,8 @@ async def check_vote(message):
             "nick": message.author.nick,
             "submitted": False,
             "voted": False, # only set to true when they make a valid vote
-            "votes": 0,
-            "vote_letter": None
+            "votes": 0
         }
-
-    # create a dict that maps letters to user_ids of people who submitted
-    # this could be stored somewhere and remove the need for 'vote_letter'
-    # in the future
-    letter_to_user_id = {}
-    for user_id in daily_data:
-        letter = daily_data[user_id]['vote_letter']
-        if letter != None:
-            letter_to_user_id[letter] = user_id
-
-    logger.debug("Vote letter to user_id map: " + letter_to_user_id.__str__())
 
     # add one to the number of votes that the person we are voting for has
     try:
@@ -113,4 +110,4 @@ async def voting(ctx):
         await voting_period(bot.get_channel(
             config.config['food_flex_channel_id']))
         logger.debug("Voting started manually")
-        await ctx.message.delete()
+        # await ctx.message.delete()
