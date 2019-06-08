@@ -8,7 +8,6 @@ import foodflex.util.config as config
 
 logger = config.initilise_logging()
 
-
 async def submission_period(channel):
     logger.info('SUBMISSIONS')
     activity = discord.Activity(name=data.quotes['submission_open_activity'],
@@ -21,21 +20,21 @@ async def submission_period(channel):
 
 
 async def process_submission(message, channel):
-    user_id_key = str(message.author.id)
-    if str(message.author.id) in data.daily_data:
+    user_id = str(message.author.id)
+    if user_id in data.daily_data:
         logger.info('Submission invalid')
     else:
-        data.daily_data[user_id_key] = {
-            'nick': str(message.author.nick),
+        new_letter = chr(ord('A') + len(data.daily_data))
+        daily_data[user_id] = {
+            'nick': message.author.nick,
             'submitted': True,
             'voted': False,
-            'votes': 0,
-            'vote_letter': chr(ord('A') + len(data.daily_data))
+            'votes': 0
         }
+        letter_to_user_id[new_letter] = user_id
         await channel.send(random.choice(data.quotes['rude']))
-        save_data()
-        logger.info('Submission valid')
-
+        data.save_data()
+        logger.info('Submission valid, assigned letter \'{}\''.format(new_letter))
 
 async def submission_reminder():
     channel = bot.get_channel(config.config['food_flex_channel_id'])

@@ -20,46 +20,75 @@ async def voting_period(channel):
                           colour=0xff0000)
     embed.set_footer(text=data.strings['voting_open_footer'])
 
-    for value in data.daily_data:
-        embed.add_field(name=data.daily_data[str(value)]['nick'],
-                        value=data.daily_data[str(value)]['vote_letter'],
+    for letter in data.letter_to_user_id:
+        user_id = data.letter_to_user_id[letter]
+        embed.add_field(name=data.daily_data[user_id]['nick'],
+                        value=letter,
                         inline=False)
 
     await channel.send(embed=embed)
 
 
 async def check_vote(message):
-    logger.info("Vote by: " + str(message.author.nick))
-
-    vote = message.clean_content[0]
-    if message.clean_content in [':b:', '🅱️']:
-        vote = 'B'
-
     user_id = str(message.author.id)
 
-    if user_id not in data.daily_data:
-        user = bot.get_guild(
-            config.config['guild_id']).get_member(message.author.id)
-        data.daily_data[user_id] = {
-            "nick": str(user.nick),
-            "submitted": False,
-            "voted": True,
-            "votes": 0,
-            "vote_letter": None
-        }
+    logger.info("Vote '{}' from '{}' ({})".format( \
+        message.clean_content, message.author.nick, user_id))
+
+    # votes must be a single letter
+    if len(message.clean_content) != 1:
+        await log_and_dm("Invalid vote!\nVotes must be a single letter", message.author)
+        return
+
+    # make sure votes are upper case
+    vote = message.clean_content.upper()
+
+    # convent 🅱 to B
+    if message.clean_content == '🅱':
+        vote = 'B'
+
+    logger.debug("Vote letter to user_id map: " + data.letter_to_user_id.__str__())
+
+    if user_id in data.daily_data:
+        # this person has submitted/voted before
+        try:
+            voting_for = letter_to_user_id[vote]
+            if voting_for == user_id:
+                await log_and_dm("Invalid vote!\nYou cannot vote for yourself", 
+                                 message.author)
+                return
+        except:
+            pass
+
+        if data.daily_data[user_id]['voted']:
+            await log_and_dm("Invalid vote!\nYou have already voted", message.author)
+            return
     else:
-        if not data.daily_data[user_id]['voted'] or \
-                data.daily_data[user_id]['vote_letter'] is not vote:
+        # person has not submitted so we need to create an entry for them
+        data.daily_data[user_id] = {
+            "nick": message.author.nick,
+            "submitted": False,
+            "voted": False,  # only set to true when they make a valid vote
+            "votes": 0
+        }
 
-            data.daily_data[user_id]['voted'] = True
-            for user in data.daily_data:
-                if data.daily_data[str(user)]['vote_letter'] == vote:
-                    data.daily_data[str(user)]['votes'] += 1
+    # add one to the number of votes that the person we are voting for has
+    try:
+        user_id_voted_for = letter_to_user_id[vote]
+        daily_data[user_id_voted_for]['votes'] += 1
+        daily_data[user_id]['voted'] = True
+        await log_and_dm("Vote has been submitted successfully for '{}'".format( \
+            daily_data[user_id_voted_for]['nick']), message.author)
+        save_data()
+    except KeyError as e:
+        # the letter voted for does not refer to anyone
+        await log_and_dm("Invalid vote!\nCan't find user for letter '{}'".format( \
+            vote), message.author)
 
-            save_data()
-            await message.author.send(data.strings['voting_success'])
-        else:
-            await message.author.send(data.strings['voting_fail'])
+async def log_and_dm(reason, person):
+    await person.send(reason)
+    logger.info(reason)
+
 
 async def voting_reminder():
     channel = bot.get_channel(config.config['food_flex_channel_id'])
@@ -68,7 +97,7 @@ async def voting_reminder():
 
     # Gets users as a list of tuples (user, score)
     users = [(data.leaderboard_data[key]['nick'],
-             data.leaderboard_data[key]['score'])
+              data.leaderboard_data[key]['score'])
              for key in data.leaderboard_data]
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 

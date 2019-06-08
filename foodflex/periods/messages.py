@@ -23,19 +23,7 @@ async def on_message(message):
             logger.info("Submission from " + message.author.nick)
             await submissions.process_submission(message, channel)
 
-        if len(message.attachments) == 0 and (hour >= 00 and hour < 12) and \
-                check_vote_period(message):
+        if len(message.attachments) == 0 and (hour >= 00 and hour < 12):
             logger.info("Vote from: " + message.author.nick + ", Vote: " +
                         str(message.clean_content))
             await voting.check_vote(message)
-
-
-def check_vote_period(message):
-    if len(message.clean_content) == 1:
-        return True
-    elif message.clean_content.strip() == ":b:":
-        return True
-    elif message.clean_content.strip() == "🅱️":
-        return True
-    else:
-        return False
