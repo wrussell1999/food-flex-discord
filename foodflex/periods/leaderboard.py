@@ -36,11 +36,7 @@ async def update_leaderboard():
 
 
 def sort_leaderboard():  # FIX ME
-    sorted_scoreboard_dict['users'] = [x for _, x in sorted(
-        zip(leaderboard_data['score'], leaderboard_data['users']), reverse=True)]
-    sorted_scoreboard_dict['scores'] = [x for _, x in sorted(
-        zip(leaderboard_data['score'], leaderboard_data['score']), reverse=True)]
-    return sorted_scoreboard_dict
+    return
 
 
 async def update_scores(users, scores, message):
@@ -52,7 +48,10 @@ async def create_leaderboard(users, scores):
     embed = get_embed(users, scores)
     channel = bot.get_channel(config.config['leaderboard_channel_id'])
     await channel.send(embed=embed)
+
+    # Get the ID of the last message
     message_id = channel.last_message_id()
+    logger.debug(message_id)
     config.config['leaderboard_message_id'] = message_id
 
 
@@ -61,7 +60,7 @@ def get_embed(users, scores):
     date_str = "Overall scores this term - " + \
         str(now.day) + "/" + str(now.month) + "/" + str(now.year)
     embed = discord.Embed(
-        title="LEADERBOARD", description=date_str, colour=0xff0000)
+        title="Leaderboard", description=date_str, colour=0xff0000)
     for index, val in enumerate(users):
         user = bot.get_guild(config.config['guild_id']).get_member(val)
         score = "Score: " + str(scores[index])

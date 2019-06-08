@@ -4,4 +4,6 @@
     "admin_id":,
     "food_chat_id": ,
     "food_flex_channel_id": ,
+    "leaderboard_channel_id",
+    "leaderboard_message_id"
 }

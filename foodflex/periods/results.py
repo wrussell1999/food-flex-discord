@@ -65,7 +65,7 @@ async def get_winner(channel, users):
     for index, value in enumerate(daily_data['submissions']):
         if daily_data['votes'][index] == max_vote:
             winner = bot.get_guild(
-                config['server_id']).get_member(value)
+                config['guild_id']).get_member(value)
             winner_message += winner.nick + ", "
             update_score(winner, 1)
     return winner_message
@@ -82,7 +82,7 @@ def check_user_vote(user):
 
 async def disqualify_winner(key, users, channel):
     user = bot.get_guild(
-        config['server_id']).get_member(key)
+        config['guild_id']).get_member(key)
 
     winner_message = "Winner disqualified: " + str(user.nick)
 

@@ -3,7 +3,7 @@ from discord.ext import commands
 import datetime
 import random
 from builtins import bot
-from ..util.data import daily_data, data_dict_to_json, strings, config
+from ..util.data import daily_data, save_data, strings, config
 from ..util import config
 from ..util.setup_period import *
 
