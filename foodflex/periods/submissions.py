@@ -33,7 +33,7 @@ async def process_submission(message, channel):
             "submitted": True,
             "voted": False,
             "votes": 0,
-            "vote_index": chr(ord('A') + len(daily_data))
+            "vote_letter": chr(ord('A') + len(daily_data))
         }
         await channel.send(random.choice(quotes['rude']))
         save_data()
@@ -45,7 +45,7 @@ async def submissions(ctx):
     if await bot.is_owner(ctx.author):
         await submission_period(bot.get_channel(
             config.config['food_flex_channel_id']))
-        reset_daily_data()
+        daily_data.clear()
         logger.info("Submissions started manually")
         await ctx.message.delete()
 

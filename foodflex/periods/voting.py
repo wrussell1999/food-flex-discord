@@ -22,25 +22,10 @@ async def voting_period(channel):
 
     for value in daily_data:
         embed.add_field(name=daily_data[str(value)]['nick'],
-                        value=daily_data[str(value)]['vote_index'],
+                        value=daily_data[str(value)]['vote_letter'],
                         inline=False)
 
     await channel.send(embed=embed)
-
-
-async def private_vote_reminder():
-    for user in daily_data:
-        if daily_data[str(user)]['submitted'] and \
-                not daily_data[str(user)]['voted']:
-            user = bot.get_guild(
-                config.config['server_id']).get_member(
-                str(user))
-            embed = discord.Embed(title="REMINDER!",
-                                  description="Remember to vote for " +
-                                  "your submission to be valid!!!")
-            embed.set_footer(text="You will be disqualified if you don't vote")
-            await user.send(embed=embed)
-            logger.debug("Vote reminder sent for " + str(user.nick))
 
 
 async def check_vote(message):
@@ -61,20 +46,36 @@ async def check_vote(message):
             "submitted": False,
             "voted": True,
             "votes": 0,
-            "vote_index": None
+            "vote_letter": None
         }
     if not daily_data[user_id]['voted'] or \
-            daily_data[user_id]['vote_index'] is not vote:
+            daily_data[user_id]['vote_letter'] is not vote:
 
         daily_data[user_id]['voted'] = True
         for user in daily_data:
-            if daily_data[str(user)]['vote_index'] is vote:
+            if daily_data[str(user)]['vote_letter'] == vote:
                 daily_data[str(user)]['votes'] += 1
+            
         save_data()
         await message.author.send(
             "Your vote has been submitted successfully")
     else:
         await message.author.send("Invalid vote!")
+
+
+async def individual_vote_reminder():
+    for user in daily_data:
+        if daily_data[str(user)]['submitted'] and \
+                not daily_data[str(user)]['voted']:
+            user = bot.get_guild(
+                config.config['server_id']).get_member(
+                str(user))
+            embed = discord.Embed(title="REMINDER!",
+                                  description="Remember to vote for " +
+                                  "your submission to be valid!!!")
+            embed.set_footer(text="You will be disqualified if you don't vote")
+            await user.send(embed=embed)
+            logger.debug("Vote reminder sent for " + str(user.nick))
 
 
 @bot.command()

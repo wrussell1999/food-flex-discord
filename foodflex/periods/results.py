@@ -35,7 +35,7 @@ async def results_period(channel):
     await channel.send(embed=embed)
     await update_leaderboard()
 
-    reset_daily_data()
+    daily_data.clear()
     save_data()
 
 
