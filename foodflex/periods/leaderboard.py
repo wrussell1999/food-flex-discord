@@ -4,50 +4,48 @@ import datetime
 import random
 import json
 from builtins import bot
-from ..util.data import leaderboard_data, save_leaderboard
-from ..util.config import config, save_config, initilise_logging
 
-logger = initilise_logging()
+import foodflex.util.data as data
+import foodflex.util.config as config
+
+logger = config.initilise_logging()
 
 
 def update_score(winner, score):
     logger.debug("Score value: " + str(score))
 
-    if winner.id not in leaderboard_data:
-        leaderboard_data[str(winner.id)] = {
+    if winner.id not in data.leaderboard_data:
+        data.leaderboard_data[str(winner.id)] = {
             'nick': winner.nick,
             'score': 1
         }
     else:
-        leaderboard_data[str(winner.id)]['score'] += 1
-    save_leaderboard()
+        data.leaderboard_data[str(winner.id)]['score'] += 1
+    data.save_leaderboard()
 
 
 async def update_leaderboard():
-    channel = bot.get_channel(config['leaderboard_channel_id'])
+    channel = bot.get_channel(config.config['leaderboard_channel_id'])
 
-    users = [(leaderboard_data[key]['nick'], leaderboard_data[key]['score'])
-             for key in leaderboard_data]
+    # Gets a list of users and scores (as tuple in descending order)
+    users = [(data.leaderboard_data[key]['nick'], data.leaderboard_data[key]['score'])
+             for key in data.leaderboard_data]
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
-    channel = bot.get_channel(config['leaderboard_channel_id'])
-    if 'leaderboard_message_id' in config:
+    channel = bot.get_channel(config.config['leaderboard_channel_id'])
+    # Checks if the leaderboard has already been posted
+    if 'leaderboard_message_id' in config.config:
         message = await channel.fetch_message(
-            config['leaderboard_message_id'])
+            config.config['leaderboard_message_id'])
         embed = get_embed(users)
         await message.edit(embed=embed)
-
     else:
+        # Creates new leaderboard
         embed = get_embed(users)
         await channel.send(embed=embed)
         message_id = channel.last_message_id
-        config['leaderboard_message_id'] = message_id
-        save_config()
-
-
-async def update_scores(users, scores, message):
-    embed = get_embed(users, scores)
-    await message.edit(embed=embed)
+        config.config['leaderboard_message_id'] = message_id
+        config.save_config()
 
 
 def get_embed(users):

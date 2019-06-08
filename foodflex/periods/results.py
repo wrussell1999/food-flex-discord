@@ -19,7 +19,7 @@ async def results_period(channel):
     await bot.change_presence(status=discord.Status.idle, activity=activity)
 
     users = [(daily_data[key]['nick'], daily_data[key]['votes'])
-             for key in daily_data if daily_data[key]['submitted'] is True]
+             for key in daily_data if daily_data[key]['submitted']]
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
     winner_message = await get_winner(channel, users)
@@ -69,15 +69,6 @@ async def get_winner(channel, users):
             winner_message += winner.nick + ", "
             update_score(winner, 1)
     return winner_message
-
-
-def check_user_vote(user):
-    if user in daily_data['voters']:
-        logger.debug("Winner voted - valid")
-        return True
-    else:
-        logger.warning("Winner disqualified")
-        return False
 
 
 async def disqualify_winner(key, users, channel):
