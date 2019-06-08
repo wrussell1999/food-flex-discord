@@ -63,13 +63,12 @@ async def check_time_periods():
                                     daily_data['votes'])
             embed.set_footer(
                 text="Remember to vote for your submission to be valid!")
-            await private_vote_reminder()
+            await individual_vote_reminder()
             await channel.send(
                 embed=embed)
 
         elif hour == 12 and minute == 00 and \
-                len(daily_data['submissions']) > 1 and \
-                len(daily_data['voters']) > 0:
+                len(daily_data) > 1:  # Needs 
             await results_period(channel)
 
         await asyncio.sleep(60)
