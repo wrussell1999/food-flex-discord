@@ -18,8 +18,11 @@ async def results_period(channel):
         name="for shit food", type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.idle, activity=activity)
 
-    users = [(daily_data[key]['nick'], daily_data[key]['votes'])
-             for key in daily_data if daily_data[key]['submitted'] is True]
+    users = []
+    for key in daily_data:
+        if daily_data[key]['submitted']:
+            tuple = (daily_data[key]['nick'], daily_data[key]['votes'])
+            users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
     winner_message = await get_winner(channel, users)
@@ -39,12 +42,9 @@ async def results_period(channel):
 
 
 async def get_winner(channel, users):
-    [await disqualify_winner(key, users, channel)
-     for key in daily_data if not daily_data[key]['voted']]
-
-    no_winners = False
-    [no_winners is True for key in daily_data
-     if not daily_data[key]['voted'] and daily_data[key]['submitted']]
+    for user_id in daily_data:
+        if not daily_data[user_id]['voted']:
+            await disqualify_winner(user_id, users, channel)
 
     if len(daily_data) == 0:  # won't work
         embed = discord.Embed(
