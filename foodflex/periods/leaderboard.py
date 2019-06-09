@@ -11,12 +11,13 @@ import foodflex.util.config as config
 logger = config.initilise_logging()
 
 
-def update_score(user_id):
+def update_score(user_id, user_nick):
     # Checks if the user is already on the leaderboard
+    print(type(user_id))
     if user_id not in data.leaderboard_data:
         # Adds user to leaderboard
         data.leaderboard_data[user_id] = {
-            'nick': winner.nick,
+            'nick': user_nick,
             'score': 1
         }
     else:
@@ -56,7 +57,9 @@ def get_embed(users):
 
     # Makes an embed
     embed = discord.Embed(
-        title="Leaderboard", description="Overall scores this term", colour=0xff0000)
+        title="Leaderboard",
+        description="Overall scores this term",
+        colour=0xff0000)
     embed.set_footer(text=date_str)
     # Adds the users to the embed
     for value in users:

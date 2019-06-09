@@ -53,7 +53,7 @@ async def get_winner(channel):
         if data.daily_data[key]['submitted'] and data.daily_data[key]['voted']:
             tuple = (data.daily_data[key]['nick'],
                      data.daily_data[key]['votes'],
-                     data.daily_data[key])
+                     list(data.daily_data.keys())[0])
             users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
@@ -75,5 +75,5 @@ async def get_winner(channel):
         else:
             # Adds user to string, and updates leaderboard score
             winner_message += user[0] + ", "
-            leaderboard.update_score(user[2])
+            leaderboard.update_score(user[2], user[0])
     return winner_message

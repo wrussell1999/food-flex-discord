@@ -34,9 +34,6 @@ async def check_vote(message):
     if len(message.clean_content) != 1:
         return
 
-    logger.info("Vote '{}' from '{}' ({})".format(
-        message.clean_content, message.author.nick, user_id))
-
     # Make sure votes are upper case
     vote = message.clean_content.upper()
 
