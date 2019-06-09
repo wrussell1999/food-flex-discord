@@ -13,7 +13,8 @@ logger = config.initilise_logging()
 
 def update_score(user_id, user_nick):
     # Checks if the user is already on the leaderboard
-    print(type(user_id))
+    print("user_id: " + user_id)
+    print("user_nick: " + user_nick)
     if user_id not in data.leaderboard_data:
         # Adds user to leaderboard
         data.leaderboard_data[user_id] = {

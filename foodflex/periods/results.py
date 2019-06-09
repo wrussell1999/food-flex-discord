@@ -49,11 +49,11 @@ async def get_winner(channel):
 
     # Get a list of potential winners
     users = []
-    for key in data.daily_data:
+    for index, key in enumerate(data.daily_data):
         if data.daily_data[key]['submitted'] and data.daily_data[key]['voted']:
             tuple = (data.daily_data[key]['nick'],
                      data.daily_data[key]['votes'],
-                     list(data.daily_data.keys())[0])
+                     list(data.daily_data.keys())[index])
             users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
