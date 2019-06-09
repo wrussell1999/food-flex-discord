@@ -1,6 +1,5 @@
-# Food Flex Discord Bot [![Discord Bots](https://discordbots.org/api/widget/status/502391189270560773.svg)](https://discordbots.org/bot/502391189270560773)
+# Food Flex Discord Bot
 
-[Discord Bot](https://discordbots.org/bot/502391189270560773) created by Will Russell
 <p align="center">
   <img src="https://cdn.discordapp.com/attachments/501947007653511172/572491463112523780/unknown.png">
 </p>
@@ -10,6 +9,7 @@ Food Flex is bot that manages:
 - Submissions
 - Voting 
 - Results
+- Leaderboard
 
 ### Submissions (13:00 - 23:59)
 
@@ -22,6 +22,10 @@ Submissions are closed and a voting poll is displayed. Users can vote for their 
 ### Results (12:00)
 
 Voting is closed and a results message will be sent to the chat. 
+
+### Leaderboard
+
+This is a read-only channel that updates every day once there are new results. This shows the overall scores over a period of time. This can be a month, university term, or a year.
 
 **NOTE:** If you submit a picture and don't vote, you are disqualified.
 
@@ -70,6 +74,8 @@ Doing this will allow us to get a token, which we need to add to the `config.jso
 
 Go to Discord and turn on Developer Mode. With this, you can now right-click on guilds, channels, catergories, users, messages, etc. and get their ID (a snowflake stored as an int for `discord.py`). Use this to get the following IDs needed for `config.json`.
 
+`leaderboard_message_id` should be removed if there isn't already a leaderboard. If there isn't a `leaderboard_message_id`, it will be generated when the leaderboard is created.
+
 _Note: Token is stored as a string, and IDs (snowflakes) are stored as integers._
 ```json
 {
@@ -79,13 +85,19 @@ _Note: Token is stored as a string, and IDs (snowflakes) are stored as integers.
     "food_chat_id": int,
     "food_flex_channel_id": int,
     "leaderboard_channel_id": int,
-    "leaderboard_message_id": int
+    "leaderboard_message_id": int // If it doesn't exist, remove this line
 }
 ```
 
 ### Run the bot 
+```bash
+$ python3 -m foodflex
+```
 
-    $ python3 -m foodflex
+## Contributors
+
+- [Will Russell](https://www.github.com/wrussell1999): Submissions, voting, results, leaderboard, working with the discord.py API wrapper and Discord servers.
+- [Daniel Spencer](https://www.github.com/danielfspencer): Voting validation, improved reliability, general refactoring, and performance improvements with dictionaries.
 
 ## License
-MIT License for all the code written by me.
+MIT License for all the code written by Will and Dan.
