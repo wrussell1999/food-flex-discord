@@ -9,11 +9,11 @@ logger = config.initilise_logging()
 
 async def submission_period(channel):
     logger.info('SUBMISSIONS')
-    activity = discord.Activity(name=data.quotes['submission_open_activity'],
+    activity = discord.Activity(name=data.strings['submission_open_activity'],
                                 type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.online, activity=activity)
-    embed = discord.Embed(title=data.quotes['submission_open_title'],
-                          description=data.quotes['submission_open'],
+    embed = discord.Embed(title=data.strings['submission_open_title'],
+                          description=data.strings['submission_open'],
                           colour=0xff0000)
     await channel.send(embed=embed)
 

@@ -25,7 +25,7 @@ async def results_period(channel):
             users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
-    winner_message = await get_winner(channel, users)
+    winner_message = await get_winner(channel)
 
     embed = discord.Embed(title="Results", description="", colour=0xff0000)
     embed.set_author(name=winner_message)
@@ -42,12 +42,18 @@ async def results_period(channel):
     data.save_data()
 
 
-async def get_winner(channel, users):
-    for user_id in data.daily_data:
-        if not data.daily_data[user_id]['voted']:
-            await disqualify_winner(user_id, users, channel)
+async def get_winner(channel):
 
-    if len(data.daily_data) == 0:  # won't work
+    users = []
+    for key in data.daily_data:
+        if data.daily_data[key]['submitted'] and data.daily_data[key]['voted']:
+            tuple = (data.daily_data[key]['nick'],
+                     data.daily_data[key]['votes'])
+            users.append(tuple)
+    users.sort(key=lambda tuple: tuple[1], reverse=True)
+
+    max_votes = users[0][1]
+    if len(users) == 0 or max_votes == 0:
         embed = discord.Embed(
             title="No winner",
             description="The potential winners were disqualified",
@@ -55,34 +61,10 @@ async def get_winner(channel, users):
         await channel.send(embed=embed)
         return "No winner"
 
-    max_vote = users[0][1]
-    winner_message = "Winner: "
-    max_index = [index for index, vote in enumerate(
-        data.daily_data['votes']) if vote == max_vote]
-
-    if len(max_index) > 1:
-        winner_message = "Winners: "
-
-    for index, value in enumerate(data.daily_data['submissions']):
-        if data.daily_data['votes'][index] == max_vote:
-            winner = bot.get_guild(
-                config['guild_id']).get_member(value)
-            winner_message += winner.nick + ", "
-            leaderboard.update_score(winner, 1)
+    winner_message = "Winners: "
+    for user in users:
+        if user[1] != max_votes:
+            users.remove(user)
+        else:
+            winner_message += user[0] + ", "
     return winner_message
-
-
-async def disqualify_winner(key, users, channel):
-    user = bot.get_guild(
-        config['guild_id']).get_member(key)
-
-    winner_message = "Winner disqualified: " + str(user.nick)
-
-    embed = discord.Embed(
-        title=winner_message, description="Winner did not vote, therefore " +
-        "their submission is invalid", colour=0xff0000)
-
-    # Remove user from the daily data
-    await channel.send(embed=embed)
-    del data.daily_data[str(user.id)]
-    await asyncio.sleep(1)

@@ -42,5 +42,5 @@ def save_leaderboard():
 
 
 def save_prefs():
-    with open('data/shared_prefs.json') as json_file:
+    with open('data/shared_prefs.json', 'w') as json_file:
         json.dump(shared_prefs, json_file)

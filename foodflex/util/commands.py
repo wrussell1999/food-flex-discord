@@ -210,7 +210,7 @@ async def result(ctx):
         data.save_prefs()
 
         await results.results_period(bot.get_channel(
-            config['food_flex_channel_id']))
+            config.config['food_flex_channel_id']))
 
         logger.debug("Results started manually")
         await ctx.message.delete()
