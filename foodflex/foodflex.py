@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import datetime
 import asyncio
-import random
 import builtins
 import foodflex.util.config as config
 import foodflex.util.data as data

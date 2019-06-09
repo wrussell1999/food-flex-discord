@@ -1,7 +1,5 @@
 import discord
 from discord.ext import commands
-import datetime
-import random
 from builtins import bot
 import foodflex.util.data as data
 import foodflex.util.config as config
@@ -37,7 +35,6 @@ async def check_vote(message):
 
     # votes must be a single letter
     if len(message.clean_content) != 1:
-        await log_and_dm("Invalid vote!\nVotes must be a single letter", message.author)
         return
 
     # make sure votes are upper case
@@ -85,6 +82,7 @@ async def check_vote(message):
         await log_and_dm("Invalid vote!\nCan't find user for letter '{}'".format( \
             vote), message.author)
 
+
 async def log_and_dm(reason, person):
     await person.send(reason)
     logger.info(reason)
@@ -106,6 +104,7 @@ async def voting_reminder():
     embed.set_footer(
         text="")
     await channel.send(embed=embed)
+
 
 async def individual_vote_reminder():
     for user in data.daily_data:

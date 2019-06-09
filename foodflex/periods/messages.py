@@ -1,12 +1,11 @@
 import discord
 from discord.ext import commands
 import datetime
-import random
 from builtins import bot
-from ..util import config
 from . import submissions
 from . import voting
 import foodflex.util.data as data
+import foodflex.util.config as config
 
 logger = config.initilise_logging()
 
