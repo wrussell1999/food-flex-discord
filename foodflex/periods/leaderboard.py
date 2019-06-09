@@ -11,16 +11,16 @@ import foodflex.util.config as config
 logger = config.initilise_logging()
 
 
-def update_score(winner, score):
-    logger.debug("Score value: " + str(score))
-
-    if str(winner.id) not in data.leaderboard_data:
-        data.leaderboard_data[str(winner.id)] = {
+def update_score(user_id):
+    # Checks if the user is already on the leaderboard
+    if user_id not in data.leaderboard_data:
+        # Adds user to leaderboard
+        data.leaderboard_data[user_id] = {
             'nick': winner.nick,
             'score': 1
         }
     else:
-        data.leaderboard_data[str(winner.id)]['score'] += 1
+        data.leaderboard_data[user_id]['score'] += 1
     data.save_leaderboard()
 
 

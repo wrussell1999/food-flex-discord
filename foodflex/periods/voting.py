@@ -30,38 +30,39 @@ async def voting_period(channel):
 async def check_vote(message):
     user_id = str(message.author.id)
 
-    logger.info("Vote '{}' from '{}' ({})".format( \
-        message.clean_content, message.author.nick, user_id))
-
-    # votes must be a single letter
+    # Votes must be a single letter
     if len(message.clean_content) != 1:
         return
 
-    # make sure votes are upper case
+    logger.info("Vote '{}' from '{}' ({})".format(
+        message.clean_content, message.author.nick, user_id))
+
+    # Make sure votes are upper case
     vote = message.clean_content.upper()
 
-    # convent 🅱 to B
+    # Convent 🅱 to B
     if message.clean_content == '🅱':
         vote = 'B'
 
-    logger.debug("Vote letter to user_id map: " + data.letter_to_user_id.__str__())
+    logger.debug("Vote letter to user_id map: " +
+                 data.letter_to_user_id.__str__())
 
     if user_id in data.daily_data:
-        # this person has submitted/voted before
+        # This person has submitted/voted before
         try:
             voting_for = data.letter_to_user_id[vote]
             if voting_for == user_id:
-                await log_and_dm("Invalid vote!\nYou cannot vote for yourself",
+                await log_and_dm("You cannot vote for yourself",
                                  message.author)
                 return
         except:
             pass
 
         if data.daily_data[user_id]['voted']:
-            await log_and_dm("Invalid vote!\nYou have already voted", message.author)
+            await log_and_dm("You have already voted", message.author)
             return
     else:
-        # person has not submitted so we need to create an entry for them
+        # Person has not submitted so we need to create an entry for them
         data.daily_data[user_id] = {
             "nick": message.author.nick,
             "submitted": False,
@@ -69,7 +70,7 @@ async def check_vote(message):
             "votes": 0
         }
 
-    # add one to the number of votes that the person we are voting for has
+    # Add one to the number of votes that the person we are voting for has
     try:
         user_id_voted_for = data.letter_to_user_id[vote]
         data.daily_data[user_id_voted_for]['votes'] += 1
@@ -78,13 +79,17 @@ async def check_vote(message):
             data.daily_data[user_id_voted_for]['nick']), message.author)
         data.save_data()
     except KeyError as e:
-        # the letter voted for does not refer to anyone
-        await log_and_dm("Invalid vote!\nCan't find user for letter '{}'".format( \
+        # The letter voted for does not refer to anyone
+        await log_and_dm("Can't find user for letter '{}'".format(
             vote), message.author)
 
 
 async def log_and_dm(reason, person):
-    await person.send(reason)
+    embed = discord.Embed(
+        title="Invalid vote",
+        description=reason,
+        colour=0xff0000)
+    await person.send(embed=embed)
     logger.info(reason)
 
 

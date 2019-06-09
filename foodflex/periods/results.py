@@ -18,6 +18,7 @@ async def results_period(channel):
         name="for shit food", type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.idle, activity=activity)
 
+    # Get list of users (tuples) who submitted (nick, votes)
     users = []
     for key in data.daily_data:
         if data.daily_data[key]['submitted']:
@@ -25,11 +26,13 @@ async def results_period(channel):
             users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
+    # Get the winner(s) as a string
     winner_message = await get_winner(channel)
 
     embed = discord.Embed(title="Results", description="", colour=0xff0000)
     embed.set_author(name=winner_message)
 
+    # Add users to embed
     for user in users:
         votes = "Votes: " + str(user[1])
         embed.add_field(name=user[0], value=votes, inline=False)
@@ -44,14 +47,17 @@ async def results_period(channel):
 
 async def get_winner(channel):
 
+    # Get a list of potential winners
     users = []
     for key in data.daily_data:
         if data.daily_data[key]['submitted'] and data.daily_data[key]['voted']:
             tuple = (data.daily_data[key]['nick'],
-                     data.daily_data[key]['votes'])
+                     data.daily_data[key]['votes'],
+                     data.daily_data[key])
             users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
+    # Check if there are any potential winners in the list
     max_votes = users[0][1]
     if len(users) == 0 or max_votes == 0:
         embed = discord.Embed(
@@ -61,10 +67,13 @@ async def get_winner(channel):
         await channel.send(embed=embed)
         return "No winner"
 
+    # Get the potential winners as a single string
     winner_message = "Winners: "
     for user in users:
         if user[1] != max_votes:
             users.remove(user)
         else:
+            # Adds user to string, and updates leaderboard score
             winner_message += user[0] + ", "
+            leaderboard.update_score(user[2])
     return winner_message
