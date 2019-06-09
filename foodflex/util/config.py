@@ -5,6 +5,11 @@ with open("config/config.json") as file:
     config = json.load(file)
 
 
+def save_config():
+    with open('config/config.json', 'w') as json_file:
+        json.dump(config, json_file)
+
+
 def initilise_logging():
     logging.basicConfig(level=logging.INFO)  # discord.py
     logger = logging.getLogger('food-flex')  # food-flex

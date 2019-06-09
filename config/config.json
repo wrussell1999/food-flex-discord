@@ -1,10 +1,9 @@
 {   
     "token": "STRING",
-    "server_id": ,
+    "guild_id": ,
     "admin_id":,
     "food_chat_id": ,
-    "submission_channel_id": ,
-    "voting_channel_id": ,
-    "results_channel_id": ,
-    "dev_channel_id": 
+    "food_flex_channel_id": ,
+    "leaderboard_channel_id": ,
+    "leaderboard_message_id": 
 }

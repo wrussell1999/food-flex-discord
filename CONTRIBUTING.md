@@ -1,12 +1,10 @@
 # Contributing
-This project is pretty much done, apart from the odd tweak. It started as a project in a private repository (with private tokens... oops), so a lot of the development is hidden. I've been working on this since October 2018, and finally think it's at a good point. 
 
-That doesn't mean that you can't contribute to Food Flex....
+Currently, we're changing how Food Flex works internally. Will is going to highlight these improvements, bugs, refactors using the GitHub issues for this repository. If you'd like to contribute, create a fork and try and create a solution for one of the solutions.
 
-## Summer 2019
-This summer, I'm planning to develop a platform just for Food Flex. If you're interested, updates will be posted on my [Twitter](https://twitter.com/WilliamR__).
+We will test your fork in an isolated test server, ensuring that it works as intended for Food Flex. If we're happy with the quality, we will merge it. If you have any questions, you can email Will (on his profile) or Tweet him at [@WilliamR](https://twitter.com/WilliamR__).
 
-### Current ideas
-
-- Web server built in Python, using Flask.
-- Mobile app built in Dart, using Flutter.
+When you make a pull request, please give a brief description to your change, e.g:
+- What's its purpose
+- What it changes
+- How it will make Food Flex better

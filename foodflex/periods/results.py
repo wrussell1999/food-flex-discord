@@ -4,10 +4,9 @@ import datetime
 import asyncio
 import random
 from builtins import bot
-from ..util.data import *
-from ..util import config
-from ..util.setup_period import *
-from .leaderboard import *
+import foodflex.util.data as data
+import foodflex.util.config as config
+import foodflex.periods.leaderboard as leaderboard
 
 logger = config.initilise_logging()
 sorted_submissions_dict = {}
@@ -15,88 +14,66 @@ sorted_submissions_dict = {}
 
 async def results_period(channel):
     logger.info("RESULTS")
-    activity = discord.Activity(name="for shit food", type=discord.ActivityType.watching)
+    activity = discord.Activity(
+        name="for shit food", type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.idle, activity=activity)
+
+    # Get list of users (tuples) who submitted (nick, votes)
+    users = []
+    for key in data.daily_data:
+        if data.daily_data[key]['submitted']:
+            tuple = (data.daily_data[key]['nick'], data.daily_data[key]['votes'])
+            users.append(tuple)
+    users.sort(key=lambda tuple: tuple[1], reverse=True)
+
+    # Get the winner(s) as a string
     winner_message = await get_winner(channel)
-    logger.debug(winner_message)
 
-    embed = discord.Embed(title="RESULTS", description="", colour=0xff0000)
+    embed = discord.Embed(title="Results", description="", colour=0xff0000)
     embed.set_author(name=winner_message)
-    embed.set_footer(text=random.choice(quotes['rude']))
 
-    sorted_submissions_dict = sort_submissions()
-    for index, val in enumerate(sorted_submissions_dict['votes']):
-        votes = "Votes: " + str(val)
-        user = bot.get_guild(config.config['server_id']).get_member(
-            sorted_submissions_dict['submissions'][index])
-        embed.add_field(name=user.nick, value=votes, inline=False)
+    # Add users to embed
+    for user in users:
+        votes = "Votes: " + str(user[1])
+        embed.add_field(name=user[0], value=votes, inline=False)
+
     await channel.send(embed=embed)
-    await update_leaderboard()
-    reset_daily_data()
-    data_dict_to_json()
+    await leaderboard.update_leaderboard()
+
+    # Reset the daily data
+    data.daily_data.clear()
+    data.save_data()
 
 
 async def get_winner(channel):
-    for index, value in enumerate(daily_data['submissions']):
-        if not check_user_vote(value):
-            await disqualify_winner(value, index, channel)
 
-    if len(daily_data['submissions']) == 0:
+    # Get a list of potential winners
+    users = []
+    for index, key in enumerate(data.daily_data):
+        if data.daily_data[key]['submitted'] and data.daily_data[key]['voted']:
+            tuple = (data.daily_data[key]['nick'],
+                     data.daily_data[key]['votes'],
+                     list(data.daily_data.keys())[index])
+            users.append(tuple)
+    users.sort(key=lambda tuple: tuple[1], reverse=True)
+
+    # Check if there are any potential winners in the list
+    max_votes = users[0][1]
+    if len(users) == 0 or max_votes == 0:
         embed = discord.Embed(
-            title="No winner", description="The potential winners were disqualified", colour=0xff0000)
+            title="No winner",
+            description="The potential winners were disqualified",
+            colour=0xff0000)
         await channel.send(embed=embed)
         return "No winner"
 
-    max_vote = max(daily_data['votes'])
-    winner_message = "Winner: "
-    max_index = [i for i, j in enumerate(
-        daily_data['votes']) if j == max_vote]
-    if len(max_index) > 1:
-        winner_message = "Winners: "
-
-    for index, value in enumerate(daily_data['submissions']):
-        if daily_data['votes'][index] == max_vote:
-            winner = bot.get_guild(
-                config.config['server_id']).get_member(value)
-            winner_message += winner.nick + ", "
-            update_score(winner, 1)
+    # Get the potential winners as a single string
+    winner_message = "Winners: "
+    for user in users:
+        if user[1] != max_votes:
+            users.remove(user)
+        else:
+            # Adds user to string, and updates leaderboard score
+            winner_message += user[0] + ", "
+            leaderboard.update_score(user[2], user[0])
     return winner_message
-
-
-def check_user_vote(user):
-    if user in daily_data['voters']:
-        logger.debug("Winner voted - valid")
-        return True
-    else:
-        logger.warning("Winner disqualified")
-        return False
-
-
-async def disqualify_winner(winner_id, index, channel):
-    winner = bot.get_guild(
-        config.config['server_id']).get_member(winner_id)
-    winner_message = "Winner disqualified: " + str(winner.nick)
-    embed = discord.Embed(
-        title=winner_message, description="Winner did not vote, therefore their submission is invalid", colour=0xff0000)
-    await channel.send(embed=embed)
-    del daily_data['votes'][index]
-    del daily_data['submissions'][index]
-    await asyncio.sleep(5)
-
-
-def sort_submissions():
-    logger.debug("Sorting submissions into descending vote")
-    sorted_submissions_dict['submissions'] = [x for _, x in sorted(
-        zip(daily_data['votes'], daily_data['submissions']), reverse=True)]
-    sorted_submissions_dict['votes'] = [x for _, x in sorted(
-        zip(daily_data['votes'], daily_data['votes']), reverse=True)]
-    return sorted_submissions_dict
-
-
-@bot.command(description="Results for a current day. Requires at least one voter")
-async def results(ctx):
-    if await bot.is_owner(ctx.author) and len(daily_data['voters']) != 0:
-        await results_period(bot.get_channel(
-            config.config['food_flex_channel_id']))
-        logger.debug("Results started manually")
-        await ctx.message.delete()
