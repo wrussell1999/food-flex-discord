@@ -163,7 +163,7 @@ async def submission_command(message):
     guild = bot.get_guild(config.config['guild_id'])
     await submissions.submission_period(channel)
     await channel.set_permissions(guild.default_role, attach_files=True)
-    message.delete()
+    await message.delete()
 
 
 @submission.command()
@@ -185,7 +185,7 @@ async def close(ctx):
         guild = bot.get_guild(config.config['guild_id'])
         await channel.set_permissions(guild.default_role, attach_files=False)
         await channel.send(embed=embed)
-        ctx.message.delete()
+        await ctx.message.delete()
 
 
 @bot.command()
