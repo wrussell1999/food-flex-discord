@@ -63,9 +63,3 @@ def get_embed(users):
         score = "Score: " + str(value[1])
         embed.add_field(name=value[0], value=score, inline=False)
     return embed
-
-
-@bot.command()
-async def refresh_scores(ctx):
-    await ctx.message.delete()
-    await update_leaderboard()

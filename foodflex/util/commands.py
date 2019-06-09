@@ -127,19 +127,19 @@ async def rude_quotes(ctx):
     await ctx.message.delete()
 
 
-@data.command()
+@data_tools.command(description="Updates leaderboard")
 async def refresh_leaderboard(ctx):
     await ctx.message.delete()
     await leaderboard.update_leaderboard()
 
 
 @bot.group()
-async def submissions(ctx):
+async def submission(ctx):
     if ctx.invoked_subcommand is None:
         await ctx.send('Invalid command')
 
 
-@submissions.command()
+@submission.command()
 async def open(ctx):
     if await bot.is_owner(ctx.author):
         await submission_command(ctx.message)
@@ -147,7 +147,7 @@ async def open(ctx):
         logger.info('Submissions started manually')
 
 
-@submissions.command()
+@submission.command()
 async def resume(ctx):
     if await bot.is_owner(ctx.author):
         await submission_command(ctx.message)
@@ -155,17 +155,24 @@ async def resume(ctx):
 
 
 async def submission_command(message):
+    data.shared_prefs['submissions'] = True
+    data.shared_prefs['voting'] = False
+    data.save_prefs()
     channel = bot.get_channel(
         config.config['food_flex_channel_id'])
     guild = bot.get_guild(config.config['guild_id'])
-    await channel.set_permissions(guild.default_role, attach_files=True)
     await submissions.submission_period(channel)
+    await channel.set_permissions(guild.default_role, attach_files=True)
     message.delete()
 
 
-@submissions.command()
+@submission.command()
 async def close(ctx):
     if await bot.is_owner(ctx.author):
+        data.shared_prefs['submissions'] = False
+        data.shared_prefs['voting'] = False
+        data.save_prefs()
+
         activity = discord.Activity(name='bugs get fixed',
                                     type=discord.ActivityType.watching)
         await bot.change_presence(status=discord.Status.online,
@@ -182,18 +189,28 @@ async def close(ctx):
 
 
 @bot.command()
-async def voting(ctx):
+async def vote(ctx):
     if await bot.is_owner(ctx.author):
+        data.shared_prefs['submissions'] = False
+        data.shared_prefs['voting'] = True
+        data.save_data()
+
         await voting.voting_period(bot.get_channel(
             config.config['food_flex_channel_id']))
+
         logger.debug("Voting started manually")
         await ctx.message.delete()
 
 
 @bot.command(description="Results for a current day. Requires at least one voter")
-async def results(ctx):
+async def result(ctx):
     if await bot.is_owner(ctx.author):
+        data.shared_prefs['submissions'] = False
+        data.shared_prefs['voting'] = False
+        data.save_prefs()
+
         await results.results_period(bot.get_channel(
             config['food_flex_channel_id']))
+
         logger.debug("Results started manually")
         await ctx.message.delete()
