@@ -52,14 +52,14 @@ async def check_vote(message):
         try:
             voting_for = data.letter_to_user_id[vote]
             if voting_for == user_id:
-                await log_and_dm("You cannot vote for yourself",
+                await log_and_dm("Invalid vote", "You cannot vote for yourself",
                                  message.author)
                 return
         except:
             pass
 
         if data.daily_data[user_id]['voted']:
-            await log_and_dm("You have already voted", message.author)
+            await log_and_dm("Invalid vote", "You have already voted", message.author)
             return
     else:
         # Person has not submitted so we need to create an entry for them
@@ -75,18 +75,18 @@ async def check_vote(message):
         user_id_voted_for = data.letter_to_user_id[vote]
         data.daily_data[user_id_voted_for]['votes'] += 1
         data.daily_data[user_id]['voted'] = True
-        await log_and_dm("Vote has been submitted successfully for '{}'".format( \
+        await log_and_dm("Vote successful!", "Vote has been submitted successfully for '{}'".format( \
             data.daily_data[user_id_voted_for]['nick']), message.author)
         data.save_data()
     except KeyError as e:
         # The letter voted for does not refer to anyone
-        await log_and_dm("Can't find user for letter '{}'".format(
+        await log_and_dm("Invalid vote", "Can't find user for letter '{}'".format(
             vote), message.author)
 
 
-async def log_and_dm(reason, person):
+async def log_and_dm(title, reason, person):
     embed = discord.Embed(
-        title="Invalid vote",
+        title=title,
         description=reason,
         colour=0xff0000)
     await person.send(embed=embed)
