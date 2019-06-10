@@ -108,7 +108,7 @@ async def voting_reminder():
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
     # Gets the embed with users in it
-    embed = await leaderboard.get_embed(users)
+    embed = leaderboard.get_embed(users)
     embed.set_footer(
         text="")
     await channel.send(embed=embed)
