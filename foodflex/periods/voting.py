@@ -18,10 +18,16 @@ async def voting_period(channel):
                           colour=0xff0000)
     embed.set_footer(text=data.strings['voting_open_footer'])
 
+    submissions = []
     for letter in data.letter_to_user_id:
         user_id = data.letter_to_user_id[letter]
-        embed.add_field(name=data.daily_data[user_id]['nick'],
-                        value=letter,
+        tuple = (data.daily_data[user_id]['nick'], letter)
+        submissions.append(tuple)
+    submissions.sort(key=lambda tuple: tuple[1], reverse=False)
+
+    for submission in submissions:
+        embed.add_field(name=submission[0],
+                        value=submission[1],
                         inline=False)
 
     await channel.send(embed=embed)
