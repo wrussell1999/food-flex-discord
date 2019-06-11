@@ -105,8 +105,10 @@ venv.bak/
 
 # Food Flex
 config/config.json
-data/scoreboard.json
+data/leaderboard.json
 data/daily_data.json
+data/shared_prefs.json
+data/all.png
 
 # VSCode
 .vscode/
