@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 import requests
 from io import BytesIO
 import foodflex.util.data as data
@@ -9,8 +9,8 @@ def get_submission_images():
     images = []
     letter = 'A'
 
-    for url in data.daily_data['urls']:
-        response = requests.get(url[1])
+    for value in data.letter_to_user_id:
+        response = requests.get(value[1])
 
         image = Image.open(BytesIO(response.content))
         image = ImageOps.fit(image, (256, 256), Image.ANTIALIAS)  # Make square
