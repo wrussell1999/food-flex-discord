@@ -31,9 +31,8 @@ async def process_submission(message, channel):
             'votes': 0
         }
 
-        url = message.attachments.url
-
-        data.letter_to_user_id[new_letter] = user_id
+        url = message.attachments.proxy_url
+        data.letter_to_user_id[new_letter] = (user_id, url)
         await channel.send(random.choice(data.quotes['rude']))
         data.save_data()
         logger.info('Submission valid, assigned letter \'{}\''.format(new_letter))
