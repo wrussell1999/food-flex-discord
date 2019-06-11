@@ -28,14 +28,16 @@ def get_submission_images():
         image.thumbnail((256, 256), Image.ANTIALIAS)  # Compress
         images.append(image)
 
-        combine_images(images)
+        return combine_images(images)
 
 
 def combine_images(images):
-    all = Image.new('RGB', ((256 * len(images)), 256))
+    all = Image.new('RGB', (256, (256 * len(images))))
 
-    x_offset = 0
+    y_offset = 0
     for image in images:
-        all.paste(image, (x_offset, 0))
-        x_offset += image.size[0]
-    all.save("data/all.png", optimize=True, qualty=30)
+        all.paste(image, (0, y_offset))
+        y_offset += image.size[1]
+    path = "data/all.png"
+    all.save(path, optimize=True, qualty=30)
+    return path

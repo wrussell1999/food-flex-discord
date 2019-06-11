@@ -30,6 +30,9 @@ async def process_submission(message, channel):
             'voted': False,
             'votes': 0
         }
+
+        url = message.attachments.url
+
         data.letter_to_user_id[new_letter] = user_id
         await channel.send(random.choice(data.quotes['rude']))
         data.save_data()

@@ -1,9 +1,11 @@
 import discord
 from discord.ext import commands
 from builtins import bot
+from io import BytesIO
 import foodflex.util.data as data
 import foodflex.util.config as config
 import foodflex.periods.leaderboard as leaderboard
+import foodflex.periods.vote_images as images
 
 logger = config.initilise_logging()
 
@@ -20,7 +22,7 @@ async def voting_period(channel):
 
     submissions = []
     for letter in data.letter_to_user_id:
-        user_id = data.letter_to_user_id[letter]
+        user_id = data.letter_to_user_id[letter][0]
         tuple = (data.daily_data[user_id]['nick'], letter)
         submissions.append(tuple)
     submissions.sort(key=lambda tuple: tuple[1], reverse=False)
@@ -29,8 +31,9 @@ async def voting_period(channel):
         embed.add_field(name=submission[0],
                         value=submission[1],
                         inline=False)
-
-    await channel.send(embed=embed)
+    path = images.get_submission_images()
+    file = discord.File(open(path))
+    await channel.send(embed=embed, file=file)
 
 
 async def check_vote(message):
@@ -48,12 +51,12 @@ async def check_vote(message):
         vote = 'B'
 
     logger.debug("Vote letter to user_id map: " +
-                 data.letter_to_user_id.__str__())
+                 data.letter_to_user_id[0].__str__())
 
     if user_id in data.daily_data:
         # This person has submitted/voted before
         try:
-            voting_for = data.letter_to_user_id[vote]
+            voting_for = data.letter_to_user_id[vote][0]
             if voting_for == user_id:
                 await log_and_dm("Invalid vote", "You cannot vote for yourself",
                                  message.author)
@@ -75,7 +78,7 @@ async def check_vote(message):
 
     # Add one to the number of votes that the person we are voting for has
     try:
-        user_id_voted_for = data.letter_to_user_id[vote]
+        user_id_voted_for = data.letter_to_user_id[vote][0]
         data.daily_data[user_id_voted_for]['votes'] += 1
         data.daily_data[user_id]['voted'] = True
         await log_and_dm("Vote successful!", "Vote has been submitted successfully for '{}'".format( \
