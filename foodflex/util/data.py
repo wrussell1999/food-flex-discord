@@ -12,9 +12,12 @@ with open('data/data.json') as temp_file:
     try:
         daily_data = content['daily_data']
         letter_to_user_id = content['letter_to_user_id']
+        urls = content['urls']
     except KeyError:
         daily_data = {}
         letter_to_user_id = {}
+        urls = {}
+
 
 with open('data/strings.json') as strings_file:
     strings = json.load(strings_file)
@@ -29,9 +32,9 @@ def save_data():
     with open('data/data.json', 'w') as json_file:
         json.dump({
             'daily_data': daily_data,
-            'letter_to_user_id': letter_to_user_id
+            'letter_to_user_id': letter_to_user_id,
+            'urls': urls
         }, json_file)
-
     logger.debug('Daily data saved')
 
 

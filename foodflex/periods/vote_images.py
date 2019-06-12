@@ -9,24 +9,25 @@ def get_submission_images():
     images = []
     letter = 'A'
 
-    for value in data.letter_to_user_id:
-        response = requests.get(value[1])
-
+    for url in data.urls:
+        # GET request for Image, then opened as obj
+        response = requests.get(data.urls[url])
         image = Image.open(BytesIO(response.content))
-        image = ImageOps.fit(image, (256, 256), Image.ANTIALIAS)  # Make square
 
-        # Caption -> Name and Letter
-        caption = url[0] + ", " + letter
-        letter = chr(ord(letter) + 1)
+        # Make image a 256 x 256 square
+        image = ImageOps.fit(image, (256, 256), Image.ANTIALIAS)
 
-        # Add caption to image
+        # Add caption (letter) to image
         draw = ImageDraw.Draw(image)
         font = ImageFont.truetype(
             '/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf', 32)
-        draw.text((24, image.size[1] - 48), caption,
+        draw.text((24, image.size[1] - 48), letter,
                   (255, 255, 255), font=font)
-        image.thumbnail((256, 256), Image.ANTIALIAS)  # Compress
+
+        # Compress image below 5 mb (Discord upload limit)
+        image.thumbnail((256, 256), Image.ANTIALIAS)
         images.append(image)
+        letter = chr(ord(letter) + 1)
 
         return combine_images(images)
 

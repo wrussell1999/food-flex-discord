@@ -22,15 +22,17 @@ async def voting_period(channel):
 
     submissions = []
     for letter in data.letter_to_user_id:
-        user_id = data.letter_to_user_id[letter][0]
+        user_id = data.letter_to_user_id[letter]
         tuple = (data.daily_data[user_id]['nick'], letter)
         submissions.append(tuple)
     submissions.sort(key=lambda tuple: tuple[1], reverse=False)
 
-    for submission in submissions:
-        embed.add_field(name=submission[0],
-                        value=submission[1],
+    for (name, letter) in submissions:
+        embed.add_field(name=name,
+                        value=letter,
                         inline=False)
+
+    # Get combined image of submissions and send it
     path = images.get_submission_images()
     file = discord.File(open(path))
     await channel.send(embed=embed, file=file)
