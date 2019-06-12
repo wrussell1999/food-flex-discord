@@ -102,15 +102,19 @@ async def voting_reminder():
                           description=data.strings['voting_reminder'])
 
     # Gets users as a list of tuples (user, score)
-    users = [(data.leaderboard_data[key]['nick'],
-              data.leaderboard_data[key]['score'])
-             for key in data.leaderboard_data]
+    users = []
+    for key in data.daily_data:
+        if data.daily_data[key]['submitted']:
+            tuple = (data.daily_data[key]['nick'], data.daily_data[key]['votes'])
+            users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
-    # Gets the embed with users in it
-    embed = leaderboard.get_embed(users)
-    embed.set_footer(
-        text="")
+    # Create embed and add people to it
+    embed = discord.Embed(title="Current scores", description="There's still time to vote!", colour=0xff000)
+    
+    # Add users to embed and send
+    for (nick, vote) in users:
+        embed.add_field(name=nick, value=vote, inline=False)
     await channel.send(embed=embed)
 
 
