@@ -27,7 +27,7 @@ async def process_submission(message):
         logger.info('Submission invalid')
     else:
         data.daily_data[user_id] = {
-            'nick': message.author.nick,
+            'nick': message.author.display_name,
             'submitted': True,
             'voted': False,
             'votes': 0

@@ -75,7 +75,7 @@ async def check_vote(message):
     else:
         # Person has not submitted so we need to create an entry for them
         data.daily_data[user_id] = {
-            "nick": message.author.nick,
+            "nick": message.author.display_name,
             "submitted": False,
             "voted": False,  # only set to true when they make a valid vote
             "votes": 0

@@ -23,10 +23,10 @@ async def on_message(message):
         if len(message.attachments) > 0 and \
                 ((hour >= 12 and hour <= 23) or data.shared_prefs['submissions']):
 
-            logger.info("Submission from '{}' ({})".format(message.author.nick, str(message.author.id)))
+            logger.info("Submission from '{}' ({})".format(message.author.display_name, str(message.author.id)))
             await submissions.process_submission(message)
 
         if len(message.attachments) == 0 and \
                 ((hour >= 00 and hour < 12) or data.shared_prefs['voting']) and len(message.clean_content) == 1:
-            logger.info("Vote '{}' from '{}' ({})".format(message.clean_content, message.author.nick, str(message.author.id)))
+            logger.info("Vote '{}' from '{}' ({})".format(message.clean_content, message.author.display_name, str(message.author.id)))
             await voting.check_vote(message)
