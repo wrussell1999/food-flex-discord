@@ -23,17 +23,15 @@ async def process_submission(message, channel):
     if user_id in data.daily_data:
         logger.info('Submission invalid')
     else:
-        new_letter = chr(ord('A') + len(data.daily_data))
         data.daily_data[user_id] = {
             'nick': message.author.nick,
             'submitted': True,
             'voted': False,
             'votes': 0
         }
-        data.letter_to_user_id[new_letter] = user_id
-        await channel.send(random.choice(data.quotes['rude']))
         data.save_data()
-        logger.info('Submission valid, assigned letter \'{}\''.format(new_letter))
+        await channel.send(random.choice(data.quotes['rude']))
+        logger.info('Submission valid')
 
 async def submission_reminder():
     channel = bot.get_channel(config.config['food_flex_channel_id'])
