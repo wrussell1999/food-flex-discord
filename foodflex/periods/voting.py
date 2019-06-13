@@ -65,7 +65,7 @@ async def check_vote(message):
                 await log_and_dm("Invalid vote", "You cannot vote for yourself",
                                  message.author)
                 return
-        except KeyError as e:
+        except KeyError:
             pass
 
         if data.daily_data[user_id]['voted']:
@@ -88,7 +88,7 @@ async def check_vote(message):
         await log_and_dm("Vote successful!", "Vote has been submitted successfully for '{}'".format( \
             data.daily_data[user_id_voted_for]['nick']), message.author)
         data.save_data()
-    except KeyError as e:
+    except KeyError:
         # The letter voted for does not refer to anyone
         await log_and_dm("Invalid vote", "Can't find user for letter '{}'".format(
             vote), message.author)
