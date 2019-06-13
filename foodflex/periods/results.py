@@ -41,6 +41,7 @@ async def results_period(channel):
     await leaderboard.update_leaderboard()
 
     # Reset data generated daily
+    logger.debug("Clearing daily data")
     data.daily_data.clear()
     data.letter_to_user_id.clear()
     data.save_data()
