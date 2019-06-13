@@ -1,4 +1,5 @@
 import discord
+import logging
 from discord.ext import commands
 import datetime
 import asyncio
@@ -8,12 +9,11 @@ import foodflex.util.data as data
 import foodflex.util.config as config
 import foodflex.periods.leaderboard as leaderboard
 
-logger = config.initilise_logging()
-sorted_submissions_dict = {}
+logger = logging.getLogger('food-flex')
 
 
 async def results_period(channel):
-    logger.info("RESULTS")
+    logger.info("// Now in RESULTS period //")
     activity = discord.Activity(
         name="for shit food", type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.idle, activity=activity)

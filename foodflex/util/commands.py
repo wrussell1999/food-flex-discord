@@ -1,4 +1,5 @@
 import discord
+import logging
 from discord.ext import commands
 import random
 
@@ -10,7 +11,7 @@ import foodflex.periods.results as results
 import foodflex.periods.leaderboard as leaderboard
 from builtins import bot
 
-logger = config.initilise_logging()
+logger = logging.getLogger('food-flex')
 
 
 @bot.command(description="This explains how the food flex competition works - how to submit and vote")
@@ -193,7 +194,6 @@ async def vote(ctx):
     if await bot.is_owner(ctx.author):
         data.shared_prefs['submissions'] = False
         data.shared_prefs['voting'] = True
-        data.save_data()
 
         await voting.voting_period(bot.get_channel(
             config.config['food_flex_channel_id']))

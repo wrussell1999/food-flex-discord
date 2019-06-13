@@ -1,14 +1,19 @@
 import discord
+import logging
 from discord.ext import commands
 import datetime
 import asyncio
 import builtins
 import foodflex.util.config as config
+
+config.initilise_logging()
+logger = logging.getLogger('food-flex')
+config.load_config()
+
 import foodflex.util.data as data
 
 bot = commands.Bot(command_prefix='flex:', owner_id=config.config['admin_id'])
 builtins.bot = bot
-logger = config.initilise_logging()
 
 # Imports are after bot, so that the other modules can access them
 import foodflex.periods.leaderboard as leaderboard
@@ -22,6 +27,7 @@ import foodflex.util.commands as commands
 def main():
     token = config.config['token']
     bot.loop.create_task(check_time_periods())
+    logger.info("Starting bot...")
     bot.run(token)
 
 

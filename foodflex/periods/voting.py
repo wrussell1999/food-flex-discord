@@ -1,15 +1,16 @@
 import discord
+import logging
 from discord.ext import commands
 from builtins import bot
 import foodflex.util.data as data
 import foodflex.util.config as config
 import foodflex.periods.leaderboard as leaderboard
 
-logger = config.initilise_logging()
+logger = logging.getLogger('food-flex')
 
 
 async def voting_period(channel):
-    logger.info("VOTING")
+    logger.info("// Now in VOTING period //")
 
     # we need to build letter_to_user_id map first
     await build_voting_map()
@@ -100,7 +101,7 @@ async def log_and_dm(title, reason, person):
         description=reason,
         colour=0xff0000)
     await person.send(embed=embed)
-    logger.info(reason)
+    logger.info(reason + ", " + title)
 
 
 async def build_voting_map():
@@ -121,8 +122,7 @@ async def build_voting_map():
                         assigned_letter, user_id))
             data.letter_to_user_id[assigned_letter] = user_id
 
-    logger.debug("Generated letter_to_user_id map: " +
-                 data.letter_to_user_id.__str__())
+    logger.debug("Map built, {} letter(s)".format(len(data.letter_to_user_id)))
     data.save_data()
 
 async def voting_reminder():

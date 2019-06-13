@@ -1,4 +1,5 @@
 import discord
+import logging
 from discord.ext import commands
 import datetime
 import random
@@ -8,7 +9,7 @@ from builtins import bot
 import foodflex.util.data as data
 import foodflex.util.config as config
 
-logger = config.initilise_logging()
+logger = logging.getLogger('food-flex')
 
 
 def update_score(user_id, user_nick):
