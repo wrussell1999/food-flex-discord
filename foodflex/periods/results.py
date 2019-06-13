@@ -58,6 +58,14 @@ async def get_winner(channel):
             users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
+    if len(users) == 0:
+        embed = discord.Embed(
+            title="No winner",
+            description="No users both submitted and voted",
+            colour=0xff0000)
+        await channel.send(embed=embed)
+        return "No winner"
+
     # Check if there are any potential winners in the list
     max_votes = users[0][1]
     if len(users) == 0 or max_votes == 0:
