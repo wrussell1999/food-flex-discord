@@ -13,6 +13,10 @@ logger = logging.getLogger('food-flex')
 
 @bot.event
 async def on_message(message):
+    if message.author.bot:
+        # don't respond own messages
+        return
+
     flex_channel = bot.get_channel(config.config['food_flex_channel_id'])
     now = datetime.datetime.now()
     hour = int(now.strftime("%H"))

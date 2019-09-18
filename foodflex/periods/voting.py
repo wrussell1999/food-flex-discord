@@ -2,6 +2,7 @@ import discord
 import logging
 from discord.ext import commands
 from builtins import bot
+import foodflex.images as images
 import foodflex.util.data as data
 import foodflex.util.config as config
 import foodflex.periods.leaderboard as leaderboard
@@ -10,35 +11,45 @@ logger = logging.getLogger('food-flex')
 
 
 async def voting_period(channel):
-    logger.info("// Now in VOTING period //")
+    logger.info('// Now in VOTING period //')
+    logger.info('Creating voting key...')
 
     # we need to build letter_to_user_id map first
-    await build_voting_map()
+    build_voting_map()
 
-    # create message to hold key for voting
-    embed = discord.Embed(title=data.strings['voting_open_title'],
-                          description=data.strings['voting_open'],
-                          colour=0xff0000)
-
-    # sort voting key alphabetically and put in into message
+    logger.debug('Creating (url, letter) pairs for submissions...')
     submissions = []
+    # create (image_url, letter) pair list
     for letter in data.letter_to_user_id:
         user_id = data.letter_to_user_id[letter]
-        nick = data.daily_data[user_id]['nick']
-        submissions.append((nick, letter))
+        image_url = data.daily_data[user_id]['image_url']
+        submissions.append((image_url, letter))
 
+    # sort submissions by alphabetical key
     submissions.sort(key=lambda tuple: tuple[1], reverse=False)
 
-    for (nick, letter) in submissions:
-        embed.add_field(name=nick, value=letter, inline=False)
+    logger.debug('Generating images...')
+    # process images
+    image_objects = []
+    for (image_url, letter) in submissions:
+        buffer = images.process_image(image_url, letter)
+        image_objects.append(discord.File(buffer, filename=f'{letter}.png'))
 
-    # when everything has been prepared, announce voting is open and post
-    # voting key
+    # announce voting is open
+    await channel.send(data.strings['voting_open_title'])
+
+    logger.debug('Uploading images...')
+    # upload images
+    for image in image_objects:
+        await channel.send(file=image)
+
+    # remind people how to vote and change presence
+    await channel.send(data.strings['voting_open_footer'])
+
     activity = discord.Activity(name="people vote on shit food",
                                 type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.online, activity=activity)
-    embed.set_footer(text=data.strings['voting_open_footer'])
-    await channel.send(embed=embed)
+    logger.info('Done, voting key posted')
 
 
 async def check_vote(message):
@@ -54,9 +65,6 @@ async def check_vote(message):
     # Convent 🅱 to B
     if message.clean_content == '🅱':
         vote = 'B'
-
-    logger.debug("Using letter_to_user_id map: " +
-                 data.letter_to_user_id.__str__())
 
     if user_id in data.daily_data:
         # This person has submitted/voted before
@@ -104,7 +112,7 @@ async def log_and_dm(title, reason, person):
     logger.info(reason + ", " + title)
 
 
-async def build_voting_map():
+def build_voting_map():
     counter = 0
     logger.debug("Building letter_to_user_id map...")
 

@@ -21,20 +21,30 @@ async def submission_period(channel):
 
 
 async def process_submission(message):
-    logger.debug("Processing submission, msg id {}".format(message.id))
     user_id = str(message.author.id)
+    logger.debug(f'Processing submission, msg id {user_id}')
+
     if user_id in data.daily_data:
         logger.info('Submission invalid')
+
     else:
+        try:
+            url = message.attachments[0].proxy_url
+        except IndexError:
+            url = ''
+            loggger.warn('Submission does not have an image attached')
+
         data.daily_data[user_id] = {
             'nick': message.author.display_name,
             'submitted': True,
+            'image_url': url,
             'voted': False,
             'votes': 0
         }
+
+        await message.channel.send(random.choice(data.quotes['rude']))
         logger.info('Submission valid')
         data.save_data()
-        await message.channel.send(random.choice(data.quotes['rude']))
 
 async def submission_reminder():
     channel = bot.get_channel(config.config['food_flex_channel_id'])
