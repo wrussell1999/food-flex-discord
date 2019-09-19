@@ -29,10 +29,7 @@ async def helpme(ctx):
 @bot.command(description='Arguments: channel_nick, output')
 async def say(ctx, channel_nick: str, output: str):
     if await bot.is_owner(ctx.author):
-        if channel_nick == 'chat':
-            channel = bot.get_channel(config.chat_channel_id)
-            await channel.send(output)
-        elif channel_nick == 'flex':
+        if channel_nick == 'flex':
             channel = bot.get_channel(config.main_channel_id)
             await channel.send(output)
         elif channel_nick == 'leaderboard':

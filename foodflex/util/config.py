@@ -7,7 +7,7 @@ CONFIG_PATH = 'config/config.json'
 
 
 def load():
-    global token, server_id, admin_ids, main_channel_id,  chat_channel_id, leaderboard_channel_id
+    global token, server_id, admin_ids, main_channel_id, leaderboard_channel_id
     logger.info('Loading config...')
     try:
         with open(CONFIG_PATH) as file:
@@ -21,7 +21,6 @@ def load():
                 server_id = config['server_id']
                 admin_ids = config['admin_ids']
                 main_channel_id = config['main_channel_id']
-                chat_channel_id = config['chat_channel_id']
                 leaderboard_channel_id = config['leaderboard_channel_id']
                 logger.debug('↳ Config loaded')
             except KeyError:
