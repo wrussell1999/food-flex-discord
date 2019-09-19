@@ -20,7 +20,7 @@ def change_period(new_period, manual_change=False):
     else:
         mode = 'automatic'
 
-    logger.info(f'Change from \'{period}\' to \'{new_period}\' ({mode})')
+    logger.info(f'Period \'{period}\' -> \'{new_period}\' ({mode})')
 
     period = new_period
     save_state()

@@ -64,20 +64,20 @@ async def automatic(ctx):
 
 @bot.command(description='Start submissions period')
 async def submit(ctx):
+    await ctx.send('Manually switched to \'submissions\' mode')
     data.change_period('submissions', manual_change=True)
     await submissions.submission_period()
-    await ctx.send('Manually switched to \'submissions\' mode')
 
 
 @bot.command(description='Start voting period')
 async def vote(ctx):
+    await ctx.send('Manually switched to \'voting\' mode')
     data.change_period('voting', manual_change=True)
     await voting.voting_period()
-    await ctx.send('Manually switched to \'voting\' mode')
 
 
 @bot.command(description='Start results period')
 async def result(ctx):
+    await ctx.send('Manually switched to \'results\' mode')
     data.change_period('results', manual_change=True)
     await results.results_period()
-    await ctx.send('Manually switched to \'results\' mode')
