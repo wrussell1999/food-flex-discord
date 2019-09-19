@@ -1,3 +1,7 @@
 from discord.ext import commands
 
-bot = commands.Bot(command_prefix='flex:')
+import foodflex.util.config as config
+from foodflex.util.logging import logger
+
+logger.debug(f'Creating bot (cmd prefix \'{config.command_prefix}\')...')
+bot = commands.Bot(command_prefix=config.command_prefix)

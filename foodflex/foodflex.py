@@ -4,13 +4,14 @@ import datetime
 
 import foodflex.util.logging as logging
 logging.init()
-logger = logging.logger
 
-# All module are after bot, so that the other modules can access it
+import foodflex.util.config as config
+config.load()
+
+# all other module imports are after bot, so that they can access it
 from foodflex.util.bot import bot
 import foodflex.util.data as data
 import foodflex.util.static as static
-import foodflex.util.config as config
 import foodflex.util.commands as commands
 import foodflex.periods.voting as voting
 import foodflex.periods.results as results
@@ -18,9 +19,9 @@ import foodflex.periods.messages as messages
 import foodflex.periods.leaderboard as leaderboard
 import foodflex.periods.submissions as submissions
 
+from foodflex.util.logging import logger
 
 def main():
-    config.load()
     static.load()
     data.load_state()
     data.load_leaderboard()

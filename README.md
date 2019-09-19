@@ -48,6 +48,7 @@ You need to create the file `config/config.json` give it the following structure
 {
   "token": str,
   "server_id": int,
+  "command_prefix":str,
   "admin_ids": [ints],
   "main_channel_id": int,
   "leaderboard_channel_id": int
@@ -57,6 +58,7 @@ You need to create the file `config/config.json` give it the following structure
 ###### Meaning of each key
 - **token** - your bot's secret token
 - **server_id** - the ID of your server
+- **command_prefix** - a prefix that marks the message as a command for the bot (you may need a space at the end)
 - **admin_ids** - a list of user IDs that will be allowed to use bot commands
 - **main_channel_id** - the ID of the channel to use for submissions, voting and results
 - **leaderboard_channel_id** - the ID of the channel to use for the leaderboard

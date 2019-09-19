@@ -7,7 +7,7 @@ CONFIG_PATH = 'config/config.json'
 
 
 def load():
-    global token, server_id, admin_ids, main_channel_id, leaderboard_channel_id
+    global token, server_id, command_prefix, admin_ids, main_channel_id, leaderboard_channel_id
     logger.info('Loading config...')
     try:
         with open(CONFIG_PATH) as file:
@@ -19,6 +19,7 @@ def load():
             try:
                 token = config['token']
                 server_id = config['server_id']
+                command_prefix = config['command_prefix']
                 admin_ids = config['admin_ids']
                 main_channel_id = config['main_channel_id']
                 leaderboard_channel_id = config['leaderboard_channel_id']
