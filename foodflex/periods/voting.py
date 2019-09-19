@@ -10,7 +10,7 @@ from foodflex.util.logging import logger
 from foodflex.util.bot import bot, __version__
 
 
-async def voting_period(channel):
+async def voting_period():
     logger.info('// Now in VOTING period //')
     logger.info('Creating voting key...')
 
@@ -36,15 +36,15 @@ async def voting_period(channel):
         image_objects.append(discord.File(buffer, filename=f'{letter}.png'))
 
     # announce voting is open
-    await channel.send(static.strings['voting_open_title'])
+    await main_channel.send(static.strings['voting_open_title'])
 
     logger.debug('Uploading images...')
     # upload images
     for image in image_objects:
-        await channel.send(file=image)
+        await main_channel.send(file=image)
 
     # remind people how to vote and change presence
-    await channel.send(static.strings['voting_open_footer'])
+    await main_channel.send(static.strings['voting_open_footer'])
 
     activity = discord.Activity(name='people vote on shit food',
                                 type=discord.ActivityType.watching)
@@ -132,7 +132,6 @@ def build_voting_map():
     data.save_state()
 
 async def voting_reminder():
-    channel = bot.get_channel(config.config['food_flex_channel_id'])
     embed = discord.Embed(title=static.strings['voting_reminder_title'],
                           description=static.strings['voting_reminder'])
 
@@ -150,7 +149,7 @@ async def voting_reminder():
     # Add users to embed and send
     for (nick, vote) in users:
         embed.add_field(name=nick, value=vote, inline=False)
-    await channel.send(embed=embed)
+    await main_channel.send(embed=embed)
 
 
 async def individual_vote_reminder():

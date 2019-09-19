@@ -27,20 +27,19 @@ def main():
     data.load_state()
     data.load_leaderboard()
 
+    print_state_info()
+
     logger.info('Starting bot...')
     bot.loop.create_task(check_time_periods())
     bot.run(config.token)
 
 
-@bot.event
-async def on_ready():
-    logger.info('Food Flex is online!')
-    logger.info(f'period = \'{data.period}\', participants = {len(data.participants)}')
+def print_state_info():
+    logger.info(f'period=\'{data.period}\', mode=\'{data.mode}\' people={len(data.participants)}')
 
 
 async def check_time_periods():
     await bot.wait_until_ready()
-    channel = bot.get_channel(config.main_channel_id)
 
     # Repeat every 60 seconds
     while True:
@@ -48,32 +47,33 @@ async def check_time_periods():
         hour = int(now.strftime('%H'))
         minute = int(now.strftime('%M'))
 
-        # Submissions
-        if hour == 13 and minute == 00:
-            data.period = 'submissions'
-            await submissions.submission_period(channel)
+        if data.mode == 'automatic':
+            # Submissions
+            if hour == 13 and minute == 00:
+                data.change_period('submissions')
+                await submissions.submission_period()
 
-        # Submissions reminder
-        elif hour == 23 and minute == 00:
-            await submissions.submission_reminder()
+            # Submissions reminder
+            elif hour == 23 and minute == 00:
+                await submissions.submission_reminder()
 
-        # Voting
-        elif (hour == 00 and minute == 00) and \
-                len(data.participants) > 1:
-            data.period = 'voting'
-            await voting.voting_period(channel)
+            # Voting
+            elif (hour == 00 and minute == 00) and \
+                    len(data.participants) > 1:
+                data.change_period('voting')
+                await voting.voting_period()
 
-        # Vote reminder
-        elif hour == 11 and minute == 00 and \
-                len(data.participants) > 1:
+            # Vote reminder
+            elif hour == 11 and minute == 00 and \
+                    len(data.participants) > 1:
 
-            await voting.voting_reminder()
-            await voting.individual_vote_reminder()
+                await voting.voting_reminder()
+                await voting.individual_vote_reminder()
 
-        # Results
-        elif hour == 12 and minute == 00 and \
-                len(data.participants) > 1:  # Needs
-            data.period = 'results'
-            await results.results_period(channel)
+            # Results
+            elif hour == 12 and minute == 00 and \
+                    len(data.participants) > 1:  # Needs
+                data.change_period('results')
+                await results.results_period()
 
         await asyncio.sleep(60)

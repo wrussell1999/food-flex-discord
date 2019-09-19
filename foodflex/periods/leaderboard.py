@@ -21,8 +21,6 @@ def update_score(user_id, user_nick):
 
 
 async def update_leaderboard():
-    channel = bot.get_channel(config.leaderboard_channel_id)
-
     # Gets a list of users and scores (as tuple in descending order)
     users = [(data.leaderboard[key]['nick'], data.leaderboard[key]['score'])
              for key in data.leaderboard]
@@ -32,12 +30,12 @@ async def update_leaderboard():
     if data.leaderboard_message_id is None:
         # Creates new leaderboard
         embed = get_embed(users)
-        await channel.send(embed=embed)
-        message_id = channel.last_message_id
+        await leaderboard_channel.send(embed=embed)
+        message_id = leaderboard_channel.last_message_id
         data.leaderboard_message_id = message_id
     else:
         # Edits and existing one
-        message = await channel.fetch_message(data.leaderboard_message_id)
+        message = await leaderboard_channel.fetch_message(data.leaderboard_message_id)
         embed = get_embed(users)
         await message.edit(embed=embed)
 

@@ -17,7 +17,7 @@ async def on_message(message):
         return
 
     # ignore messages in any channel but the main one
-    if message.channel != bot.get_channel(config.main_channel_id):
+    if message.channel != main_channel:
         return
 
     now = datetime.datetime.now()

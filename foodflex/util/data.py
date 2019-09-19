@@ -5,14 +5,32 @@ import json
 from foodflex.util.logging import logger
 
 DEFAULT_PERIOD = 'submissions'
+DEFAULT_MODE = 'automatic'
 
 DATA_PATH = 'data'
 STATE_PATH = f'{DATA_PATH}/state.json'
 LEADERBOARD_PATH = f'{DATA_PATH}/leaderboard.json'
 
 
+def change_period(new_period, manual_change=False):
+    global period, mode
+
+    if manual_change:
+        mode = 'manual'
+    else:
+        mode = 'automatic'
+
+    logger.info(f'Change from \'{period}\' to \'{new_period}\' ({mode})')
+
+    period = new_period
+    save_state()
+
+def set_mode(new_mode):
+    mode = new_mode
+    save_state()
+
 def load_state():
-    global participants, voting_map, period
+    global participants, voting_map, period, mode
 
     logger.debug('Loading state...')
     try:
@@ -25,6 +43,7 @@ def load_state():
                 participants = data['participants']
                 voting_map = data['voting_map']
                 period = data['period']
+                mode = data['mode']
                 logger.info('↳ Using existing state file')
             except KeyError:
                 fatal(f'↳ Cannot find required keys in {STATE_PATH}')
@@ -32,6 +51,7 @@ def load_state():
         participants = {}
         voting_map = {}
         period = DEFAULT_PERIOD
+        mode = DEFAULT_MODE
         logger.info('↳ No existing state file, starting with blank state')
         save_state()
 
@@ -60,7 +80,7 @@ def load_leaderboard():
 
 
 def save_state():
-    global participants, voting_map, period
+    global participants, voting_map, period, mode
 
     logger.debug('Saving state...')
 
@@ -71,6 +91,7 @@ def save_state():
                 'participants': participants,
                 'voting_map': voting_map,
                 'period': period,
+                'mode': mode
                 }, file, indent=2)
             logger.info('State saved')
     except OSError:

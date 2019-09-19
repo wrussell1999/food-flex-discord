@@ -9,7 +9,7 @@ from foodflex.util.logging import logger
 from foodflex.util.bot import bot, __version__
 
 
-async def submission_period(channel):
+async def submission_period():
     logger.info('// Now in SUBMISSIONS period //')
     activity = discord.Activity(name=static.strings['submission_open_activity'],
                                 type=discord.ActivityType.watching)
@@ -17,7 +17,7 @@ async def submission_period(channel):
     embed = discord.Embed(title=static.strings['submission_open_title'],
                           description=static.strings['submission_open'],
                           colour=0xff0000)
-    await channel.send(embed=embed)
+    await main_channel.send(embed=embed)
 
     logger.debug('Clearing participants & voting_map')
     data.participants.clear()
@@ -51,9 +51,9 @@ async def process_submission(message):
         logger.info('Submission valid')
         data.save_state()
 
+
 async def submission_reminder():
-    channel = bot.get_channel(config.config['food_flex_channel_id'])
     embed = discord.Embed(title=static.strings['submission_reminder_title'],
                           description=static.strings['submission_reminder'],
                           colour=0xff0000)
-    await channel.send(embed=embed)
+    await main_channel.send(embed=embed)

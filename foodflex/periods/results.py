@@ -8,7 +8,7 @@ from foodflex.util.logging import logger
 from foodflex.util.bot import bot, __version__
 
 
-async def results_period(channel):
+async def results_period():
     logger.info('// Now in RESULTS period //')
     activity = discord.Activity(
         name='for shit food', type=discord.ActivityType.watching)
@@ -24,7 +24,7 @@ async def results_period(channel):
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
     # Get the winner(s) as a string
-    winner_message = await get_winner(channel)
+    winner_message = await get_winner(main_channel)
 
     embed = discord.Embed(title='Results', description='', colour=0xff0000)
     embed.set_author(name=winner_message)
@@ -34,12 +34,12 @@ async def results_period(channel):
         votes = 'Votes: ' + str(user[1])
         embed.add_field(name=user[0], value=votes, inline=False)
 
-    await channel.send(embed=embed)
+    await main_channel.send(embed=embed)
     logger.info('Results posted')
     await leaderboard.update_leaderboard()
 
-async def get_winner(channel):
 
+async def get_winner():
     # Get a list of potential winners
     users = []
     for index, key in enumerate(data.participants):
@@ -55,7 +55,7 @@ async def get_winner(channel):
             title='No winner',
             description='No users both submitted and voted',
             colour=0xff0000)
-        await channel.send(embed=embed)
+        await main_channel.send(embed=embed)
         return 'No winner'
 
     # Check if there are any potential winners in the list
@@ -65,7 +65,7 @@ async def get_winner(channel):
             title='No winner',
             description='The potential winners were disqualified',
             colour=0xff0000)
-        await channel.send(embed=embed)
+        await main_channel.send(embed=embed)
         return 'No winner'
 
     # Get the potential winners as a single string
