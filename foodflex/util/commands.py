@@ -58,8 +58,8 @@ async def state(ctx):
 
 @bot.command(description='Switch to automatic time-based control')
 async def automatic(ctx):
-    data.set_mode('automatic')
     await ctx.send('Now in automatic mode')
+    data.set_mode('automatic')
 
 
 @bot.command(description='Start submissions period')

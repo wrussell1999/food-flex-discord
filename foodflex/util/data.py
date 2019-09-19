@@ -25,9 +25,14 @@ def change_period(new_period, manual_change=False):
     period = new_period
     save_state()
 
+
 def set_mode(new_mode):
+    global mode
+
+    logger.info(f'Mode \'{mode}\' -> \'{new_mode}\'')
     mode = new_mode
     save_state()
+
 
 def load_state():
     global participants, voting_map, period, mode
