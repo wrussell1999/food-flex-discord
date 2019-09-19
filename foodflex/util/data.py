@@ -33,6 +33,7 @@ def load_state():
         voting_map = {}
         period = DEFAULT_PERIOD
         logger.info('↳ No existing state file, starting with blank state')
+        save_state()
 
 
 def load_leaderboard():
@@ -55,6 +56,7 @@ def load_leaderboard():
         leaderboard = {}
         leaderboard_message_id = None
         logger.info('↳ No existing leaderboard file, starting with blank')
+        save_leaderboard()
 
 
 def save_state():
