@@ -9,7 +9,7 @@ import foodflex.util.config as config
 config.load()
 
 # all other module imports are after bot, so that they can access it
-from foodflex.util.bot import bot
+from foodflex.util.bot import bot, __version__
 import foodflex.util.data as data
 import foodflex.util.static as static
 import foodflex.util.commands as commands
@@ -22,6 +22,7 @@ import foodflex.periods.submissions as submissions
 from foodflex.util.logging import logger
 
 def main():
+    logger.info(f'Starting Food Flex v{__version__}')
     static.load()
     data.load_state()
     data.load_leaderboard()

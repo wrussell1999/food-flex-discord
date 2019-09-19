@@ -5,8 +5,8 @@ import foodflex.util.data as data
 import foodflex.util.config as config
 import foodflex.util.static as static
 
-from foodflex.util.bot import bot
 from foodflex.util.logging import logger
+from foodflex.util.bot import bot, __version__
 
 
 async def submission_period(channel):
