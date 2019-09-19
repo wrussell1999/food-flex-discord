@@ -1,36 +1,35 @@
 import discord
-import logging
-from discord.ext import commands
 import datetime
-from builtins import bot
-from . import submissions
-from . import voting
+
 import foodflex.util.data as data
 import foodflex.util.config as config
+import foodflex.periods.voting as voting
+import foodflex.periods.submissions as submissions
 
-logger = logging.getLogger('food-flex')
+from foodflex.util.bot import bot
+from foodflex.util.logging import logger
 
 
 @bot.event
 async def on_message(message):
+    # don't respond to our own messages
     if message.author.bot:
-        # don't respond own messages
         return
 
-    flex_channel = bot.get_channel(config.config['food_flex_channel_id'])
+    # ignore messages in any channel but the main one
+    if message.channel != bot.get_channel(config.main_channel_id):
+        return
+
     now = datetime.datetime.now()
-    hour = int(now.strftime("%H"))
-    minute = int(now.strftime("%M"))
+    hour = int(now.strftime('%H'))
+    minute = int(now.strftime('%M'))
+
     await bot.process_commands(message)
 
-    if message.channel == flex_channel:
-        if len(message.attachments) > 0 and \
-                ((hour >= 12 and hour <= 23) or data.shared_prefs['submissions']):
+    if data.period == 'submissions' and len(message.attachments) > 0:
+        logger.info(f'Submission from \'{message.author.display_name}\' ({str(message.author.id)})')
+        await submissions.process_submission(message)
 
-            logger.info("Submission from '{}' ({})".format(message.author.display_name, str(message.author.id)))
-            await submissions.process_submission(message)
-
-        if len(message.attachments) == 0 and \
-                ((hour >= 00 and hour < 12) or data.shared_prefs['voting']) and len(message.clean_content) == 1:
-            logger.info("Vote '{}' from '{}' ({})".format(message.clean_content, message.author.display_name, str(message.author.id)))
-            await voting.check_vote(message)
+    elif data.period == 'voting' and len(message.clean_content) == 1:
+        logger.info(f'Vote \'{message.clean_content}\' from \'{message.author.display_name}\' ({str(message.author.id)})')
+        await voting.check_vote(message)

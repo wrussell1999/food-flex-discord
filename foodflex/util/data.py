@@ -1,54 +1,96 @@
+import os
+import sys
 import json
-import logging
-from . import config
-logger = logging.getLogger('food-flex')
+
+from foodflex.util.logging import logger
+
+DEFAULT_PERIOD = 'submissions'
+
+DATA_PATH = 'data'
+STATE_PATH = f'{DATA_PATH}/state.json'
+LEADERBOARD_PATH = f'{DATA_PATH}/leaderboard.json'
 
 
-logger.debug('Loading quotes...')
-with open('data/quotes.json') as file:
-    quotes = json.load(file)
+def load_state():
+    global participants, voting_map, period
 
-logger.debug('Loading leaderboard...')
-with open('data/leaderboard.json') as file:
-    leaderboard_data = json.load(file)
-
-logger.debug('Loading daily data...')
-with open('data/data.json') as file:
-    content = json.load(file)
+    logger.debug('Loading state...')
     try:
-        daily_data = content['daily_data']
-        letter_to_user_id = content['letter_to_user_id']
-        logger.debug("Existing entries in daily data, restoring from file")
-    except KeyError:
-        daily_data = {}
-        letter_to_user_id = {}
-        logger.debug("No entries in daily data, creating blank template")
+        with open(STATE_PATH, 'r') as file:
+            try:
+                data = json.load(file)
+            except json.decoder.JSONDecodeError:
+                fatal(f'↳ Cannot parse {STATE_PATH}')
+            try:
+                participants = data['participants']
+                voting_map = data['voting_map']
+                period = data['period']
+                logger.info('↳ Using existing state file')
+            except KeyError:
+                fatal(f'↳ Cannot find required keys in {STATE_PATH}')
+    except OSError:
+        participants = {}
+        voting_map = {}
+        period = DEFAULT_PERIOD
+        logger.info('↳ No existing state file, starting with blank state')
 
-logger.debug('Loading strings...')
-with open('data/strings.json') as strings_file:
-    strings = json.load(strings_file)
 
-logger.debug('Loading shared prefs...')
-with open('data/shared_prefs.json') as sp_file:
-    shared_prefs = json.load(sp_file)
+def load_leaderboard():
+    global leaderboard, leaderboard_message_id
+
+    logger.debug('Loading leaderboard...')
+    try:
+        with open(LEADERBOARD_PATH) as file:
+            try:
+                data = json.load(file)
+            except json.decoder.JSONDecodeError:
+                fatal(f'↳ Cannot parse {LEADERBOARD_PATH}')
+            try:
+                leaderboard = data['leaderboard']
+                leaderboard_message_id = data['leaderboard_message_id']
+                logger.info('↳ Using existing leaderboard file')
+            except KeyError:
+                fatal(f'↳ Cannot find required keys in {LEADERBOARD_PATH}')
+    except OSError:
+        leaderboard = {}
+        leaderboard_message_id = None
+        logger.info('↳ No existing leaderboard file, starting with blank')
 
 
-def save_data():
-    logger.debug('Saving daily data...')
-    with open('data/data.json', 'w') as file:
-        json.dump({
-            'daily_data': daily_data,
-            'letter_to_user_id': letter_to_user_id
-        }, file)
+def save_state():
+    global participants, voting_map, period
+
+    logger.debug('Saving state...')
+
+    try:
+        os.makedirs(DATA_PATH, exist_ok=True)
+        with open(STATE_PATH, 'w') as file:
+            json.dump({
+                'participants': participants,
+                'voting_map': voting_map,
+                'period': period,
+                }, file, indent=2)
+            logger.info('State saved')
+    except OSError:
+        fatal(f'↳ Could not save to {STATE_PATH}')
 
 
 def save_leaderboard():
+    global leaderboard, leaderboard_message_id
+
     logger.debug('Saving leaderboard...')
-    with open('data/leaderboard.json', 'w') as file:
-        json.dump(leaderboard_data, file)
+    try:
+        os.makedirs(DATA_PATH, exist_ok=True)
+        with open(LEADERBOARD_PATH, 'w') as file:
+            json.dump({
+                'leaderboard': leaderboard,
+                'leaderboard_message_id': leaderboard_message_id
+                }, file, indent=2)
+            logger.info('Leaderboard saved')
+    except OSError:
+        fatal(f'↳ Could not save to {STATE_PATH}')
 
 
-def save_prefs():
-    logger.debug('Saving shared prefs...')
-    with open('data/shared_prefs.json', 'w') as file:
-        json.dump(shared_prefs, file)
+def fatal(message):
+    logger.critical(message)
+    sys.exit(1)

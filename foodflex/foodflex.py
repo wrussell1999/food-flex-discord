@@ -1,53 +1,54 @@
 import discord
-import logging
-from discord.ext import commands
-import datetime
 import asyncio
-import builtins
-import foodflex.util.config as config
+import datetime
 
-config.initilise_logging()
-logger = logging.getLogger('food-flex')
-config.load_config()
+import foodflex.util.logging as logging
+logging.init()
+logger = logging.logger
 
+# All module are after bot, so that the other modules can access it
+from foodflex.util.bot import bot
 import foodflex.util.data as data
-
-bot = commands.Bot(command_prefix='flex:', owner_id=config.config['admin_id'])
-builtins.bot = bot
-
-# Imports are after bot, so that the other modules can access them
-import foodflex.periods.leaderboard as leaderboard
-import foodflex.periods.submissions as submissions
+import foodflex.util.static as static
+import foodflex.util.config as config
+import foodflex.util.commands as commands
 import foodflex.periods.voting as voting
 import foodflex.periods.results as results
 import foodflex.periods.messages as messages
-import foodflex.util.commands as commands
+import foodflex.periods.leaderboard as leaderboard
+import foodflex.periods.submissions as submissions
 
 
 def main():
-    token = config.config['token']
+    config.load()
+    static.load()
+    data.load_state()
+    data.load_leaderboard()
+
+    logger.info('Starting bot...')
     bot.loop.create_task(check_time_periods())
-    logger.info("Starting bot...")
-    bot.run(token)
+    bot.run(config.token)
 
 
 @bot.event
 async def on_ready():
-    logger.info("Food Flex is online!")
+    logger.info('Food Flex is online!')
+    logger.info(f'period = \'{data.period}\', participants = {len(data.participants)}')
 
 
 async def check_time_periods():
     await bot.wait_until_ready()
-    channel = bot.get_channel(config.config['food_flex_channel_id'])
+    channel = bot.get_channel(config.main_channel_id)
 
     # Repeat every 60 seconds
     while True:
         now = datetime.datetime.now()
-        hour = int(now.strftime("%H"))
-        minute = int(now.strftime("%M"))
+        hour = int(now.strftime('%H'))
+        minute = int(now.strftime('%M'))
 
         # Submissions
         if hour == 13 and minute == 00:
+            data.period = 'submissions'
             await submissions.submission_period(channel)
 
         # Submissions reminder
@@ -56,19 +57,21 @@ async def check_time_periods():
 
         # Voting
         elif (hour == 00 and minute == 00) and \
-                len(data.daily_data) > 1:
+                len(data.participants) > 1:
+            data.period = 'voting'
             await voting.voting_period(channel)
 
         # Vote reminder
         elif hour == 11 and minute == 00 and \
-                len(data.daily_data) > 1:
+                len(data.participants) > 1:
 
             await voting.voting_reminder()
             await voting.individual_vote_reminder()
 
         # Results
         elif hour == 12 and minute == 00 and \
-                len(data.daily_data) > 1:  # Needs
+                len(data.participants) > 1:  # Needs
+            data.period = 'results'
             await results.results_period(channel)
 
         await asyncio.sleep(60)

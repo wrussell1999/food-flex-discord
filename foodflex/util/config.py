@@ -1,40 +1,36 @@
-import json
-import logging
 import sys
-logger = logging.getLogger('food-flex')
+import json
+
+from foodflex.util.logging import logger
+
+CONFIG_PATH = 'config/config.json'
 
 
-def load_config():
-    global config
-    logger.debug("Loading config...")
-    with open("config/config.json") as file:
-        config = json.load(file)
+def load():
+    global token, server_id, admin_ids, main_channel_id,  chat_channel_id, leaderboard_channel_id
+    logger.info('Loading config...')
+    try:
+        with open(CONFIG_PATH) as file:
+            try:
+                config = json.load(file)
+            except json.decoder.JSONDecodeError:
+                fatal(f'↳ Cannot parse {CONFIG_PATH}')
+
+            try:
+                token = config['token']
+                server_id = config['server_id']
+                admin_ids = config['admin_ids']
+                main_channel_id = config['main_channel_id']
+                chat_channel_id = config['chat_channel_id']
+                leaderboard_channel_id = config['leaderboard_channel_id']
+                logger.debug('↳ Config loaded')
+            except KeyError:
+                fatal(f'↳ Cannot find required keys in {CONFIG_PATH}\
+                      \nSee README.md for required structure')
+    except OSError:
+        fatal(f'↳ Cannot open {CONFIG_PATH}')
 
 
-def save_config():
-    global config
-    with open('config/config.json', 'w') as json_file:
-        logger.debug("Saving config.json...")
-        json.dump(config, json_file)
-
-
-def initilise_logging():
-    logging.addLevelName(logging.WARNING, 'WARN')
-    logger = logging.getLogger('food-flex')
-    logger.setLevel(logging.DEBUG)
-
-    console_format = logging.Formatter('%(asctime)s %(levelname)5s %(module)11s: %(message)s'
-                                       , "%H:%M:%S")
-    file_format = logging.Formatter('%(asctime)s %(levelname)5s %(module)11s: %(message)s'
-                                    , "%d/%m/%y %H:%M:%S")
-
-    file_handler = logging.FileHandler(filename='data/foodflex.log', encoding='utf-8', mode='w')
-    file_handler.setFormatter(file_format)
-    file_handler.setLevel(logging.INFO)
-
-    console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(console_format)
-    console_handler.setLevel(logging.DEBUG)
-
-    logger.addHandler(console_handler)
-    logger.addHandler(file_handler)
+def fatal(message):
+    logger.critical(message)
+    sys.exit(1)

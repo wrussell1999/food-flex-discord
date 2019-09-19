@@ -1,28 +1,28 @@
 import discord
-import logging
-from discord.ext import commands
-from builtins import bot
+
 import foodflex.images as images
 import foodflex.util.data as data
+import foodflex.util.static as static
 import foodflex.util.config as config
 import foodflex.periods.leaderboard as leaderboard
 
-logger = logging.getLogger('food-flex')
+from foodflex.util.bot import bot
+from foodflex.util.logging import logger
 
 
 async def voting_period(channel):
     logger.info('// Now in VOTING period //')
     logger.info('Creating voting key...')
 
-    # we need to build letter_to_user_id map first
+    # we need to build voting_map map first
     build_voting_map()
 
     logger.debug('Creating (url, letter) pairs for submissions...')
     submissions = []
     # create (image_url, letter) pair list
-    for letter in data.letter_to_user_id:
-        user_id = data.letter_to_user_id[letter]
-        image_url = data.daily_data[user_id]['image_url']
+    for letter in data.voting_map:
+        user_id = data.voting_map[letter]
+        image_url = data.participants[user_id]['image_url']
         submissions.append((image_url, letter))
 
     # sort submissions by alphabetical key
@@ -36,7 +36,7 @@ async def voting_period(channel):
         image_objects.append(discord.File(buffer, filename=f'{letter}.png'))
 
     # announce voting is open
-    await channel.send(data.strings['voting_open_title'])
+    await channel.send(static.strings['voting_open_title'])
 
     logger.debug('Uploading images...')
     # upload images
@@ -44,9 +44,9 @@ async def voting_period(channel):
         await channel.send(file=image)
 
     # remind people how to vote and change presence
-    await channel.send(data.strings['voting_open_footer'])
+    await channel.send(static.strings['voting_open_footer'])
 
-    activity = discord.Activity(name="people vote on shit food",
+    activity = discord.Activity(name='people vote on shit food',
                                 type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.online, activity=activity)
     logger.info('Done, voting key posted')
@@ -66,41 +66,40 @@ async def check_vote(message):
     if message.clean_content == '🅱':
         vote = 'B'
 
-    if user_id in data.daily_data:
+    if user_id in data.participants:
         # This person has submitted/voted before
         try:
-            voting_for = data.letter_to_user_id[vote]
+            voting_for = data.voting_map[vote]
             if voting_for == user_id:
-                await log_and_dm("Invalid vote", "You cannot vote for yourself",
+                await log_and_dm('Invalid vote', 'You cannot vote for yourself',
                                  message.author)
                 return
         except KeyError:
             pass
 
-        if data.daily_data[user_id]['voted']:
-            await log_and_dm("Invalid vote", "You have already voted", message.author)
+        if data.participants[user_id]['voted']:
+            await log_and_dm('Invalid vote', 'You have already voted', message.author)
             return
     else:
         # Person has not submitted so we need to create an entry for them
-        data.daily_data[user_id] = {
-            "nick": message.author.display_name,
-            "submitted": False,
-            "voted": False,  # only set to true when they make a valid vote
-            "votes": 0
+        data.participants[user_id] = {
+            'nick': message.author.display_name,
+            'submitted': False,
+            'voted': False,  # only set to true when they make a valid vote
+            'votes': 0
         }
 
     # Add one to the number of votes that the person we are voting for has
     try:
-        user_id_voted_for = data.letter_to_user_id[vote]
-        data.daily_data[user_id_voted_for]['votes'] += 1
-        data.daily_data[user_id]['voted'] = True
-        await log_and_dm("Vote successful!", "Vote has been submitted successfully for '{}'".format( \
-            data.daily_data[user_id_voted_for]['nick']), message.author)
-        data.save_data()
+        user_id_voted_for = data.voting_map[vote]
+        data.participants[user_id_voted_for]['votes'] += 1
+        data.participants[user_id]['voted'] = True
+        nickname = data.participants[user_id_voted_for]['nick']
+        await log_and_dm('Vote successful!', f'Vote has been submitted successfully for \'{nickname}\'', message.author)
+        data.save_state()
     except KeyError:
         # The letter voted for does not refer to anyone
-        await log_and_dm("Invalid vote", "Can't find user for letter '{}'".format(
-            vote), message.author)
+        await log_and_dm('Invalid vote', f'Can\'t find user for letter \'{vote}\'', message.author)
 
 
 async def log_and_dm(title, reason, person):
@@ -109,45 +108,44 @@ async def log_and_dm(title, reason, person):
         description=reason,
         colour=0xff0000)
     await person.send(embed=embed)
-    logger.info(reason + ", " + title)
+    logger.info(reason + ', ' + title)
 
 
 def build_voting_map():
     counter = 0
-    logger.debug("Building letter_to_user_id map...")
+    logger.debug('Building voting_map map...')
 
-    # ensure letter_to_user_id map is empty
-    if len(data.letter_to_user_id) != 0:
-        logger.warn("letter_to_user_id map has not been cleared, clearing now")
-        data.letter_to_user_id.clear()
+    # ensure voting_map is empty
+    if len(data.voting_map) != 0:
+        logger.warn('voting_map map has not been cleared, clearing now')
+        data.voting_map.clear()
 
     # assign a letter to every person who has submitted
-    for user_id in data.daily_data:
-        if data.daily_data[user_id]['submitted']:
+    for user_id in data.participants:
+        if data.participants[user_id]['submitted']:
             assigned_letter = chr(ord('A') + counter)
             counter += 1
-            logger.debug('Assigned letter \'{}\' to user_id \'{}\''.format(
-                        assigned_letter, user_id))
-            data.letter_to_user_id[assigned_letter] = user_id
+            logger.debug(f'Assigned letter \'{assigned_letter}\' to user_id \'{user_id}\'')
+            data.voting_map[assigned_letter] = user_id
 
-    logger.debug("Map built, {} letter(s)".format(len(data.letter_to_user_id)))
-    data.save_data()
+    logger.debug(f'Map built, {len(data.voting_map)} letter(s)')
+    data.save_state()
 
 async def voting_reminder():
     channel = bot.get_channel(config.config['food_flex_channel_id'])
-    embed = discord.Embed(title=data.strings['voting_reminder_title'],
-                          description=data.strings['voting_reminder'])
+    embed = discord.Embed(title=static.strings['voting_reminder_title'],
+                          description=static.strings['voting_reminder'])
 
     # Gets users as a list of tuples (user, score)
     users = []
-    for key in data.daily_data:
-        if data.daily_data[key]['submitted']:
-            tuple = (data.daily_data[key]['nick'], data.daily_data[key]['votes'])
+    for key in data.participants:
+        if data.participants[key]['submitted']:
+            tuple = (data.participants[key]['nick'], data.participants[key]['votes'])
             users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
     # Create embed and add people to it
-    embed = discord.Embed(title="Current scores", description="There's still time to vote!", colour=0xff000)
+    embed = discord.Embed(title='Current scores', description='There\'s still time to vote!', colour=0xff000)
 
     # Add users to embed and send
     for (nick, vote) in users:
@@ -156,14 +154,14 @@ async def voting_reminder():
 
 
 async def individual_vote_reminder():
-    for user in data.daily_data:
-        if data.daily_data[str(user)]['submitted'] and \
-                not data.daily_data[str(user)]['voted']:
+    for user in data.participants:
+        if data.participants[str(user)]['submitted'] and \
+                not data.participants[str(user)]['voted']:
             user = bot.get_guild(
                 config.config['guild_id']).get_member(
                 str(user))
-            embed = discord.Embed(title=data.strings['voting_dm_reminder_title'],
-                                  description=data.strings['voting_dm_reminder'])
-            embed.set_footer(text=data.strings['voting_dm_reminder_footer'])
+            embed = discord.Embed(title=static.strings['voting_dm_reminder_title'],
+                                  description=static.strings['voting_dm_reminder'])
+            embed.set_footer(text=static.strings['voting_dm_reminder_footer'])
             await user.send(embed=embed)
-            logger.debug("Vote reminder sent for " + str(user.nick))
+            logger.debug('Vote reminder sent for ' + str(user.nick))

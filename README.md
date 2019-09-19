@@ -7,7 +7,7 @@
 ## What does the bot do?
 Food Flex is bot that manages:
 - Submissions
-- Voting 
+- Voting
 - Results
 - Leaderboard
 
@@ -21,7 +21,7 @@ Submissions are closed and a voting poll is displayed. Users can vote for their 
 
 ### Results (12:00)
 
-Voting is closed and a results message will be sent to the chat. 
+Voting is closed and a results message will be sent to the chat.
 
 ### Leaderboard
 
@@ -77,19 +77,19 @@ Go to Discord and turn on Developer Mode. With this, you can now right-click on 
 `leaderboard_message_id` should be removed if there isn't already a leaderboard. If there isn't a `leaderboard_message_id`, it will be generated when the leaderboard is created.
 
 _Note: Token is stored as a string, and IDs (snowflakes) are stored as integers._
+`config/config.json`
 ```json
 {
-    "token": "String",
-    "admin_id": int,
-    "guild_id": int,
-    "food_chat_id": int,
-    "food_flex_channel_id": int,
-    "leaderboard_channel_id": int,
-    "leaderboard_message_id": int // If it doesn't exist, remove this line
+  "token": str,
+  "server_id": int,
+  "admin_ids": [list of ints],
+  "main_channel_id": int,
+  "chat_channel_id": int,
+  "leaderboard_channel_id": int
 }
 ```
 
-### Run the bot 
+### Run the bot
 ```bash
 $ python3 -m foodflex
 ```

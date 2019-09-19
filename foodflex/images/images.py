@@ -45,7 +45,7 @@ def process_image(url, letter):
     image = ImageOps.fit(image, INTERNAL_RES, method=Image.ANTIALIAS)
     draw = ImageDraw.Draw(image)
 
-    # Draw "error" if image could not be loaded
+    # Draw 'error' if image could not be loaded
     if not image_loaded:
         pos = (INTERNAL_RES[0] * 0.19, INTERNAL_RES[1] * 0.35)
         draw.text(pos, 'error', font=font_shadow, fill='black')
