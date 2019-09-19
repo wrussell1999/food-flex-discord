@@ -26,8 +26,7 @@ async def is_admin(ctx):
 async def on_command_error(ctx, error):
     # CheckFailure is an auth error which we already log
     if not isinstance(error, discord.ext.commands.CheckFailure):
-        # logger.debug(f'error: {error}')
-        raise error
+        logger.debug(f'error: {error}')
 
 # delete the message that successfully invoked a command
 @bot.after_invoke
