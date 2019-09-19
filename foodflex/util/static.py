@@ -9,7 +9,7 @@ STRINGS_PATH = 'static/strings.json'
 
 def load():
     global quotes, strings
-    logger.info('Loading quotes & strings...')
+    logger.debug('Loading quotes & strings...')
     try:
         with open(QUOTES_PATH) as file:
             try:
@@ -28,7 +28,8 @@ def load():
     except OSError:
         fatal(f'↳ Cannot open {STRINGS_PATH}')
 
-    logger.debug('↳ Quotes & strings loaded')
+    logger.info('↳ Quotes & strings loaded')
+
 
 def fatal(message):
     logger.critical(message)
