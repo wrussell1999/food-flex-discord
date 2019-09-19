@@ -7,7 +7,6 @@ import foodflex.periods.voting as voting
 import foodflex.periods.submissions as submissions
 
 from foodflex.util.logging import logger
-from foodflex.util.bot import bot, __version__
 
 
 @bot.event

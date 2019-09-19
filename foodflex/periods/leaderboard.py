@@ -5,7 +5,6 @@ import foodflex.util.data as data
 import foodflex.util.config as config
 
 from foodflex.util.logging import logger
-from foodflex.util.bot import bot, __version__
 
 
 def update_score(user_id, user_nick):

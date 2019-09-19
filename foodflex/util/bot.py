@@ -1,13 +1,13 @@
-__version__ = '2.0.0'
-
 import builtins
 from discord.ext import commands
 
 import foodflex.util.config as config
 from foodflex.util.logging import logger
 
+builtins.__version__ = '2.0.0'
+
 logger.debug(f'Creating bot (cmd prefix \'{config.command_prefix}\')...')
-bot = commands.Bot(command_prefix=config.command_prefix)
+builtins.bot = commands.Bot(command_prefix=config.command_prefix)
 
 @bot.event
 async def on_ready():

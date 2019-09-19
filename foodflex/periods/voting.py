@@ -7,7 +7,6 @@ import foodflex.util.config as config
 import foodflex.periods.leaderboard as leaderboard
 
 from foodflex.util.logging import logger
-from foodflex.util.bot import bot, __version__
 
 
 async def voting_period():

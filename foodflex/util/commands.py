@@ -11,7 +11,6 @@ import foodflex.periods.submissions as submissions
 import foodflex.periods.leaderboard as leaderboard
 
 from foodflex.util.logging import logger
-from foodflex.util.bot import bot, __version__
 
 # to use any command, the user must be in the admin list
 @bot.check

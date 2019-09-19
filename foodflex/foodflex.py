@@ -9,7 +9,7 @@ import foodflex.util.config as config
 config.load()
 
 # all other module imports are after bot, so that they can access it
-from foodflex.util.bot import bot, __version__
+import foodflex.util.bot
 import foodflex.util.data as data
 import foodflex.util.static as static
 import foodflex.util.commands as commands
