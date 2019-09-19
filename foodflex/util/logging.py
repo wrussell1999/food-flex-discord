@@ -4,6 +4,7 @@ import logging
 def init():
     global logger
     logging.addLevelName(logging.WARNING, 'WARN')
+    logging.addLevelName(logging.CRITICAL, 'FATAL')
     logger = logging.getLogger('food-flex')
     logger.setLevel(logging.DEBUG)
 
