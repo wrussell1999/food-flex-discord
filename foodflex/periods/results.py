@@ -23,7 +23,7 @@ async def results_period():
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
     # Get the winner(s) as a string
-    winner_message = await get_winner(main_channel)
+    winner_message = await get_winner()
 
     embed = discord.Embed(title='Results', description='', colour=0xff0000)
     embed.set_author(name=winner_message)
