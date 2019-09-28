@@ -35,11 +35,9 @@ $ git clone https://github.com/wrussell1999/food-flex-discord
 $ cd food-flex-discord
 ```
 
-#### Setup venv & Install dependencies
+#### Setup
 ```bash
-$ python3 -m venv .venv
-$ source .venv/bin/activate
-$ pip3 install -r requirements.txt
+$ ./setup.sh
 ```
 
 ### Configuration

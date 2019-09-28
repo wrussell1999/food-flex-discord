@@ -8,7 +8,7 @@ logger = logging.getLogger('food-flex')
 INTERNAL_RES = (1024, 1024)
 OUTPUT_RES = (1024, 1024)
 
-FONT_PATH = '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf'
+FONT_PATH = '/usr/share/fonts/truetype/msttcorefonts/Arial.ttf'
 FONT_BASE_SIZE = int(0.2 * INTERNAL_RES[1])
 FONT_SHADOW_SIZE = int(1.125 * FONT_BASE_SIZE)
 
