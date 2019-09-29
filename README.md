@@ -78,3 +78,5 @@ $ python3 -m foodflex
 
 ## License
 MIT License for all the code written by Will and Dan.
+
+[DejaVuSans font](https://dejavu-fonts.github.io/) - Bitstream Vera Fonts Copyright
