@@ -143,7 +143,7 @@ async def voting_reminder():
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
     # Create embed and add people to it
-    embed = discord.Embed(title='Current scores', description='There\'s still time to vote!', colour=0xff000)
+    embed = discord.Embed(title='Current scores', description='There\'s still time to vote!', colour=0xff0000)
 
     # Add users to embed and send
     for (nick, vote) in users:
@@ -153,13 +153,17 @@ async def voting_reminder():
 
 async def individual_vote_reminder():
     for user in data.participants:
-        if data.participants[str(user)]['submitted'] and \
-                not data.participants[str(user)]['voted']:
-            user = bot.get_guild(
-                config.config['guild_id']).get_member(
-                str(user))
+        if data.participants[user]['submitted'] and \
+                not data.participants[user]['voted']:
+            member = bot.get_guild(config.server_id).get_member(int(user))
+
+            if member is None:
+                logger.warn(f'Unable to get user object for \'{user}\', skipping their vote reminder')
+                continue
+
             embed = discord.Embed(title=static.strings['voting_dm_reminder_title'],
-                                  description=static.strings['voting_dm_reminder'])
+                                  description=static.strings['voting_dm_reminder'],
+                                  colour=0xff0000)
             embed.set_footer(text=static.strings['voting_dm_reminder_footer'])
-            await user.send(embed=embed)
-            logger.debug('Vote reminder sent for ' + str(user.nick))
+            await member.send(embed=embed)
+            logger.debug(f'Vote reminder sent for \'{member.display_name}\' ({member.id})')

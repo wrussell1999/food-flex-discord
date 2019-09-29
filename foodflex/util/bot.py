@@ -12,7 +12,9 @@ builtins.bot = commands.Bot(command_prefix=config.command_prefix)
 @bot.event
 async def on_ready():
     global main_channel, leaderboard_channel
-    logger.info('Food Flex is online!')
+    logger.debug('Finding text channels...')
 
     builtins.main_channel = bot.get_channel(config.main_channel_id)
     builtins.leaderboard_channel = bot.get_channel(config.leaderboard_channel_id)
+
+    logger.info('Food Flex is online!')
