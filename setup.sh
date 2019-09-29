@@ -1,13 +1,6 @@
 #!/bin/bash
-
-if [ "$EUID" -ne 0 ]
-  then echo "Please run as root"
-  exit
-fi
-
+sudo apt-get install build-essential python3-dev python3-venv libfreetype6-dev libjpeg-dev zlib1g-dev
 python3 -m venv .venv
 source .venv/bin/activate
+pip install wheel
 pip install -r requirements.txt
-sudo apt-get install libopenjp2-7
-sudo apt install libtiff5
-sudo apt install ttf-mscorefonts-installer

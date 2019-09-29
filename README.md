@@ -36,6 +36,7 @@ $ cd food-flex-discord
 ```
 
 #### Setup
+Install dependencies (on Debian-based systems):
 ```bash
 $ ./setup.sh
 ```
@@ -69,6 +70,7 @@ Go to Discord and turn on Developer Mode. With this, you can now right-click on 
 
 ### Run the bot
 ```bash
+$ source .venv/bin/activate
 $ python3 -m foodflex
 ```
 
