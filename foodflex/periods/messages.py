@@ -15,6 +15,8 @@ async def on_message(message):
     if message.author.bot:
         return
 
+    await bot.process_commands(message)
+
     # ignore messages in any channel but the main one
     if message.channel != main_channel:
         return
@@ -23,7 +25,6 @@ async def on_message(message):
     hour = int(now.strftime('%H'))
     minute = int(now.strftime('%M'))
 
-    await bot.process_commands(message)
 
     if data.period == 'submissions' and len(message.attachments) > 0:
         logger.info(f'Submission from \'{message.author.display_name}\' ({str(message.author.id)})')
