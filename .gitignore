@@ -1,5 +1,6 @@
 data/
 config/
+.env
 
 __pycache__/
 .venv/

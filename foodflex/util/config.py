@@ -1,6 +1,6 @@
 import sys
 import json
-
+import os
 from foodflex.util.logging import logger
 
 CONFIG_PATH = 'config/config.json'
@@ -28,7 +28,15 @@ def load():
                 fatal(f'↳ Cannot find required keys in {CONFIG_PATH}\
                       \nSee README.md for required structure')
     except OSError:
-        fatal(f'↳ Cannot open {CONFIG_PATH}')
+        logger.warn(f'↳ Cannot open {CONFIG_PATH}')
+        token = os.environ['TOKEN']
+        server_id = os.environ['SERVER_ID']
+        command_prefix = os.environ['COMMAND_PREFIX']
+        admin_ids = os.environ['ADMIN_IDS']
+        main_channel_id = os.environ['MAIN_CHANNEL_ID']
+        leaderboard_channel_id = os.environ['LEADERBOARD_CHANNEL_ID']
+        logger.debug('↳ Config loaded')
+
 
 
 def fatal(message):
