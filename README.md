@@ -54,6 +54,17 @@ You need to create the file `config/config.json` give it the following structure
 }
 ```
 
+Alternatively, if `config/config.json` is not present then environmental variables will be read.
+
+### Docker Compose
+The [Compose](docker-compose.yml) can also be used to run the application.
+
+1. `cp example.env .env`
+2. Configure the variables as equivilent to [config](###Configuration)
+3. Pull: `docker-compose pull`
+4. Launch: `docker-compose up -d`
+5. View logs: `docker-compose logs -f`
+
 ###### Meaning of each key
 - **token** - your bot's secret token
 - **server_id** - the ID of your server
