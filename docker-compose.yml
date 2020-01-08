@@ -5,3 +5,4 @@ services:
         container_name: 'food-flex'
         build: .
         env_file: .env
+        image: chasbob/food-flex
