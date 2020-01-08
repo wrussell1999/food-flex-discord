@@ -6,3 +6,5 @@ __pycache__/
 .venv/
 .python-version
 *.log
+
+.vscode/
