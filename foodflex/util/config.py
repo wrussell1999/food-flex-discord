@@ -35,7 +35,7 @@ def load():
         admin_ids = os.environ['ADMIN_IDS']
         main_channel_id = os.environ['MAIN_CHANNEL_ID']
         leaderboard_channel_id = os.environ['LEADERBOARD_CHANNEL_ID']
-        logger.debug('↳ Config loaded')
+        logger.debug('↳ Config loaded from environment')
 
 
 
