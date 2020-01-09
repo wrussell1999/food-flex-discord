@@ -1,3 +1,4 @@
 discord.py==1.2.3
 requests==2.22.0
 Pillow==6.1.0
+environs==7.1.0
