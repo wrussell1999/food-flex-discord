@@ -66,7 +66,7 @@ The [Compose](docker-compose.yml) can also be used to run the application.
 4. Launch: `docker-compose up -d`
 5. View logs: `docker-compose logs -f`
 
-\* The only thing to note here is that `admin_id` should be in the form of `1111 2222 3333` when using environment variables.
+\* The only thing to note here is that `admin_id` should be in the form of `1111, 2222, 3333` when using environment variables.
 
 ###### Meaning of each key
 - **token** - your bot's secret token
