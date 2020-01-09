@@ -32,17 +32,11 @@ def load():
         logger.warn(f'↳ Cannot open {CONFIG_PATH}')
         env = Env()
         token = env('TOKEN')
-        logger.info(type(token))
         server_id = env.int('SERVER_ID')
-        logger.info(f'server_id -> {type(server_id)}: {server_id}')
         command_prefix = env('COMMAND_PREFIX')
-        logger.info(f'command_prefix -> {type(command_prefix)}: {command_prefix}')
         admin_ids = list(map(lambda x: int(x), env.list('ADMIN_IDS')))
-        logger.info(f'admin_ids -> {type(admin_ids)}: {admin_ids}')
         main_channel_id = env.int('MAIN_CHANNEL_ID')
-        logger.info(f'main_channel_id -> {type(main_channel_id)}: {main_channel_id}')
         leaderboard_channel_id = env.int('LEADERBOARD_CHANNEL_ID')
-        logger.info(f'leaderboard_channel_id -> {type(leaderboard_channel_id)}: {leaderboard_channel_id}')
         logger.debug('↳ Config loaded from environment')
 
 
