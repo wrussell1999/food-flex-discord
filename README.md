@@ -50,7 +50,8 @@ You need to create the file `config/config.json` give it the following structure
   "command_prefix":str,
   "admin_ids": [ints],
   "main_channel_id": int,
-  "leaderboard_channel_id": int
+  "leaderboard_channel_id": int,
+  "data_root": str
 }
 ```
 
@@ -74,6 +75,7 @@ The [Compose](docker-compose.yml) can also be used to run the application.
 - **admin_ids** - a list of user IDs that will be allowed to use bot commands
 - **main_channel_id** - the ID of the channel to use for submissions, voting and results
 - **leaderboard_channel_id** - the ID of the channel to use for the leaderboard
+- **data_root** - directory containing `leaderboard.json` and `state.json`
 
 ###### Getting a token
 [This guide](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) will show you how to create a Discord Bot for your Discord server.

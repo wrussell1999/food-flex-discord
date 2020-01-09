@@ -33,6 +33,11 @@ def set_mode(new_mode):
     mode = new_mode
     save_state()
 
+def set_paths(data_path: str):
+    DATA_PATH = data_path
+    STATE_PATH = f'{DATA_PATH}/state.json'
+    LEADERBOARD_PATH = f'{DATA_PATH}/leaderboard.json'
+
 
 def load_state():
     global participants, voting_map, period, mode

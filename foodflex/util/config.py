@@ -8,7 +8,7 @@ CONFIG_PATH = 'config/config.json'
 
 
 def load():
-    global token, server_id, command_prefix, admin_ids, main_channel_id, leaderboard_channel_id
+    global token, server_id, command_prefix, admin_ids, main_channel_id, leaderboard_channel_id, data_root
     logger.info('Loading config...')
     try:
         with open(CONFIG_PATH) as file:
@@ -24,6 +24,7 @@ def load():
                 admin_ids = config['admin_ids']
                 main_channel_id = config['main_channel_id']
                 leaderboard_channel_id = config['leaderboard_channel_id']
+                data_root = config['data_root']
                 logger.debug('↳ Config loaded')
             except KeyError:
                 fatal(f'↳ Cannot find required keys in {CONFIG_PATH}\
@@ -37,6 +38,7 @@ def load():
         admin_ids = list(map(lambda x: int(x), env.list('ADMIN_IDS')))
         main_channel_id = env.int('MAIN_CHANNEL_ID')
         leaderboard_channel_id = env.int('LEADERBOARD_CHANNEL_ID')
+        data_root = env('DATA_ROOT')
         logger.debug('↳ Config loaded from environment')
 
 

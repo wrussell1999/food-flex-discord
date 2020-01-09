@@ -1,8 +1,13 @@
 version: '3.7'
 
-services: 
+volumes:
+    food-flex-data:
+
+services:
     food-flex:
         container_name: 'food-flex'
         build: .
         env_file: .env
         image: chasbob/food-flex
+        volumes:
+            - food-flex-data:/data
