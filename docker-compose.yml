@@ -8,6 +8,6 @@ services:
         container_name: 'food-flex'
         build: .
         env_file: .env
-        image: chasbob/food-flex
+        image: wrussell1999/food-flex-discord
         volumes:
             - food-flex-data:/data
