@@ -24,6 +24,7 @@ from foodflex.util.logging import logger
 def main():
     logger.info(f'Starting Food Flex v{__version__}')
     static.load()
+    data.set_paths(config.data_root)
     data.load_state()
     data.load_leaderboard()
 

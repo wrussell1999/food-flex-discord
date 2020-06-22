@@ -36,13 +36,32 @@ $ cd food-flex-discord
 ```
 
 #### Setup
-Install dependencies (on Debian-based systems):
+
+##### Debian-based
+
+Install dependencies:
 ```bash
 $ ./setup.sh
 ```
 
+##### Docker Compose
+The [Compose](docker-compose.yml) can also be used to run the application.
+
+1. `cp example.env .env`
+2. Configure the variables as equivilent to [config](###Configuration) *
+3. Pull: `docker-compose pull`
+4. Launch: `docker-compose up -d`
+5. View logs: `docker-compose logs -f`
+
+---
+
 ### Configuration
+
+
+#### JSON file
+
 You need to create the file `config/config.json` give it the following structure:
+
 ```python
 {
   "token": str,
@@ -50,17 +69,34 @@ You need to create the file `config/config.json` give it the following structure
   "command_prefix":str,
   "admin_ids": [ints],
   "main_channel_id": int,
-  "leaderboard_channel_id": int
+  "leaderboard_channel_id": int,
+  "data_root": str
 }
 ```
 
+#### Environment Variables
+
+Alternatively, if `config/config.json` is not present then environmental variables will be read.
+
+```bash
+TOKEN=
+SERVER_ID=
+COMMAND_PREFIX=
+ADMIN_IDS=
+MAIN_CHANNEL_ID=
+LEADERBOARD_CHANNEL_ID=
+DATA_ROOT=
+```
+\* The only thing to note here is that `admin_id` should be in the form of `1111, 2222, 3333` when using environment variables.
+
 ###### Meaning of each key
-- **token** - your bot's secret token
-- **server_id** - the ID of your server
-- **command_prefix** - a prefix that marks the message as a command for the bot (you may need a space at the end)
-- **admin_ids** - a list of user IDs that will be allowed to use bot commands
-- **main_channel_id** - the ID of the channel to use for submissions, voting and results
-- **leaderboard_channel_id** - the ID of the channel to use for the leaderboard
+- `token` - your bot's secret token
+- `server_id` - the ID of your server
+- `command_prefix` - a prefix that marks the message as a command for the bot (you may need a space at the end)
+- `admin_ids` - a list of user IDs that will be allowed to use bot commands
+- `main_channel_id` - the ID of the channel to use for submissions, voting and results
+- `leaderboard_channel_id` - the ID of the channel to use for the leaderboard
+- `data_root` - directory containing `leaderboard.json` and `state.json` (Default value of `.` if none is provided)
 
 ###### Getting a token
 [This guide](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) will show you how to create a Discord Bot for your Discord server.

@@ -1,0 +1,13 @@
+version: '3.7'
+
+volumes:
+    food-flex-data:
+
+services:
+    food-flex:
+        container_name: 'food-flex'
+        build: .
+        env_file: .env
+        image: wrussell1999/food-flex-discord
+        volumes:
+            - food-flex-data:/data

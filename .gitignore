@@ -1,7 +1,12 @@
 data/
 config/
+.env
 
 __pycache__/
 .venv/
 .python-version
 *.log
+
+.vscode/
+
+.idea/

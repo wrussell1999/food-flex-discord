@@ -1,13 +1,14 @@
 import sys
 import json
-
+import os
+from environs import Env
 from foodflex.util.logging import logger
 
 CONFIG_PATH = 'config/config.json'
 
 
 def load():
-    global token, server_id, command_prefix, admin_ids, main_channel_id, leaderboard_channel_id
+    global token, server_id, command_prefix, admin_ids, main_channel_id, leaderboard_channel_id, data_root
     logger.info('Loading config...')
     try:
         with open(CONFIG_PATH) as file:
@@ -23,12 +24,23 @@ def load():
                 admin_ids = config['admin_ids']
                 main_channel_id = config['main_channel_id']
                 leaderboard_channel_id = config['leaderboard_channel_id']
+                data_root = config['data_root'] if 'data_root' in config.keys() else '.'
                 logger.debug('↳ Config loaded')
             except KeyError:
                 fatal(f'↳ Cannot find required keys in {CONFIG_PATH}\
                       \nSee README.md for required structure')
     except OSError:
-        fatal(f'↳ Cannot open {CONFIG_PATH}')
+        logger.warn(f'↳ Cannot open {CONFIG_PATH}')
+        env = Env()
+        token = env('TOKEN')
+        server_id = env.int('SERVER_ID')
+        command_prefix = env('COMMAND_PREFIX')
+        admin_ids = list(map(lambda x: int(x), env.list('ADMIN_IDS')))
+        main_channel_id = env.int('MAIN_CHANNEL_ID')
+        leaderboard_channel_id = env.int('LEADERBOARD_CHANNEL_ID')
+        data_root = env('DATA_ROOT') if 'DATA_ROOT' in os.environ else '.'
+        logger.debug('↳ Config loaded from environment')
+
 
 
 def fatal(message):
