@@ -57,26 +57,9 @@ The [Compose](docker-compose.yml) can also be used to run the application.
 
 ### Configuration
 
-
-#### JSON file
-
-You need to create the file `config/config.json` give it the following structure:
-
-```python
-{
-  "token": str,
-  "server_id": int,
-  "command_prefix":str,
-  "admin_ids": [ints],
-  "main_channel_id": int,
-  "leaderboard_channel_id": int,
-  "data_root": str
-}
-```
-
 #### Environment Variables
 
-Alternatively, if `config/config.json` is not present then environmental variables will be read.
+Will out the `.env` file.
 
 ```bash
 TOKEN=
