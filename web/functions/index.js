@@ -3,22 +3,22 @@ const express = require('express');
 const app = express();
 const firebase = require("firebase");
 require("firebase/firestore");
-require('dotenv').config();
-
 firebase.initializeApp({
-    apiKey: process.env['API_KEY'],
-    authDomain: process.env['AUTH_DOMAIN'],
-    databaseURL: process.env['DATABASE_URL'],
-    projectId: process.env['PROJECT_ID'],
-    storageBucket: process.env['STORAGE_BUCKET'],
-    messagingSenderId: process.env['MESSAGING_SENDER_ID'],
-    appId: process.env['APP_ID'],
-    measurementId: process.env['MEASUREMENT_ID']
+    apiKey: functions.config().creds.api_key,
+    authDomain: functions.config().creds.auth_domain,
+    databaseURL: functions.config().creds.database_url,
+    projectId: functions.config().creds.project_id,
+    storageBucket: functions.config().creds.storage_bucket,
+    messagingSenderId: functions.config().creds.messaging_sender_id,
+    appId: functions.config().creds.app_id,
+    measurementId: functions.config().creds.measurement_id
 });
 
 var db = firebase.firestore();
 
 app.get('/leaderboard', (req, res) => {
+
+    
     res.sendFile('views/leaderboard.html', { root: __dirname });
 });
 
