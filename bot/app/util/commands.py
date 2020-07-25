@@ -32,7 +32,6 @@ async def on_command_error(ctx, error):
 async def after_invoke(ctx):
     await ctx.message.delete()
 
-
 @bot.command(description='Get version number and git commit')
 async def version(ctx):
     try:
@@ -41,7 +40,6 @@ async def version(ctx):
         commit = 'unknown, could not run git'
 
     await ctx.send(f'Food Flex v{__version__} [commit {commit}]')
-
 
 @bot.command(description='Dump state into the chat')
 async def state(ctx):
@@ -61,20 +59,17 @@ async def automatic(ctx):
     await ctx.send('Now in automatic mode')
     data.set_mode('automatic')
 
-
 @bot.command(description='Start submissions period')
 async def submit(ctx):
     await ctx.send('Manually switched to \'submissions\' mode')
     data.change_period('submissions', manual_change=True)
     await submissions.submission_period()
 
-
 @bot.command(description='Start voting period')
 async def vote(ctx):
     await ctx.send('Manually switched to \'voting\' mode')
     data.change_period('voting', manual_change=True)
     await voting.voting_period()
-
 
 @bot.command(description='Start results period')
 async def result(ctx):

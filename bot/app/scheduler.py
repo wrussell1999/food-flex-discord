@@ -48,33 +48,32 @@ async def check_time_periods():
         hour = int(now.strftime('%H'))
         minute = int(now.strftime('%M'))
 
-        if data.mode == 'automatic':
             # Submissions
-            if hour == 13 and minute == 00:
-                data.change_period('submissions')
-                await submissions.submission_period()
+        if hour == 13 and minute == 00:
+            data.change_period('submissions')
+            await submissions.submission_period()
 
-            # Submissions reminder
-            elif hour == 23 and minute == 00:
-                await submissions.submission_reminder()
+        # Submissions reminder
+        elif hour == 23 and minute == 00:
+            await submissions.submission_reminder()
 
-            # Voting
-            elif (hour == 00 and minute == 00) and \
-                    len(data.participants) > 1:
-                data.change_period('voting')
-                await voting.voting_period()
+        # Voting
+        elif (hour == 00 and minute == 00) and \
+                len(data.participants) > 1:
+            data.change_period('voting')
+            await voting.voting_period()
 
-            # Vote reminder
-            elif hour == 11 and minute == 00 and \
-                    len(data.participants) > 1:
+        # Vote reminder
+        elif hour == 11 and minute == 00 and \
+                len(data.participants) > 1:
 
-                await voting.voting_reminder()
-                await voting.individual_vote_reminder()
+            await voting.voting_reminder()
+            await voting.individual_vote_reminder()
 
-            # Results
-            elif hour == 12 and minute == 00 and \
-                    len(data.participants) > 1:  # Needs
-                data.change_period('results')
-                await results.results_period()
+        # Results
+        elif hour == 12 and minute == 00 and \
+                len(data.participants) > 1:  # Needs
+            data.change_period('results')
+            await results.results_period()
 
         await asyncio.sleep(60)
