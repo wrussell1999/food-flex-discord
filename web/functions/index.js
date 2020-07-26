@@ -50,13 +50,8 @@ app.get('/leaderboard', async (req, res) => {
             </tr>
             </tbody>`
             tbody.appendChild(table);
-        }
-        
+        }        
         // add term date
-
-        for (var element in data) {
-            
-        }
         res.status(200).send(root.toString());
     });
 });
