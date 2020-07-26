@@ -14,7 +14,9 @@
   "dependencies": {
     "firebase": "^7.17.1",
     "firebase-admin": "^8.10.0",
-    "firebase-functions": "^3.6.1"
+    "firebase-functions": "^3.6.1",
+    "node-html-parser": "^1.2.20",
+    "sort-nested-json": "^0.2.1"
   },
   "devDependencies": {
     "firebase-functions-test": "^0.2.0"
