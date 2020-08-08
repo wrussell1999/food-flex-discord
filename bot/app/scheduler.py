@@ -45,34 +45,32 @@ async def check_time_periods():
     # Repeat every 60 seconds
     while True:
         now = datetime.datetime.now()
+        day = now.strftime('%a')
         hour = int(now.strftime('%H'))
         minute = int(now.strftime('%M'))
 
-            # Submissions
-        if hour == 13 and minute == 00:
+        # Submissions
+        if day == 'Mon' and hour == 10 and minute == 00:
             data.change_period('submissions')
             await submissions.submission_period()
 
         # Submissions reminder
-        elif hour == 23 and minute == 00:
+        elif day == 'Sat' and hour == 11 and minute == 00:
             await submissions.submission_reminder()
 
         # Voting
-        elif (hour == 00 and minute == 00) and \
-                len(data.participants) > 1:
+        elif day == 'Sat' and hour == 12 and minute == 00 and len(data.participants) > 1:
             data.change_period('voting')
             await voting.voting_period()
 
         # Vote reminder
-        elif hour == 11 and minute == 00 and \
-                len(data.participants) > 1:
+        elif day == '' and hour == 11 and minute == 00 and len(data.participants) > 1:
 
             await voting.voting_reminder()
             await voting.individual_vote_reminder()
 
         # Results
-        elif hour == 12 and minute == 00 and \
-                len(data.participants) > 1:  # Needs
+        elif day == 'Sun' and hour == 22 and minute == 00 and len(data.participants) > 1:
             data.change_period('results')
             await results.results_period()
 
