@@ -61,7 +61,23 @@ app.get('/submissions', async (req, res) => {
     const weekId = await weekRef.get();
     const currentWeekRef = db.collection("weekly-data").doc(weekId.data().id);
     const currentWeek = await currentWeekRef.get();
-    res.sendFile('views/submissions.html', { root: __dirname });
+    const data = currentWeek.data()
+    
+    fs.readFile('views/submissions.html', 'utf8', (err, html) => {
+        if (err) {
+            throw err;
+        }
+        const root = parse(html);
+        const gallery = root.querySelector('#submission-photos');
+        for (var i = 0; i < 5; i++) {
+            const url = "// GET FROM FIRESTORE";
+            const element = `
+            <img class="submission" src="${url}">
+            `
+            gallery.appendChild(element);
+        }
+        res.status(200).send(root.toString());
+    });
 });
 
 exports.app = functions.https.onRequest(app);
