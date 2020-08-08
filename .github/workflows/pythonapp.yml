@@ -1,4 +1,4 @@
-name: Python application
+name: Dependencies for Python application
 
 on: [push]
 
@@ -16,4 +16,4 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install -r bot/requirements.txt
