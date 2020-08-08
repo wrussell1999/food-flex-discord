@@ -6,20 +6,23 @@
 
 ## What does the bot do?
 Food Flex is bot that manages:
+
 - Submissions
 - Voting
 - Results
 - Leaderboard
 
-### Submissions (13:00 - 23:59)
+### Submissions (Monday 10:00 BST - Saturday 12:00 BST)
+
 When a user uploads a picture of their food to the chat, they are automatically entered into the vote. Users can only submit once. The bot will won't count additional submission pictures, therefore users who may feel that multiple pictures helps show off their 'flexing', are able to post multiple pictures without error.
 
-### Voting (00:00 - 11:59)
+### Voting (Saturday 12:00 BST - Sunday 22:00 BST)
+
 Submissions are closed and a voting poll is displayed. Users can vote for their favourite by sending the letter that corresponds to the user. Users can only vote once, and not for themselves. The bot will won't count additional votes. Also, anyone who submitted, and hasn't voted by 11:00, will received a private message to remind them to vote. You will receive a private message to confirm your vote.
 
 **NOTE:** If you submit a picture and don't vote, you are disqualified.
 
-### Results (12:00)
+### Results (Sunday 22:00 BST)
 Voting is closed and a results message will be sent to the chat.
 
 ### Leaderboard
@@ -28,23 +31,16 @@ This is a read-only channel that updates every day once there are new results. T
 ## Docs
 See the wiki for documentation on commands, json data and more.
 
-## Installation
-##### Clone latest release
-```bash
-$ git clone https://github.com/wrussell1999/food-flex-discord
-$ cd food-flex-discord
-```
+## Setup
 
-#### Setup
-
-##### Debian-based
+### Debian-based
 
 Install dependencies:
 ```bash
 $ ./setup.sh
 ```
 
-##### Docker Compose
+### Docker Compose
 The [Compose](docker-compose.yml) can also be used to run the application.
 
 1. `cp example.env .env`
@@ -55,9 +51,9 @@ The [Compose](docker-compose.yml) can also be used to run the application.
 
 ---
 
-### Configuration
+## Configuration
 
-#### Environment Variables
+### Environment Variables
 
 Will out the `.env` file.
 
@@ -72,7 +68,7 @@ DATA_ROOT=
 ```
 \* The only thing to note here is that `admin_id` should be in the form of `1111, 2222, 3333` when using environment variables.
 
-###### Meaning of each key
+###  Meaning of each key
 - `token` - your bot's secret token
 - `server_id` - the ID of your server
 - `command_prefix` - a prefix that marks the message as a command for the bot (you may need a space at the end)
@@ -81,17 +77,11 @@ DATA_ROOT=
 - `leaderboard_channel_id` - the ID of the channel to use for the leaderboard
 - `data_root` - directory containing `leaderboard.json` and `state.json` (Default value of `.` if none is provided)
 
-###### Getting a token
+### Getting a token
 [This guide](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) will show you how to create a Discord Bot for your Discord server.
 
-###### Getting IDs
+### Getting IDs
 Go to Discord and turn on Developer Mode. With this, you can now right-click on guilds, channels, catergories, users, messages, etc. and get their ID (an integer).
-
-### Run the bot
-```bash
-$ source .venv/bin/activate
-$ python3 -m foodflex
-```
 
 ## Contributors
 - [Will Russell](https://www.github.com/wrussell1999): Submissions, voting, results, leaderboard, working with the discord.py API wrapper and Discord servers.
