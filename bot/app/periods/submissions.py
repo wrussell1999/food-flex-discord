@@ -1,12 +1,9 @@
-import random
 import discord
-
-import foodflex.util.data as data
-import foodflex.util.config as config
-import foodflex.util.static as static
-
+import random
+import datetime
+import foodflex.data.firestore as data
+import foodflex.data.static as static
 from foodflex.util.logging import logger
-
 
 async def submission_period():
     logger.info('// Now in SUBMISSIONS period //')
@@ -19,10 +16,11 @@ async def submission_period():
     await main_channel.send(embed=embed)
 
     logger.debug('Clearing participants & voting_map')
+
+    week_number = datetime.datetime.now()
+
     data.participants.clear()
     data.voting_map.clear()
-    data.save_state()
-
 
 async def process_submission(message):
     user_id = str(message.author.id)

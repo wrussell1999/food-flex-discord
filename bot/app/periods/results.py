@@ -1,11 +1,7 @@
 import discord
-
-import foodflex.util.data as data
-import foodflex.util.config as config
-import foodflex.periods.leaderboard as leaderboard
-
+import foodflex.data.firestore as data
+import foodflex.data.leaderboard as leaderboard
 from foodflex.util.logging import logger
-
 
 async def results_period():
     logger.info('// Now in RESULTS period //')
@@ -36,7 +32,6 @@ async def results_period():
     await main_channel.send(embed=embed)
     logger.info('Results posted')
     await leaderboard.update_leaderboard()
-
 
 async def get_winner():
     # Get a list of potential winners

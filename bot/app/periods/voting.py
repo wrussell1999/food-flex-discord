@@ -1,13 +1,9 @@
 import discord
-
-import foodflex.images as images
-import foodflex.util.data as data
-import foodflex.util.static as static
-import foodflex.util.config as config
+import foodflex.data.images as images
+import foodflex.data.firestore as data
+import foodflex.data.static as static
 import foodflex.periods.leaderboard as leaderboard
-
 from foodflex.util.logging import logger
-
 
 async def voting_period():
     logger.info('// Now in VOTING period //')
@@ -49,7 +45,6 @@ async def voting_period():
                                 type=discord.ActivityType.watching)
     await bot.change_presence(status=discord.Status.online, activity=activity)
     logger.info('Done, voting key posted')
-
 
 async def check_vote(message):
     user_id = str(message.author.id)
@@ -100,7 +95,6 @@ async def check_vote(message):
         # The letter voted for does not refer to anyone
         await log_and_dm('Invalid vote', f'Can\'t find user for letter \'{vote}\'', message.author)
 
-
 async def log_and_dm(title, reason, person):
     embed = discord.Embed(
         title=title,
@@ -149,7 +143,6 @@ async def voting_reminder():
     for (nick, vote) in users:
         embed.add_field(name=nick, value=vote, inline=False)
     await main_channel.send(embed=embed)
-
 
 async def individual_vote_reminder():
     for user in data.participants:
