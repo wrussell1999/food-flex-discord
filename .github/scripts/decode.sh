@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo -n "$GC_SA" | base64 -d > bot/credentials.json
+echo -n "$GC_SA" | base64 -d > bot/creds.json
 
 cat << EOF > bot/.env
 TOKEN=$TOKEN
