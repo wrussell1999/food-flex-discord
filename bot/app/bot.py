@@ -14,21 +14,19 @@ builtins.__version__ = '3.0.0'
 builtins.bot = commands.Bot(command_prefix="-ff ")
 
 # all other module imports are after bot, so that they can access it
-import foodflex.data.firestore as firestore
 import foodflex.data.static as static
 import foodflex.util.commands as commands
 import foodflex.periods.voting as voting
 import foodflex.periods.results as results
 import foodflex.periods.messages as messages
-import foodflex.periods.leaderboard as leaderboard
 import foodflex.periods.submissions as submissions
 
 def main():
     load_dotenv()
     sys.stdout.flush()
     logger.info(f'Starting Food Flex v{__version__}')
+    data.init_firebase()
     static.load()
-    logger.info(f'period=\'{data.period}\', mode=\'{data.mode}\' people={len(data.participants)}')
     bot.loop.create_task(check_time_periods())
     bot.run(config.token)
 
@@ -96,3 +94,4 @@ async def check_time_periods():
             await results.results_period()
 
         await asyncio.sleep(60)
+ 

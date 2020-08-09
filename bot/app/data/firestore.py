@@ -29,4 +29,3 @@ def init_firebase():
                 
     leaderboard_watch = current_leaderboard_ref.on_snapshot(on_snapshot)
     weekly_data_watch = weekly_data_ref.on_snapshot(on_snapshot)
-            
