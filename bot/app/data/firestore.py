@@ -39,18 +39,18 @@ def init_firebase():
     state_watch = state_ref.on_snapshot(on_snapshot)
 
 def create_new_weekly_document(week_number):
-    name = u'week' + str(week_number)
+    name = u'week-' + str(week_number)
     db.collection(u'weekly-data').document(name).set({})
     current_week = {
         'id': str(week_number)
     }
-    db.collection(u'weekly-data').document(u'current-week').set(data)
+    db.collection(u'weekly-data').document(u'current-week').set(current_week)
     logger.info(f'Week {week_number} document created')
 
 def update_weekly_document():
     current_week_id = db.collection(u'weekly-data').document(u'current-week').get().to_dict()['id']
     current_week = u'week-' + current_week_id
-    db.collection(u'weekly-data').document(u'week-38').set(weekly_data)
+    db.collection(u'weekly-data').document(current_week).set(weekly_data)
     logger.info(f'{current_week} document updated')
 
 def build_state():

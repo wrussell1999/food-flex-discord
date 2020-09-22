@@ -39,7 +39,7 @@ async def version(ctx):
 @commands.has_role(admin_role_id)
 async def state(ctx):
     state = {
-        "weekly_date": data.weekly_data,
+        "weekly_data": data.weekly_data,
         "voting_map": data.voting_map,
         "state": data.state,
     }
@@ -49,21 +49,24 @@ async def state(ctx):
 
 @bot.command(description='Start submissions period')
 @commands.has_role(admin_role_id)
-async def submission(ctx):
+async def do_submissions(ctx):
     await ctx.send('Manually triggering submissions')
     data.state['period'] = 'submissions'
+    data.update_state()
     await submissions.submission_period()
 
 @bot.command(description='Start voting period')
 @commands.has_role(admin_role_id)
-async def voting(ctx):
+async def do_voting(ctx):
     await ctx.send('Manually triggering voting')
     data.state['period'] = 'voting'
+    data.update_state()
     await voting.voting_period()
 
 @bot.command(description='Start results period')
 @commands.has_role(admin_role_id)
-async def results(ctx):
+async def do_results(ctx):
     await ctx.send('Manually triggering results')
     data.state['period'] = 'results'
+    data.update_state()
     await results.results_period()

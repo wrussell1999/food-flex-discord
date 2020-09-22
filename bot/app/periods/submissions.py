@@ -18,15 +18,23 @@ async def submission_period():
     logger.debug('Creating new weekly document')
 
     week_number = datetime.datetime.now().isocalendar()[1]
-    data.create_new_weekly_document(document_name, week_number)
+    data.create_new_weekly_document(week_number)
 
 async def process_submission(message):
     user_id = str(message.author.id)
     logger.debug(f'Processing submission, msg id {user_id}')
-
-    if user_id in data.weekly_data:
+    if data.weekly_data != None and user_id in data.weekly_data:
         logger.info('Submission invalid')
+        try:
+            url = message.attachments[0].proxy_url
+        except IndexError:
+            url = ''
+            loggger.warn('Submission does not have an image attached')
 
+
+        data.weekly_data[user_id][u'image_url'] = url
+        await message.channel.send(random.choice(static.quotes['rude']))
+        logger.info('Submission overwritten')
     else:
         try:
             url = message.attachments[0].proxy_url
@@ -41,10 +49,9 @@ async def process_submission(message):
             u'voted': False,
             u'votes': 0
         }
-
         await message.channel.send(random.choice(static.quotes['rude']))
         logger.info('Submission valid')
-        data.update_weekly_document()
+    data.update_weekly_document()
 
 async def submission_reminder():
     embed = discord.Embed(title=static.strings['submission_reminder_title'],
