@@ -22,7 +22,7 @@ async def update_leaderboard():
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
     # Checks if the leaderboard has already been posted
-    if data.leaderboard_message_id is None:
+    if int(os.getenv('LEADERBOARD_CHANNEL_ID')) is None:
         # Creates new leaderboard
         embed = get_embed(users)
         await leaderboard_channel.send(embed=embed)
@@ -30,7 +30,7 @@ async def update_leaderboard():
         data.leaderboard_message_id = message_id
     else:
         # Edits and existing one
-        message = await leaderboard_channel.fetch_message(data.leaderboard_message_id)
+        message = await leaderboard_channel.fetch_message(int(os.getenv('LEADERBOARD_CHANNEL_ID')))
         embed = get_embed(users)
         await message.edit(embed=embed)
 
