@@ -15,18 +15,16 @@ async def submission_period():
                           colour=0xff0000)
     await main_channel.send(embed=embed)
 
-    logger.debug('Clearing participants & voting_map')
+    logger.debug('Creating new weekly document')
 
-    week_number = datetime.datetime.now()
-
-    data.participants.clear()
-    data.voting_map.clear()
+    week_number = datetime.datetime.now().isocalendar()[1]
+    data.create_new_weekly_document(document_name, week_number)
 
 async def process_submission(message):
     user_id = str(message.author.id)
     logger.debug(f'Processing submission, msg id {user_id}')
 
-    if user_id in data.participants:
+    if user_id in data.weekly_data:
         logger.info('Submission invalid')
 
     else:
@@ -36,7 +34,7 @@ async def process_submission(message):
             url = ''
             loggger.warn('Submission does not have an image attached')
 
-        data.participants[user_id] = {
+        data.weekly_data[user_id] = {
             'nick': message.author.display_name,
             'submitted': True,
             'image_url': url,
@@ -46,7 +44,7 @@ async def process_submission(message):
 
         await message.channel.send(random.choice(static.quotes['rude']))
         logger.info('Submission valid')
-        data.save_state()
+        data.update_weekly_document()
 
 
 async def submission_reminder():
