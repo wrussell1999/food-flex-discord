@@ -46,7 +46,6 @@ async def process_submission(message):
         logger.info('Submission valid')
         data.update_weekly_document()
 
-
 async def submission_reminder():
     embed = discord.Embed(title=static.strings['submission_reminder_title'],
                           description=static.strings['submission_reminder'],

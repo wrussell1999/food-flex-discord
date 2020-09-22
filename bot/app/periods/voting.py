@@ -10,14 +10,14 @@ async def voting_period():
     logger.info('Creating voting key...')
 
     # we need to build voting_map map first
-    build_voting_map()
+    data.build_voting_map()
 
     logger.debug('Creating (url, letter) pairs for submissions...')
     submissions = []
     # create (image_url, letter) pair list
     for letter in data.voting_map:
         user_id = data.voting_map[letter]
-        image_url = data.participants[user_id]['image_url']
+        image_url = data.weekly_data[user_id]['image_url']
         submissions.append((image_url, letter))
 
     # sort submissions by alphabetical key
@@ -60,7 +60,7 @@ async def check_vote(message):
     if message.clean_content == '🅱':
         vote = 'B'
 
-    if user_id in data.participants:
+    if user_id in data.weekly_data:
         # This person has submitted/voted before
         try:
             voting_for = data.voting_map[vote]
@@ -71,12 +71,12 @@ async def check_vote(message):
         except KeyError:
             pass
 
-        if data.participants[user_id]['voted']:
+        if data.weekly_data[user_id]['voted']:
             await log_and_dm('Invalid vote', 'You have already voted', message.author)
             return
     else:
         # Person has not submitted so we need to create an entry for them
-        data.participants[user_id] = {
+        data.weekly_data[user_id] = {
             'nick': message.author.display_name,
             'submitted': False,
             'voted': False,  # only set to true when they make a valid vote
@@ -86,11 +86,12 @@ async def check_vote(message):
     # Add one to the number of votes that the person we are voting for has
     try:
         user_id_voted_for = data.voting_map[vote]
-        data.participants[user_id_voted_for]['votes'] += 1
-        data.participants[user_id]['voted'] = True
-        nickname = data.participants[user_id_voted_for]['nick']
+        data.weekly_data[user_id_voted_for]['votes'] += 1
+        data.weekly_data[user_id]['voted'] = True
+        nickname = data.weekly_data[user_id_voted_for]['nick']
         await log_and_dm('Vote successful!', f'Vote has been submitted successfully for \'{nickname}\'', message.author)
-        data.save_state()
+        data.update_weekly_document()
+        data.update_voting_map()
     except KeyError:
         # The letter voted for does not refer to anyone
         await log_and_dm('Invalid vote', f'Can\'t find user for letter \'{vote}\'', message.author)
@@ -103,36 +104,15 @@ async def log_and_dm(title, reason, person):
     await person.send(embed=embed)
     logger.info(reason + ', ' + title)
 
-
-def build_voting_map():
-    counter = 0
-    logger.debug('Building voting_map map...')
-
-    # ensure voting_map is empty
-    if len(data.voting_map) != 0:
-        logger.warn('voting_map map has not been cleared, clearing now')
-        data.voting_map.clear()
-
-    # assign a letter to every person who has submitted
-    for user_id in data.participants:
-        if data.participants[user_id]['submitted']:
-            assigned_letter = chr(ord('A') + counter)
-            counter += 1
-            logger.debug(f'Assigned letter \'{assigned_letter}\' to user_id \'{user_id}\'')
-            data.voting_map[assigned_letter] = user_id
-
-    logger.debug(f'Map built, {len(data.voting_map)} letter(s)')
-    data.save_state()
-
 async def voting_reminder():
     embed = discord.Embed(title=static.strings['voting_reminder_title'],
                           description=static.strings['voting_reminder'])
 
     # Gets users as a list of tuples (user, score)
     users = []
-    for key in data.participants:
-        if data.participants[key]['submitted']:
-            tuple = (data.participants[key]['nick'], data.participants[key]['votes'])
+    for key in data.weekly_data:
+        if data.weekly_data[key]['submitted']:
+            tuple = (data.weekly_data[key]['nick'], data.weekly_data[key]['votes'])
             users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
@@ -145,9 +125,9 @@ async def voting_reminder():
     await main_channel.send(embed=embed)
 
 async def individual_vote_reminder():
-    for user in data.participants:
-        if data.participants[user]['submitted'] and \
-                not data.participants[user]['voted']:
+    for user in data.weekly_data:
+        if data.weekly_data[user]['submitted'] and \
+                not data.weekly_data[user]['voted']:
             member = bot.get_guild(config.server_id).get_member(int(user))
 
             if member is None:
