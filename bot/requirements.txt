@@ -1,6 +1,6 @@
-discord.py
-requests==2.22.0
-environs==7.1.0
-Pillow==6.2.2
-python-dotenv
-firebase-admin
+discord.py==1.4.1s==2.24.0
+requests==2.24.0
+environs==8.0.0
+Pillow==7.2.0
+python-dotenv==0.14.0
+firebase-admin==4.4.0
