@@ -1,9 +1,9 @@
 import discord
-import foodflex.data.images as images
-import foodflex.data.firestore as data
-import foodflex.data.static as static
-import foodflex.periods.leaderboard as leaderboard
-from foodflex.util.logging import logger
+import app.data.images as images
+import app.data.firestore as data
+import app.data.static as static
+import app.data.leaderboard as leaderboard
+from app.util.logging import logger
 
 async def voting_period():
     logger.info('// Now in VOTING period //')
@@ -77,10 +77,10 @@ async def check_vote(message):
     else:
         # Person has not submitted so we need to create an entry for them
         data.weekly_data[user_id] = {
-            'nick': message.author.display_name,
-            'submitted': False,
-            'voted': False,  # only set to true when they make a valid vote
-            'votes': 0
+            u'nick': message.author.display_name,
+            u'submitted': False,
+            u'voted': False,  # only set to true when they make a valid vote
+            u'votes': 0
         }
 
     # Add one to the number of votes that the person we are voting for has
@@ -128,7 +128,7 @@ async def individual_vote_reminder():
     for user in data.weekly_data:
         if data.weekly_data[user]['submitted'] and \
                 not data.weekly_data[user]['voted']:
-            member = bot.get_guild(config.server_id).get_member(int(user))
+            member = builtins.guild.get_member(int(user))
 
             if member is None:
                 logger.warn(f'Unable to get user object for \'{user}\', skipping their vote reminder')

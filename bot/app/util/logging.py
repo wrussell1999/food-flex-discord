@@ -13,7 +13,7 @@ def init():
     file_format = logging.Formatter('%(asctime)s %(levelname)5s %(module)11s: %(message)s'
                                     , '%d/%m/%y %H:%M:%S')
 
-    file_handler = logging.FileHandler(filename='foodflex.log', encoding='utf-8', mode='w')
+    file_handler = logging.FileHandler(filename='bot.log', encoding='utf-8', mode='w')
     file_handler.setFormatter(file_format)
     file_handler.setLevel(logging.INFO)
 

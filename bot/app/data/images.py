@@ -2,7 +2,7 @@ import logging
 import requests
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageFont, ImageOps
-import foodflex.util.data as data
+import app.data.firestore as data
 logger = logging.getLogger('food-flex')
 
 INTERNAL_RES = (1024, 1024)

@@ -1,7 +1,7 @@
 import sys
 import json
 
-from foodflex.util.logging import logger
+from app.util.logging import logger
 
 QUOTES_PATH = 'static/quotes.json'
 STRINGS_PATH = 'static/strings.json'

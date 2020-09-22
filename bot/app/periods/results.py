@@ -1,7 +1,7 @@
 import discord
-import foodflex.data.firestore as data
-import foodflex.data.leaderboard as leaderboard
-from foodflex.util.logging import logger
+import app.data.firestore as data
+import app.data.leaderboard as leaderboard
+from app.util.logging import logger
 
 async def results_period():
     logger.info('// Now in RESULTS period //')

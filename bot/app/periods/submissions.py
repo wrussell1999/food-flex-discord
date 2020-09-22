@@ -1,9 +1,9 @@
 import discord
 import random
 import datetime
-import foodflex.data.firestore as data
-import foodflex.data.static as static
-from foodflex.util.logging import logger
+import app.data.firestore as data
+import app.data.static as static
+from app.util.logging import logger
 
 async def submission_period():
     logger.info('// Now in SUBMISSIONS period //')
@@ -35,11 +35,11 @@ async def process_submission(message):
             loggger.warn('Submission does not have an image attached')
 
         data.weekly_data[user_id] = {
-            'nick': message.author.display_name,
-            'submitted': True,
-            'image_url': url,
-            'voted': False,
-            'votes': 0
+            u'nick': message.author.display_name,
+            u'submitted': True,
+            u'image_url': url,
+            u'voted': False,
+            u'votes': 0
         }
 
         await message.channel.send(random.choice(static.quotes['rude']))

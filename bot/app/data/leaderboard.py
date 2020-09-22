@@ -1,8 +1,8 @@
 import discord
 import datetime
 
-import foodflex.data.firestore as data
-from foodflex.util.logging import logger
+import app.data.firestore as data
+from app.util.logging import logger
 
 def update_score(user_id, user_nick):
     # Checks if the user is already on the leaderboard
@@ -27,7 +27,6 @@ async def update_leaderboard():
         embed = get_embed(users)
         await leaderboard_channel.send(embed=embed)
         message_id = leaderboard_channel.last_message_id
-        data.leaderboard_message_id = message_id
     else:
         # Edits and existing one
         message = await leaderboard_channel.fetch_message(int(os.getenv('LEADERBOARD_CHANNEL_ID')))

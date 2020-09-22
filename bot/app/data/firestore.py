@@ -1,10 +1,10 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
-from foodflex.util.logging import logger
+from app.util.logging import logger
 
 def init_firebase():
-    global leaderboard, weekly_data, current_week_id, voting_map, db
+    global leaderboard, weekly_data, current_week_id, voting_map, state, db
     cred = credentials.Certificate('creds.json')
     firebase_admin.initialize_app(cred)
     db = firestore.client()
@@ -22,9 +22,12 @@ def init_firebase():
     voting_map_ref = weekly_collection.document(u'voting-map')
     voting_map = voting_map_ref.get().to_dict()
 
+    state_ref = weekly_collection.document(u'state')
+    state = state_ref.get().to_dict()
+
     def on_snapshot(doc_snapshot, changes, read_time):
         for doc in doc_snapshot:
-            print(u'Received document snapshot: {}'.format(doc.id))
+            logger.info(u'Received document snapshot: {}'.format(doc.id))
             if doc.id == current_leaderboard_ref.get().id:
                 leaderboard = doc.to_dict()
             elif doc.id == weekly_data_ref.get().id:
@@ -33,23 +36,33 @@ def init_firebase():
     leaderboard_watch = current_leaderboard_ref.on_snapshot(on_snapshot)
     weekly_data_watch = weekly_data_ref.on_snapshot(on_snapshot)
     voting_map_watch = voting_map_ref.on_snapshot(on_snapshot)
+    state_watch = state_ref.on_snapshot(on_snapshot)
 
 def create_new_weekly_document(week_number):
     name = u'week' + str(week_number)
     db.collection(u'weekly-data').document(name).set({})
     current_week = {
-        'id': week_number
+        'id': str(week_number)
     }
-    db.collection(u'weekly_data').document(u'current-week').set(data)
+    db.collection(u'weekly-data').document(u'current-week').set(data)
     logger.info(f'Week {week_number} document created')
 
 def update_weekly_document():
-    current_week_id = int(db.collection(u'weekly-data').document(u'current-week').get().to_dict()['id'])
-    current_week = u'week-' + str(current_week_id)
-    
-    db.collection('weekly_data').document(current_week).set(weekly_data)
-    logger.info(f'Week {current_week} document updated')
+    current_week_id = db.collection(u'weekly-data').document(u'current-week').get().to_dict()['id']
+    current_week = u'week-' + current_week_id
+    db.collection(u'weekly-data').document(u'week-38').set(weekly_data)
+    logger.info(f'{current_week} document updated')
 
+def build_state():
+    data = {
+        'period': ''
+    }
+    db.collection(u'weekly-data').document(u'state').set(data)
+    logger.info('State built')
+
+def update_state():
+    db.collection(u'weekly-data').document(u'state').set(state)
+    logger.info('State updated')
 
 def build_voting_map():
     counter = 0
@@ -68,9 +81,14 @@ def build_voting_map():
             logger.debug(f'Assigned letter \'{assigned_letter}\' to user_id \'{user_id}\'')
             voting_map[assigned_letter] = user_id
 
-    logger.debug(f'Map built, {len(voting_map)} letter(s)')
-    db.collection('weekly-data').document('voting-map').set(voting_map)
+    logger.info(f'Map built, {len(voting_map)} letter(s)')
+    db.collection(u'weekly-data').document(u'voting-map').set(voting_map)
     
-def update_voting_map()
-    db.collection('weekly-data').document('voting-map').set(voting_map)
+def update_voting_map():
+    db.collection(u'weekly-data').document(u'voting-map').set(voting_map)
+    logger.info('Voting map updated')
 
+def save_leaderbooard():
+    current_leaderboard = db.collection(u'leaderboard').document(u'current-leaderboard').get().to_dict()
+    db.collection(u'leaderboard').document(u''.format(current_leaderboard)).set(leaderboard)
+    logger.info('Leaderboard updated')
