@@ -12,9 +12,9 @@ async def results_period():
     logger.info('Preparing reuslts...')
     # Get list of users (tuples) who submitted (nick, votes)
     users = []
-    for user in data.participants:
-        if data.participants[user]['submitted']:
-            tuple = (data.participants[user]['nick'], data.participants[user]['votes'])
+    for user in data.weekly_data:
+        if data.weekly_data[user]['submitted']:
+            tuple = (data.weekly_data[user]['nick'], data.weekly_data[user]['votes'])
             users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
@@ -36,11 +36,11 @@ async def results_period():
 async def get_winner():
     # Get a list of potential winners
     users = []
-    for index, key in enumerate(data.participants):
-        if data.participants[key]['submitted'] and data.participants[key]['voted']:
-            tuple = (data.participants[key]['nick'],
-                     data.participants[key]['votes'],
-                     list(data.participants.keys())[index])
+    for index, key in enumerate(data.weekly_data):
+        if data.weekly_data[key]['submitted'] and data.weekly_data[key]['voted']:
+            tuple = (data.weekly_data[key]['nick'],
+                     data.weekly_data[key]['votes'],
+                     list(data.weekly_data.keys())[index])
             users.append(tuple)
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
