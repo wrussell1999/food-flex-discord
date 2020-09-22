@@ -4,7 +4,6 @@ import datetime
 import foodflex.data.firestore as data
 from foodflex.util.logging import logger
 
-
 def update_score(user_id, user_nick):
     # Checks if the user is already on the leaderboard
     if user_id not in data.leaderboard:
