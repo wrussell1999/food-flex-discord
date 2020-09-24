@@ -19,5 +19,5 @@ jobs:
         TOKEN: ${{ secrets.TOKEN }}
 
     - name: Build the Docker image
-      run: docker build bot --file Dockerfile --tag food-flext:$(date +%s)
-      working-directory: ./bot
+      run: docker build . --file bot/Dockerfile --tag food-flex:$(date +%s)
+      
