@@ -1,0 +1,22 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Create Service Account JSON and .env
+      run: ./.github/scripts/decode.sh
+      env:
+        GC_SA: ${{ secrets.GC_SA }}
+        TOKEN: ${{ secrets.TOKEN }}
+
+    - name: Build the Docker image
+      run: docker build bot --file Dockerfile --tag food-flext:$(date +%s)
