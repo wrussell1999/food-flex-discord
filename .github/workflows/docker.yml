@@ -20,4 +20,4 @@ jobs:
 
     - name: Build the Docker image
       run: docker build bot --file Dockerfile --tag food-flext:$(date +%s)
-      working-directory: bot
+      working-directory: ./bot
