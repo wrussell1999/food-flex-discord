@@ -37,6 +37,14 @@ async def on_ready():
     logger.debug('Finding text channels...')
     builtins.main_channel = bot.get_channel(int(os.getenv('MAIN_CHANNEL_ID')))
     builtins.leaderboard_channel = bot.get_channel(int(os.getenv('LEADERBOARD_CHANNEL_ID')))
+    try:
+        builtins.leaderboard_message = await builtins.leaderboard_channel.fetch_message(int(os.getenv("LEADERBOARD_MESSAGE_ID")))
+    except:
+        logger.warning("No leaderboard message")
+        if "leaderboard_message_id" not in data.state:
+            builtins.leaderboard_message = None
+        else:
+            builtins.leaderboard_message = await builtins.leaderboard_channel.fetch_message(data.state['leaderboard_message_id'])
     builtins.guild = bot.get_guild(int(os.getenv('SERVER_ID')))
     builtins.admin_role = guild.get_role(int(os.getenv('ADMIN_ROLE_ID')))
     logger.info('Food Flex is online!')
@@ -48,7 +56,7 @@ async def on_message(message):
     if message.author.bot:
         return
     # ignore messages in any channel but the main one
-    if message.channel != main_channel:
+    if message.channel != builtins.main_channel:
         return
 
     if data.state['period'] == 'submissions' and len(message.attachments) > 0:

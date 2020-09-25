@@ -1,7 +1,7 @@
 import os
 import discord
 import datetime
-
+import builtins
 import app.data.firestore as data
 from app.util.logging import logger
 
@@ -23,18 +23,22 @@ async def update_leaderboard():
     users.sort(key=lambda tuple: tuple[1], reverse=True)
 
     # Checks if the leaderboard has already been posted
-    if int(os.getenv('LEADERBOARD_CHANNEL_ID')) is None:
+
+    if "leaderboard_message_id" not in data.state and os.getenv("LEADERBOARD_MESSAGE_ID") == None:
         # Creates new leaderboard
+        logger.info("Make new leaderboard message")
         embed = get_embed(users)
-        await leaderboard_channel.send(embed=embed)
-        message_id = leaderboard_channel.last_message_id
+        await builtins.leaderboard_channel.send(embed=embed)
+        leaderboard_id = leaderboard_channel.last_message_id
+        builtins.leaderboard_message = await builtins.leaderboard_channel.fetch_message(leaderboard_id)
+        data.state['leaderboard_message_id'] = leaderboard_id
+        data.update_state()
     else:
         # Edits and existing one
-        message = await leaderboard_channel.fetch_message(int(os.getenv('LEADERBOARD_CHANNEL_ID')))
+        logger.info("Edit leaderboard message")
         embed = get_embed(users)
-        await message.edit(embed=embed)
-
-    data.save_leaderboard()
+        await builtins.leaderboard_message.edit(embed=embed)
+    data.update_leaderboard()
 
 def get_embed(users):
     # Gets the date

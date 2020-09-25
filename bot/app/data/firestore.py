@@ -26,13 +26,19 @@ def init_firebase():
     state = state_ref.get().to_dict()
 
     def on_snapshot(doc_snapshot, changes, read_time):
+        global leaderboard, weekly_data, voting_map, state
+        
         for doc in doc_snapshot:
             logger.info(u'Received document snapshot: {}'.format(doc.id))
             if doc.id == current_leaderboard_ref.get().id:
                 leaderboard = doc.to_dict()
             elif doc.id == weekly_data_ref.get().id:
                 weekly_data = doc.to_dict()
-                
+            elif doc.id == voting_map_ref.get().id:
+                voting_map = doc.to_dict()
+            elif doc.id == state_ref.get().id:
+                state = doc.to_dict()
+
     leaderboard_watch = current_leaderboard_ref.on_snapshot(on_snapshot)
     weekly_data_watch = weekly_data_ref.on_snapshot(on_snapshot)
     voting_map_watch = voting_map_ref.on_snapshot(on_snapshot)
@@ -88,7 +94,7 @@ def update_voting_map():
     db.collection(u'weekly-data').document(u'voting-map').set(voting_map)
     logger.info('Voting map updated')
 
-def save_leaderbooard():
-    current_leaderboard = db.collection(u'leaderboard').document(u'current-leaderboard').get().to_dict()
-    db.collection(u'leaderboard').document(u''.format(current_leaderboard)).set(leaderboard)
+def update_leaderboard():
+    current_leaderboard = db.collection(u'leaderboard').document(u'current-leaderboard').get().to_dict()['id']
+    db.collection(u'leaderboard').document(current_leaderboard).set(leaderboard)
     logger.info('Leaderboard updated')
