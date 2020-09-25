@@ -14,11 +14,11 @@ Food Flex is bot that manages:
 
 ### Submissions (Monday 10:00 BST - Saturday 12:00 BST)
 
-When a user uploads a picture of their food to the chat, they are automatically entered into the vote. Users can only submit once. The bot will won't count additional submission pictures, therefore users who may feel that multiple pictures helps show off their 'flexing', are able to post multiple pictures without error.
+When a user uploads a picture of their food to the chat, they are automatically entered into the competition. Users can only submit once. Additional photos will overwrite the existing submission so your last photo sent will be the one saved.
 
 ### Voting (Saturday 12:00 BST - Sunday 22:00 BST)
 
-Submissions are closed and a voting poll is displayed. Users can vote for their favourite by sending the letter that corresponds to the user. Users can only vote once, and not for themselves. The bot will won't count additional votes. Also, anyone who submitted, and hasn't voted by 11:00, will received a private message to remind them to vote. You will receive a private message to confirm your vote.
+Submissions are closed and a voting poll is displayed. Users can vote for their favourite by sending the letter that corresponds to the user. Users can only vote once, and not for themselves. The bot will won't count additional votes. Also, anyone who submitted, and hasn't voted by 21:00, will received a private message to remind them to vote. You will receive a private message to confirm your vote.
 
 **NOTE:** If you submit a picture and don't vote, you are disqualified.
 
@@ -26,7 +26,7 @@ Submissions are closed and a voting poll is displayed. Users can vote for their 
 Voting is closed and a results message will be sent to the chat.
 
 ### Leaderboard
-This is a read-only channel that updates every day once there are new results. This shows the overall scores over a period of time. This can be a month, university term, or a year.
+This is a read-only channel that updates every day once there are new results. This shows the overall scores over a period of time. This can be a month, university term, or a year. You can also see the leaderboard at [here.](https://foodflex.wrussell.co.uk/leaderboard)
 
 ## Docs
 See the wiki for documentation on commands, json data and more.
