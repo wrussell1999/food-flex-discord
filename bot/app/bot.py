@@ -92,7 +92,7 @@ async def check_time_periods():
             await voting.voting_period()
 
         # Vote reminder
-        elif day == 'Sun' and hour == 11 and minute == 00 and len(data.weekly_data) > 1:
+        elif day == 'Sun' and hour == 21 and minute == 00 and len(data.weekly_data) > 1:
 
             await voting.voting_reminder()
             await voting.individual_vote_reminder()
