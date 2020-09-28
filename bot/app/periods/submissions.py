@@ -19,6 +19,11 @@ async def submission_period():
 
     week_number = datetime.datetime.now().isocalendar()[1]
     data.create_new_weekly_document(week_number)
+    data.weekly_data = {}
+    data.update_weekly_document()
+    
+    data.voting_map = {}
+    data.update_voting_map()
 
 async def process_submission(message):
     user_id = str(message.author.id)
