@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  food-flex:
+    container_name: 'food-flex'
+    build: .
+    env_file: .env
+    image: wrussell1999/food-flex-discord
+    environment: 
+      PYTHONUNBUFFERED: 1
