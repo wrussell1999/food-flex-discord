@@ -18,6 +18,6 @@ jobs:
         GC_SA: ${{ secrets.GC_SA }}
         TOKEN: ${{ secrets.TOKEN }}
 
-    - name: Build the Docker image
-      run: docker build . --file bot/Dockerfile --tag food-flex:$(date +%s)
+    #- name: Build the Docker image
+    #  run: docker build . --file bot/Dockerfile --tag food-flex:$(date +%s)
       
