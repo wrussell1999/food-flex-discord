@@ -13,17 +13,17 @@ Food Flex is bot that manages:
 - Results
 - Leaderboard
 
-### Submissions (Monday 10:00 BST - Saturday 12:00 BST)
+### Submissions (Monday 10:00 - Sunday 8:59)
 
 When a user uploads a picture of their food to the chat, they are automatically entered into the competition. Users can only submit once. Additional photos will overwrite the existing submission so your last photo sent will be the one saved.
 
-### Voting (Saturday 12:00 BST - Sunday 22:00 BST)
+### Voting (Sunday 9:00 - Sunday 21:59)
 
 Submissions are closed and a voting poll is displayed. Users can vote for their favourite by sending the letter that corresponds to the user. Users can only vote once, and not for themselves. The bot will won't count additional votes. Also, anyone who submitted, and hasn't voted by 21:00, will received a private message to remind them to vote. You will receive a private message to confirm your vote.
 
 **NOTE:** If you submit a picture and don't vote, you are disqualified.
 
-### Results (Sunday 22:00 BST)
+### Results (Sunday 22:00)
 
 Voting is closed and a results message will be sent to the chat.
 
