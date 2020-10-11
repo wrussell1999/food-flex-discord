@@ -78,17 +78,17 @@ async def check_time_periods():
         minute = int(now.strftime('%M'))
 
         # Submissions
-        if day == 'Mon' and hour == 10 and minute == 00:
+        if day == 'Mon' and hour == 9 and minute == 00:
             data.state['period'] = 'submissions'
             data.update_state()
             await submissions.submission_period()
 
         # Submissions reminder
-        elif day == 'Sat' and hour == 11 and minute == 00:
+        elif day == 'Sun' and hour == 8 and minute == 00:
             await submissions.submission_reminder()
 
         # Voting
-        elif day == 'Sat' and hour == 12 and minute == 00 and len(data.weekly_data) > 1:
+        elif day == 'Sun' and hour == 9 and minute == 00 and len(data.weekly_data) > 1:
             data.state['period'] = 'voting'
             data.update_state()
             await voting.voting_period()
