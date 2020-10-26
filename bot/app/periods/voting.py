@@ -1,4 +1,5 @@
 import discord
+import builtins
 import app.data.images as images
 import app.data.firestore as data
 import app.data.static as static
