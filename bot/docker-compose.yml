@@ -5,6 +5,7 @@ services:
     container_name: 'food-flex'
     build: .
     env_file: .env
+    restart: always
     image: wrussell1999/food-flex-discord
     environment: 
       PYTHONUNBUFFERED: 1
