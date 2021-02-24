@@ -2,8 +2,8 @@ const functions = require('firebase-functions');
 const express = require('express');
 const fs = require('fs');
 const parse = require('node-html-parser').parse;
-
 const app = express();
+const probe = require('probe-image-size');
 const firebase = require("firebase");
 require("firebase/firestore");
 firebase.initializeApp({
@@ -17,7 +17,7 @@ firebase.initializeApp({
     measurementId: functions.config().creds.measurement_id
 });
 
-var db = firebase.firestore();
+let db = firebase.firestore();
 
 
 app.get('/leaderboard', async (req, res) => {
@@ -26,22 +26,22 @@ app.get('/leaderboard', async (req, res) => {
     const leaderboardRef = db.collection("leaderboard").doc(idDoc.data().id);
     const leaderboard = await leaderboardRef.get();
     const data = leaderboard.data();
-
+    console.log(data);
     fs.readFile('views/leaderboard.html', 'utf8', (err, html) => {
         if (err) {
             throw err;
         }
 
-        var sort_array = [];
-        for (var key in data) {
+        let sort_array = [];
+        for (let key in data) {
             sort_array.push({ key: key, score: data[key].score, nick: data[key].nick });
         }
         sort_array.sort(function (x, y) { return y.score - x.score });
         
         const root = parse(html);
         const tbody = root.querySelector('tbody');
-        for (var i = 0; i < sort_array.length; i++) {
-            var item = data[sort_array[i].key];
+        for (let i = 0; i < sort_array.length; i++) {
+            let item = data[sort_array[i].key];
             const table = `
             <tr>
                 <th scope="row">${i + 1}</th>
@@ -59,7 +59,7 @@ app.get('/leaderboard', async (req, res) => {
 app.get('/submissions', async (req, res) => {
     const weekRef = db.collection("weekly-data").doc("current-week");
     const weekId = await weekRef.get();
-    const currentWeekRef = db.collection("weekly-data").doc(weekId.data().id);
+    const currentWeekRef = db.collection("weekly-data").doc("week-" + weekId.data().id.toString());
     const currentWeek = await currentWeekRef.get();
     const data = currentWeek.data()
     
@@ -67,12 +67,23 @@ app.get('/submissions', async (req, res) => {
         if (err) {
             throw err;
         }
+
+        var sort_array = [];
+        for (var key in data) {
+            if (data[key].submitted == true) {
+                sort_array.push({ key: key, image_url: data[key].image_url, nick: data[key].nick });
+            }
+        }
         const root = parse(html);
         const gallery = root.querySelector('#submission-photos');
-        for (var i = 0; i < 5; i++) {
-            const url = "// GET FROM FIRESTORE";
+        for (let i = 0; i < sort_array.length; i++) {
+            let image = data[sort_array[i].key].image_url;
+            let nick = data[sort_array[i].key].nick;
             const element = `
-            <img class="submission" src="${url}">
+            <div class="submission-container">
+                <h2 class="nick">${nick}</h2>
+                <img class="submission" src="${image}"">
+            </div>
             `
             gallery.appendChild(element);
         }

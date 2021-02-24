@@ -1,5 +1,5 @@
 body, html {
-    background-color: #3D5EE6;
+    background-color: #3d5bd1;
     height: 100%;
     
 }
@@ -29,6 +29,9 @@ p {
     border-width: 0px;
     margin: 0.3em;
     font-size: 2em;
+    margin-top: 100px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.20);
 }
 
 .btn:hover {
@@ -48,6 +51,7 @@ p {
     margin-right: auto;
     display: block;
     margin-bottom: 5em;
+    box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.20);
 }
 
 table {
@@ -58,13 +62,6 @@ thead {
     background-color: #1635b8;
 }
 
-.submission {
-        margin: 10px;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-        width: 50%;
-}
 
 @media screen and (max-width: 700px) {
     h1 {
@@ -78,4 +75,44 @@ thead {
         width: 10em;
         margin-bottom: 2em;
     }
+}
+
+.submission {
+    object-fit: cover;
+    
+    width:230px;
+    height:230px;
+    margin: 10px;
+    border-radius: 15px;
+    box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.20);
+}
+
+.submission-container:hover {
+    -webkit-transform: scale(1.2); /* Safari 3-8 */
+    transform: scale(1.2); 
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-gap: 2rem;
+    justify-content: center;
+    align-content: bottom;
+}
+
+.submission-container {
+    display:flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    transition: transform .3s;
+}
+
+.nick {
+    font-family: "Open Sans";
+    color: white;
+    position: absolute;
+    text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
+    top: 180px;
+    
 }
