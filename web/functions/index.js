@@ -3,7 +3,6 @@ const express = require('express');
 const fs = require('fs');
 const parse = require('node-html-parser').parse;
 const app = express();
-const probe = require('probe-image-size');
 const firebase = require("firebase");
 require("firebase/firestore");
 firebase.initializeApp({
@@ -26,7 +25,7 @@ app.get('/leaderboard', async (req, res) => {
     const leaderboardRef = db.collection("leaderboard").doc(idDoc.data().id);
     const leaderboard = await leaderboardRef.get();
     const data = leaderboard.data();
-    console.log(data);
+    
     fs.readFile('views/leaderboard.html', 'utf8', (err, html) => {
         if (err) {
             throw err;
@@ -51,7 +50,6 @@ app.get('/leaderboard', async (req, res) => {
             </tbody>`
             tbody.appendChild(table);
         }        
-        // add term date
         res.status(200).send(root.toString());
     });
 });

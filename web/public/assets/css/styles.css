@@ -54,15 +54,6 @@ p {
     box-shadow: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2px 4px -1px rgba(0,0,0,0.20);
 }
 
-table {
-    color: white;
-}
-
-thead {
-    background-color: #1635b8;
-}
-
-
 @media screen and (max-width: 700px) {
     h1 {
         font-size: 2em;
@@ -115,4 +106,39 @@ thead {
     text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
     top: 180px;
     
+}
+
+.table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 1.5em;
+    min-width: 400px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    background-color: white;
+}
+
+.table th {
+    border: 0px;
+}
+
+.table thead th {
+    border: 0px;
+}
+
+.table thead {
+    background-color: #1635b8;
+    color: #ffffff;
+    text-align: left;
+    font-weight: bold;
+}
+
+.table tbody tr:last-of-type {
+    border-bottom: 2px solid gray;
+}
+
+.table th,
+.table td {
+    padding: 12px 15px;
 }
